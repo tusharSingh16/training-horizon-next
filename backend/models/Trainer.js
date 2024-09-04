@@ -7,6 +7,7 @@ const trainerSchema = new mongoose.Schema({
   qualifications: { type: String, required: true },
   linkedin: { type: String, required: true },
   experience: { type: String, required: true },
+  courses: [{ type: mongoose.Schema.Types.ObjectId, ref: 'listing' }],
   email: { 
     type: String, 
     required: true, 

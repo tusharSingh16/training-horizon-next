@@ -4,7 +4,8 @@ import axios from 'axios';
 
 interface Trainer {
   id: string;
-  name: string;
+  fname: string;
+  lname: string;
   qualifications: string;
   linkedin: string;
   experience: string;
@@ -22,7 +23,7 @@ const TrainerList: React.FC = () => {
   useEffect(() => {
     const fetchTrainers = async () => {
       try {
-        const response = await axios.get('http://localhost:3005/api/v1/trainers/');
+        const response = await axios.get(`http://localhost:3005/api/v1/trainers/`);
         setTrainers(response.data);
       } catch (err) {
         setError('Failed to fetch trainers.');
@@ -44,7 +45,7 @@ const TrainerList: React.FC = () => {
       <ul className="space-y-4">
         {trainers.map(trainer => (
           <li key={trainer.id} className="p-4 border rounded-lg shadow-md">
-            <h2 className="text-xl font-semibold">{trainer.name}</h2>
+            <h2 className="text-xl font-semibold">{trainer.fname + " " + trainer.lname}</h2>
             <p><strong>Qualifications:</strong> {trainer.qualifications}</p>
             <p><strong>LinkedIn:</strong> <a href={trainer.linkedin} target="_blank" rel="noopener noreferrer" className="text-blue-500">{trainer.linkedin}</a></p>
             <p><strong>Experience:</strong> {trainer.experience}</p>

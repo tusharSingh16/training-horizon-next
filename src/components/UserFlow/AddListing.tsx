@@ -6,6 +6,9 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import axios from "axios";
 import { useState, useEffect } from "react";
+import { useJsApiLoader, StandaloneSearchBox } from "@react-google-maps/api"
+import { Library } from "@googlemaps/js-api-loader"
+import { useRef } from "react";
 
 import { Button } from "@/components/trainer-dashboard/ui/button";
 import {
@@ -26,14 +29,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/trainer-dashboard/ui/select";
-import { Dialog, DialogContent, DialogHeader } from "../trainer-dashboard/ui/dialog";
-import { DialogDescription, DialogTitle, DialogTrigger } from "@radix-ui/react-dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "../trainer-dashboard/ui/dialog";
+
+const libs: Library[]  = ["places"]
 
 export function AddListing() {
   const categories = ["Basketball", "Table Tennis", "Yoga", "Other"] as const;
   const gender = ["Male", "Female", "Other"] as const;
   const agegroup = ["5-8", "8-12", "13-18", "18-21", "21+"] as const;
   const mode = ["Offline", "Online"] as const;
+
+  const { isLoaded } = useJsApiLoader({
+    googleMapsApiKey: process.env.NEXT_PUBLIC_MAPS_API_KEY!,
+    libraries: libs
+  })
 
   const formSchema = z.object({
     category: z.string(),
@@ -60,6 +69,8 @@ export function AddListing() {
       endTime: "",
     }
   });
+
+  const inputRef = useRef<google.maps.places.SearchBox | null>(null);
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedMode, setSelectedMode] = useState("");
@@ -140,16 +151,21 @@ export function AddListing() {
   const handleSubmit = () => {
     handleDateChange();
 
-  // Check if there are any validation errors
-  const hasErrors = form.formState.errors.startDate || form.formState.errors.endDate;
-  
-  if (hasErrors) {
-    // If there are errors, do not submit
-    return;
-  }
+    // Check if there are any validation errors
+    const hasErrors = form.formState.errors.startDate || form.formState.errors.endDate;
+
+    if (hasErrors) {
+      // If there are errors, do not submit
+      return;
+    }
     form.handleSubmit(onSubmit)();
     setIsDialogOpen(false);
   };
+
+  const handleOnPlacesChanged = () => {
+    let address = inputRef.current?.getPlaces()
+    console.log("address", address)
+  }
 
   return (
     <div className="m-4">
@@ -223,10 +239,10 @@ export function AddListing() {
               <FormItem>
                 <FormLabel>Mode</FormLabel>
                 <FormControl>
-                  <Select onValueChange={(value) => { 
+                  <Select onValueChange={(value) => {
                     field.onChange(value);
                     setSelectedMode(value); // Update state with selected mode
-                  } } value={field.value ?? ""}>
+                  }} value={field.value ?? ""}>
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Select Mode" />
                     </SelectTrigger>
@@ -247,19 +263,41 @@ export function AddListing() {
             )}
           />
           {/* Location Field */}
-          <FormField
-            name="location"
-            control={form.control}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{selectedMode === "Online" ? "ZOOM LINK" : "LOCATION"}</FormLabel>
-                <FormControl>
-                <Input {...field} value={field.value ?? ""} placeholder={selectedMode === "Online" ? "Enter Zoom link" : "Enter location"} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          { isLoaded && (selectedMode === "Offline") &&
+          <StandaloneSearchBox
+            onLoad={(ref) => inputRef.current = ref}
+            >
+            <FormField
+              name="location"
+              control={form.control}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>LOCATION</FormLabel>
+                  <FormControl>
+                    <Input {...field} value={field.value ?? ""} placeholder="Enter Location" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </StandaloneSearchBox>
+          
+          }
+          { (selectedMode === "Online") &&
+            <FormField
+              name="location"
+              control={form.control}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{selectedMode === "Online" ? "ZOOM LINK" : "LOCATION"}</FormLabel>
+                  <FormControl>
+                    <Input {...field} value={field.value ?? ""} placeholder="Enter zoom link" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          }
           {/* Quantity Field */}
           <FormField
             name="quantity"

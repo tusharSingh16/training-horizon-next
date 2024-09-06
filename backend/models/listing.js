@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const listingSchema = new mongoose.Schema({
   trainerId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
+    ref: "Trainer",
     required: true,
   },
   category: {

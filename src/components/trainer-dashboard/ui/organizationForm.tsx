@@ -15,18 +15,11 @@ import {
   FormMessage,
 } from "@/components/trainer-dashboard/ui/form";
 import { Input } from "@/components/trainer-dashboard/ui/input";
-import Popup from "./PopUp";
-import { Card, CardContent} from './ui/card'
-import Image from 'next/image'
 
-export function TrainerForm() {
-  const [popupVisible, setPopupVisible] = useState(false);
-  const [popupMessage, setPopupMessage] = useState("");
-  const formSchema = z.object({
-    fname: z.string().min(3, {
-      message: "Enter at least 3 characters",
-    }),
-    lname: z.string().min(3, {
+// Schema definition with custom password confirmation validation
+const formSchema = z
+  .object({
+    orgname: z.string().min(3, {
       message: "Enter at least 3 characters",
     }),
     qualifications: z.string().min(1, {
@@ -47,32 +40,41 @@ export function TrainerForm() {
     address: z.string().min(1, {
       message: "Please enter your address",
     }),
-    availability: z.array(z.string()).optional(),
-    password: z.string().min(1, {
-      message: "Please enter a valid password",
-    })
+    password: z.string().min(6, {
+      message: "Password must be at least 6 characters",
+    }),
+    confirmPassword: z.string().min(6, {
+      message: "Please confirm your password",
+    }),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"], // Field to apply the error
   });
+
+export function OrganizationForm() {
+  const [popupVisible, setPopupVisible] = useState(false);
+  const [popupMessage, setPopupMessage] = useState("");
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      fname: "",
-      lname: "",
+      orgname: "",
       qualifications: "",
       linkedin: "",
       experience: "",
       email: "",
       phone: "",
       address: "",
-      availability: [],
-      password: ""
+      password: "",
+      confirmPassword: "",
     },
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      const response = await axios.post("http://localhost:3005/api/v1/trainers/signup", values);
-      console.log("Trainer added" + response.data)
+      const response = await axios.post("http://localhost:3005/", values);
+      console.log("Trainer added" + response.data);
       setPopupMessage("Trainer added successfully!");
       setPopupVisible(true);
     } catch (e) {
@@ -87,41 +89,26 @@ export function TrainerForm() {
 
   return (
     <div>
-      <Popup
+      {/* <Popup
         message={popupMessage}
         isOpen={popupVisible}
         onClose={() => setPopupVisible(false)}
-      />
+      /> */}
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-1">
           <div className="grid grid-cols-2 w-full gap-2 max-[769px]:grid-cols-1">
             <div>
               <div className="flex gap-2 w-full max-sm:flex-col">
-                <div className="flex w-1/2 max-sm:w-full">
+                <div className="flex w-full max-sm:w-full">
                   <FormField
-                    name="fname"
+                    name="orgname"
                     control={form.control}
                     render={({ field }) => (
                       <FormItem className="w-full">
-                        <FormLabel>First Name</FormLabel>
+                        <FormLabel>Name of the Organization</FormLabel>
                         <FormControl>
-                          <Input placeholder="Enter first name" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <div className="flex w-1/2 max-sm:w-full">
-                  <FormField
-                    name="lname"
-                    control={form.control}
-                    render={({ field }) => (
-                      <FormItem className=" w-full">
-                        <FormLabel>Last Name</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Enter last name" {...field} />
+                          <Input placeholder="Enter name of the organization" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -129,6 +116,7 @@ export function TrainerForm() {
                   />
                 </div>
               </div>
+
               <FormField
                 name="qualifications"
                 control={form.control}
@@ -142,6 +130,7 @@ export function TrainerForm() {
                   </FormItem>
                 )}
               />
+
               <FormField
                 name="email"
                 control={form.control}
@@ -155,6 +144,7 @@ export function TrainerForm() {
                   </FormItem>
                 )}
               />
+
               <FormField
                 name="password"
                 control={form.control}
@@ -162,7 +152,29 @@ export function TrainerForm() {
                   <FormItem>
                     <FormLabel>Password</FormLabel>
                     <FormControl>
-                      <Input type="password" placeholder="Enter your password" {...field} />
+                      <Input
+                        type="password"
+                        placeholder="Enter your password"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                name="confirmPassword"
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Confirm Password</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="password"
+                        placeholder="Enter your password again"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -182,6 +194,7 @@ export function TrainerForm() {
                   </FormItem>
                 )}
               />
+
               <FormField
                 name="experience"
                 control={form.control}
@@ -189,12 +202,17 @@ export function TrainerForm() {
                   <FormItem>
                     <FormLabel>Teaching Experience</FormLabel>
                     <FormControl>
-                      <Input type="number" placeholder="Enter your teaching experience in years" {...field} />
+                      <Input
+                        type="number"
+                        placeholder="Enter your teaching experience in years"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+
               <FormField
                 name="linkedin"
                 control={form.control}
@@ -209,22 +227,10 @@ export function TrainerForm() {
                 )}
               />
             </div>
+
             <div>
-              <div className='flex justify-center'>
-                <Card className="w-full">
-                  <CardContent className='h-full pt-2 w-full '>
-                    <div className='w-full flex justify-center'>
-                      <Image src={'/img/profile.png'}
-                        alt='map'
-                        width={150}
-                        height={150}
-                      />
-                    </div>
-                    <div className='py-2 flex text-xs w-full justify-center'>Upload your photo</div>
-                    <Button className=' w-full' size={'sm'} type='button' variant={'outline'}>Select from Computer</Button>
-                  </CardContent>
-                </Card>
-              </div>
+              <div className="flex justify-center"></div>
+
               <FormField
                 name="address"
                 control={form.control}
@@ -238,43 +244,13 @@ export function TrainerForm() {
                   </FormItem>
                 )}
               />
-
-              {/* <Card>
-                <CardHeader>
-                  <CardTitle>
-                    See near your location
-                  </CardTitle>
-                  <CardDescription>Northern Street, Chicago, United States</CardDescription>
-                </CardHeader>
-                <CardContent>
-
-                  <Image src={'/img/basemap.png'}
-                    alt='map'
-                    width={300}
-                    height={200}
-                  />
-                </CardContent>
-              </Card> */}
-
-              {/* <FormField
-                name="availability"
-                control={form.control}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Availability</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter your availability" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              /> */}
-              {/* <JobDetailForm /> */}
             </div>
-
           </div>
+
           <div className="flex justify-between py-4">
-            <Button variant={"outline"} type="button">Cancel</Button>
+            <Button variant={"outline"} type="button">
+              Cancel
+            </Button>
             <Button type="submit">Submit Details</Button>
           </div>
         </form>

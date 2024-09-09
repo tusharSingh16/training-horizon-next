@@ -1,10 +1,16 @@
-"use client"
+"use client";
 
-import React, { useState } from 'react';
-import Link from 'next/link';
+import React, { useState } from "react";
+import Link from "next/link";
+import UserDashboard from "./UserDashboard";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+
+  const isUserLoggedIn = () => {
+    return !!localStorage.getItem("token");
+  };
+  const loggedIn = isUserLoggedIn();
 
   return (
     <nav className="bg-white border-b border-gray-300 sticky top-0 z-50">
@@ -12,33 +18,65 @@ const Navbar = () => {
         <div className="p-5">
           <div className="hidden md:flex  justify-between ">
             <div>
-            <Link href="/" className="text-gray-700 hover:text-black px-3 py-2 rounded-md text-sm font-medium">
-              Home
-            </Link>
-            <Link href="/courses" className="text-gray-700 hover:text-black px-3 py-2 rounded-md text-sm font-medium">
-              Courses
-            </Link>
-            <Link href="/about" className="text-gray-700 hover:text-black px-3 py-2 rounded-md text-sm font-medium">
-              About Us
-            </Link>
-            <Link href="/contact" className="text-gray-700 hover:text-black px-3 py-2 rounded-md text-sm font-medium">
-              Contact
-            </Link>
+              <Link
+                href="/"
+                className="text-gray-700 hover:text-black px-3 py-2 rounded-md text-sm font-medium"
+              >
+                Home
+              </Link>
+              <Link
+                href="/courses"
+                className="text-gray-700 hover:text-black px-3 py-2 rounded-md text-sm font-medium"
+              >
+                Courses
+              </Link>
+              <Link
+                href="/about"
+                className="text-gray-700 hover:text-black px-3 py-2 rounded-md text-sm font-medium"
+              >
+                About Us
+              </Link>
+              <Link
+                href="/contact"
+                className="text-gray-700 hover:text-black px-3 py-2 rounded-md text-sm font-medium"
+              >
+                Contact
+              </Link>
             </div>
             <div>
-            {/* <Link href="/Dashboard/Teacher/join_as_teacher" className="text-gray-700 hover:text-black px-3 py-2 rounded-md text-sm font-medium">
+              {/* <Link href="/Dashboard/Teacher/join_as_teacher" className="text-gray-700 hover:text-black px-3 py-2 rounded-md text-sm font-medium">
             </Link> */}
-              <Link href="/userflow/addListing" className="bg-blue-300 text-black px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-200"> Add Listing
+              <Link
+                href="/userflow/addListing"
+                className="bg-blue-300 text-black px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-200"
+              >
+                {" "}
+                Add Listing
               </Link>
-            <Link href="/dashboard/teacher/join_as_teacher" className="text-gray-700 hover:text-black px-3 py-2 rounded-md text-sm font-medium">
-              Join as Teacher
-            </Link>
-            <Link href="/userflow/login" className="text-gray-700 hover:text-black px-3 py-2 rounded-md text-sm font-medium">
-              Log in
-            </Link>
-            <Link href="/userflow/signup" className="bg-yellow-500 text-black px-3 py-2 rounded-md text-sm font-medium hover:bg-yellow-600">
-              Sign Up
-            </Link>
+              <Link
+                href="/dashboard/teacher/join_as_teacher"
+                className="text-gray-700 hover:text-black px-3 py-2 rounded-md text-sm font-medium"
+              >
+                Join as Teacher
+              </Link>
+              {loggedIn ? (
+                <UserDashboard />
+              ) : (
+                <>
+                  <Link
+                    href="/userflow/login"
+                    className="text-gray-700 hover:text-black px-3 py-2 rounded-md text-sm font-medium"
+                  >
+                    Log in
+                  </Link>
+                  <Link
+                    href="/userflow/signup"
+                    className="bg-yellow-500 text-black px-3 py-2 rounded-md text-sm font-medium hover:bg-yellow-600"
+                  >
+                    Sign Up
+                  </Link>
+                </>
+              )}
             </div>
           </div>
           <div className="-mr-2 flex md:hidden">
@@ -51,12 +89,36 @@ const Navbar = () => {
             >
               <span className="sr-only">Open main menu</span>
               {!isOpen ? (
-                <svg className="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16m-7 6h7" />
+                <svg
+                  className="block h-6 w-6"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M4 6h16M4 12h16m-7 6h7"
+                  />
                 </svg>
               ) : (
-                <svg className="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                <svg
+                  className="block h-6 w-6"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               )}
             </button>
@@ -64,28 +126,58 @@ const Navbar = () => {
         </div>
       </div>
 
-      <div className={`${isOpen ? 'block' : 'hidden'} md:hidden`} id="mobile-menu">
+      <div
+        className={`${isOpen ? "block" : "hidden"} md:hidden`}
+        id="mobile-menu"
+      >
         <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-          <Link href="/" className="text-gray-700 hover:text-black block px-3 py-2 rounded-md text-base font-medium">
+          <Link
+            href="/"
+            className="text-gray-700 hover:text-black block px-3 py-2 rounded-md text-base font-medium"
+          >
             Home
           </Link>
-          <Link href="/courses" className="text-gray-700 hover:text-black block px-3 py-2 rounded-md text-base font-medium">
+          <Link
+            href="/courses"
+            className="text-gray-700 hover:text-black block px-3 py-2 rounded-md text-base font-medium"
+          >
             Courses
           </Link>
-          <Link href="/about" className="text-gray-700 hover:text-black block px-3 py-2 rounded-md text-base font-medium">
+          <Link
+            href="/about"
+            className="text-gray-700 hover:text-black block px-3 py-2 rounded-md text-base font-medium"
+          >
             About Us
           </Link>
-          <Link href="/contact" className="text-gray-700 hover:text-black block px-3 py-2 rounded-md text-base font-medium">
+          <Link
+            href="/contact"
+            className="text-gray-700 hover:text-black block px-3 py-2 rounded-md text-base font-medium"
+          >
             Contact
           </Link>
-          <Link href='/userflow/addListing' className='text-gray-700 hover:text-black block px-3 py-2 rounded-md text-base font-medium'> Add Listing</Link>
-          <Link href="/dashboard/teacher/join_as_teacher" className="text-gray-700 hover:text-black block px-3 py-2 rounded-md text-base font-medium">
+          <Link
+            href="/userflow/addListing"
+            className="text-gray-700 hover:text-black block px-3 py-2 rounded-md text-base font-medium"
+          >
+            {" "}
+            Add Listing
+          </Link>
+          <Link
+            href="/dashboard/teacher/join_as_teacher"
+            className="text-gray-700 hover:text-black block px-3 py-2 rounded-md text-base font-medium"
+          >
             Join as Teacher
           </Link>
-          <Link href="/userflow/login" className="text-gray-700 hover:text-black block px-3 py-2 rounded-md text-base font-medium">
+          <Link
+            href="/userflow/login"
+            className="text-gray-700 hover:text-black block px-3 py-2 rounded-md text-base font-medium"
+          >
             Log in
           </Link>
-          <Link href="/userflow/signup" className="bg-yellow-500 text-white block px-3 py-2 rounded-md text-base font-medium hover:bg-yellow-600">
+          <Link
+            href="/userflow/signup"
+            className="bg-yellow-500 text-white block px-3 py-2 rounded-md text-base font-medium hover:bg-yellow-600"
+          >
             Sign Up
           </Link>
         </div>

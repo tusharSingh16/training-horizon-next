@@ -87,9 +87,12 @@ export function AddListing() {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
+
+      const token = localStorage.getItem("token")
+
       const response = await axios.post('http://localhost:3005/api/v1/listing/add-listing', values, {
         headers: {
-          'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NmQxZDM0MWQ1YTcyMGU5MGFlYTJiNjQiLCJpYXQiOjE3MjU0MDgyODJ9.YH3aJtElSKnWsacQtGDrriUhZAwlNcjkDOhUAK49WIY`,
+          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
       });

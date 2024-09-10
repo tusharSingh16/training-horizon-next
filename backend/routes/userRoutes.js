@@ -14,6 +14,7 @@ const userSignupSchema =zod.object({
         firstName:zod.string(),
         lastName:zod.string(),
         password:zod.string(),
+        role: zod.string(),
 })
 const userSigninSchema =zod.object({
     email:zod.string().email(),
@@ -31,6 +32,7 @@ userRouter.post('/signup',async function (req,res) {
         firstName:req.body.firstName,
         lastName:req.body.lastName,
         password:req.body.password,
+        role: req.body.role || 'user',
     } 
     const result =userSignupSchema.safeParse(inputFromUser);
     
@@ -56,6 +58,7 @@ userRouter.post('/signup',async function (req,res) {
         res.status(200).json({
             message:"user created successfully",
             token:token,
+            _id: user._id,
         })
     } catch (error) {
         res.status(411).json({

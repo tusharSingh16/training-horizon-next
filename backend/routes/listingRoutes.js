@@ -87,7 +87,7 @@ listingRouter.get("/listing/:listingId", async function (req, res) {
 
   try {
     // Fetch the listing from the database using the listingId
-    const listing = await Listing.findById(listingId).populate('trainer');
+    const listing = await Listing.findById(listingId);
 
     // Check if the listing exists
     if (!listing) {

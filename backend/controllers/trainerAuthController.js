@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const { z } = require("zod");
 
 const signUpSchema = z.object({
+  _id: z.string(),
   fname: z.string().min(1, "Name is required"),
   lname: z.string().min(1, "Name is required"),
   qualifications: z.string().min(1, "Qualifications are required"),

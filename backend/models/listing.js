@@ -16,6 +16,9 @@ const listingSchema = new mongoose.Schema({
     required: true,
     // maxLength:30,
   },
+  priceMode:{
+    type: String
+  },
   price: {
     type: String,
   },
@@ -28,6 +31,9 @@ const listingSchema = new mongoose.Schema({
   quantity: {
     type: String,
     // required:true,
+  },
+  classSize:{
+    type: String,
   },
   startDate: {
     type: String,
@@ -58,12 +64,11 @@ const listingSchema = new mongoose.Schema({
   ageGroup: {
     type: String,
     required: true,
-    trim: true,
   },
   description: {
     type: String,
     required: true,
-    // minLength:10,
+    minlength: 100
   },
   isApproved: { type: Boolean, default: false },
 });

@@ -8,10 +8,12 @@ import ListingCard from './ListingCard';
 interface Listing {
   category: string,
   title: string,
+  priceMode:string,
   price: string,
   mode: string,
   location: string,
   quantity: string,
+  classSize:string,
   startDate: string,
   endDate:string,
   days: string,
@@ -22,77 +24,6 @@ interface Listing {
   description:string,
 }
 
-
-  
-
-// const listings: Listing[] = [
-//   // Example data...
-//   {
-//     title: "Cricket",
-//     category: "Sports",
-//     gender: "Boys and Girls",
-//     description: "Learn the basics of cricket...",
-//     imageUrl: "/img/cricket.png",
-//     time: "8:00 PM to 9:30 PM",
-//   },
-//   {
-//     title: "Basketball",
-//     category: "Sports",
-//     gender: "Boys Only",
-//     description: "Master the skills of basketball...",
-//     imageUrl: "/img/basketball.png",
-//     time: "2 hrs",
-//   },
-//   {
-//     title: "Football",
-//     category: "Sports",
-//     gender: "Boys Only",
-//     description: "Kick-start your football career...",
-//     imageUrl: "/img/football.png",
-//     time: "2 hrs",
-//   },
-//   {
-//     title: "Badminton",
-//     category: "Sports",
-//     gender: "Boys and Girls",
-//     description: "Learn to smash the shuttle...",
-//     imageUrl: "/img//badminton.png",
-//     time: "2 hrs",
-//   },
-//   {
-//     title: "Mathematics",
-//     category: "Educational",
-//     gender: "Boys and Girls",
-//     description: "Ace the formulas ",
-//     imageUrl: "/img/math.png",
-//     time: "8:00 PM to 9:30 PM",
-//   },
-//   {
-//     title: "Science",
-//     category: "Educational",
-//     gender: "Boys and Girls",
-//     description: "Ace the formulas ",
-//     imageUrl: "/img/lab.png",
-//     time: "2 hrs",
-//   },
-//   {
-//     title: "History",
-//     category: "Educational",
-//     gender: "Boys",
-//     description: "Ace the formulas ",
-//     imageUrl: "/img/history.png",
-//     time: "2 hrs",
-//   },
-//   {
-//     title: "History",
-//     category: "Educational",
-//     gender: "Boys",
-//     description: "Ace the formulas ",
-//     imageUrl: "/img/history.png",
-//     time: "2 hrs",
-//   },
-//   // More listings...
-// ];
 
 const ListingsPage: React.FC = () => {
 

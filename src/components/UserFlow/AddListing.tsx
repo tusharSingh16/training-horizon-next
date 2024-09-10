@@ -6,6 +6,9 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import axios from "axios";
 import { useState, useEffect } from "react";
+import { useJsApiLoader, StandaloneSearchBox } from "@react-google-maps/api"
+import { Library } from "@googlemaps/js-api-loader"
+import { useRef } from "react";
 
 import { Button } from "@/components/trainer-dashboard/ui/button";
 import {
@@ -26,22 +29,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/trainer-dashboard/ui/select";
-import { Dialog, DialogContent, DialogHeader } from "../trainer-dashboard/ui/dialog";
-import { DialogDescription, DialogTitle, DialogTrigger } from "@radix-ui/react-dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "../trainer-dashboard/ui/dialog";
+
+const libs: Library[] = ["places"]
 
 export function AddListing() {
-  const categories = ["Basketball", "Table Tennis", "Yoga", "Other"] as const;
-  const gender = ["Male", "Female", "Other"] as const;
-  const agegroup = ["5-8", "8-12", "13-18", "18-21", "21+"] as const;
-  const mode = ["Offline", "Online"] as const;
 
   const formSchema = z.object({
     category: z.string(),
     title: z.string(),
+    priceMode: z.string(),
     price: z.string(),
     mode: z.string(),
     location: z.string(),
     quantity: z.string().optional(),
+    classSize: z.string(),
     startDate: z.string(),
     endDate: z.string(),
     days: z.string(),
@@ -49,7 +51,9 @@ export function AddListing() {
     startTime: z.string().optional(),
     endTime: z.string().optional(),
     ageGroup: z.string(),
-    description: z.string(),
+    description: z.string().min(100,{
+      message: "Enter atleast 100 characters"
+    }),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -61,26 +65,25 @@ export function AddListing() {
     }
   });
 
+  const categories = ["Basketball", "Table Tennis", "Yoga", "Other"] as const;
+  const gender = ["Boys & Girls", "Boys Only", "Girls Only"] as const;
+  const agegroup = ["5-8", "8-12", "13-18", "18-21", "21+"] as const;
+  const mode = ["Offline", "Online"] as const;
+  const priceMode = ["Per day", "Per month", "Per Course"] as const;
+  const classSize = ["Group", "1 to 1"] as const;
+
+  const inputRef = useRef<google.maps.places.SearchBox | null>(null);
+  const router = useRouter();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedMode, setSelectedMode] = useState("");
-  const [formValues, setFormValues] = useState<z.infer<typeof formSchema>>({
-    category: "",
-    title: "",
-    price: "",
-    mode: "",
-    location: "",
-    quantity: "",
-    startDate: "",
-    endDate: "",
-    days: "",
-    gender: "",
-    startTime: "",
-    endTime: "",
-    ageGroup: "",
-    description: "",
-  });
+  const [selectedClassSize, setSelectedClassSize] = useState("");
+  const [selectedPriceMode, setSelectedPriceMode] = useState("");
+  const [formValues, setFormValues] = useState<z.infer<typeof formSchema>>(form.getValues());
 
-  const router = useRouter();
+  const { isLoaded } = useJsApiLoader({
+    googleMapsApiKey: process.env.NEXT_PUBLIC_MAPS_API_KEY!,
+    libraries: libs
+  })
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
@@ -132,6 +135,16 @@ export function AddListing() {
     return () => subscription.unsubscribe();
   }, [form.watch]);
 
+  const handlePlaceSelect = () => {
+    if (inputRef.current) {
+      const places = inputRef.current.getPlaces();
+      if (places && places.length > 0) {
+        const place = places[0];
+        form.setValue("location", place.formatted_address || "");
+      }
+    }
+  };
+
   const handleReviewClick = () => {
     setFormValues(form.getValues());
     setIsDialogOpen(true);
@@ -140,13 +153,13 @@ export function AddListing() {
   const handleSubmit = () => {
     handleDateChange();
 
-  // Check if there are any validation errors
-  const hasErrors = form.formState.errors.startDate || form.formState.errors.endDate;
-  
-  if (hasErrors) {
-    // If there are errors, do not submit
-    return;
-  }
+    // Check if there are any validation errors
+    const hasErrors = form.formState.errors.startDate || form.formState.errors.endDate;
+
+    if (hasErrors) {
+      // If there are errors, do not submit
+      return;
+    }
     form.handleSubmit(onSubmit)();
     setIsDialogOpen(false);
   };
@@ -201,6 +214,38 @@ export function AddListing() {
               </FormItem>
             )}
           />
+          {/* price mode field */}
+          <FormField
+            name="priceMode"
+            control={form.control}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>PRICE MODE</FormLabel>
+                <FormControl>
+                  <Select onValueChange={(value) => {
+                    field.onChange(value);
+                    setSelectedPriceMode(value); // Update state with selected priceMode
+                  }} value={field.value ?? ""}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select Price Mode" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectLabel>Price Mode</SelectLabel>
+                        {priceMode.map((priceMode) => (
+                          <SelectItem key={priceMode} value={priceMode}>
+                            {priceMode}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
           {/* Price Field */}
           <FormField
             name="price"
@@ -223,10 +268,10 @@ export function AddListing() {
               <FormItem>
                 <FormLabel>Mode</FormLabel>
                 <FormControl>
-                  <Select onValueChange={(value) => { 
+                  <Select onValueChange={(value) => {
                     field.onChange(value);
                     setSelectedMode(value); // Update state with selected mode
-                  } } value={field.value ?? ""}>
+                  }} value={field.value ?? ""}>
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Select Mode" />
                     </SelectTrigger>
@@ -247,19 +292,42 @@ export function AddListing() {
             )}
           />
           {/* Location Field */}
-          <FormField
-            name="location"
-            control={form.control}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{selectedMode === "Online" ? "ZOOM LINK" : "LOCATION"}</FormLabel>
-                <FormControl>
-                <Input {...field} value={field.value ?? ""} placeholder={selectedMode === "Online" ? "Enter Zoom link" : "Enter location"} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          {isLoaded && (selectedMode === "Offline") &&
+            <StandaloneSearchBox
+              onLoad={(ref) => inputRef.current = ref}
+              onPlacesChanged={handlePlaceSelect}
+            >
+              <FormField
+                name="location"
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>LOCATION</FormLabel>
+                    <FormControl>
+                      <Input {...field} value={field.value ?? ""} placeholder="Enter Location" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </StandaloneSearchBox>
+
+          }
+          {(selectedMode === "Online") &&
+            <FormField
+              name="location"
+              control={form.control}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>ZOOM LINK</FormLabel>
+                  <FormControl>
+                    <Input {...field} value={field.value ?? ""} placeholder="Enter zoom link" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          }
           {/* Quantity Field */}
           <FormField
             name="quantity"
@@ -274,6 +342,38 @@ export function AddListing() {
               </FormItem>
             )}
           />
+          {/* class size field*/}
+          <FormField
+            name="classSize"
+            control={form.control}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>CLASS SIZE</FormLabel>
+                <FormControl>
+                  <Select onValueChange={(value) => {
+                    field.onChange(value);
+                    setSelectedClassSize(value); // Update state with selected classSize
+                  }} value={field.value ?? ""}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select Mode" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectLabel>Class Size</SelectLabel>
+                        {classSize.map((classSize) => (
+                          <SelectItem key={classSize} value={classSize}>
+                            {classSize}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          
           {/* Start Date Field */}
           <FormField
             name="startDate"

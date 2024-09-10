@@ -12,10 +12,12 @@ const getListingSchema = zod.object({
   trainerId: zod.string(),
   category: zod.string(),
   title: zod.string(),
+  priceMode: zod.string(),
   price: zod.string(),
   mode: zod.string().optional(),
   location: zod.string(),
   quantity: zod.string().optional(),
+  classSize: zod.string(),
   startDate: zod.string(),
   endDate: zod.string(),
   days: zod.string(),
@@ -53,7 +55,7 @@ const postListingSchema = zod.object({
 //can be used in listing filtering
 listingRouter.get("/listing", async function (req, res) {
 
-  const listings = await Listing.find().populate('trainer');
+  const listings = await Listing.find();
 
   res.status(200).json(listings);
 });
@@ -112,11 +114,13 @@ listingRouter.post("/add-listing", trainerAuthMiddleware,async function (req, re
     const inputFromTrainer = {
       trainerId: res.trainerId,
       category: req.body.category,
+      priceMode: req.body.priceMode,
       title: req.body.title,
       price: req.body.price,
       mode: req.body.mode,
       location: req.body.location,
       quantity: req.body.quantity,
+      classSize: req.body.quantity,
       startDate: req.body.startDate,
       endDate: req.body.endDate,
       days: req.body.days,
@@ -155,6 +159,7 @@ listingRouter.post("/add-listing", trainerAuthMiddleware,async function (req, re
       res.status(200).json({
         message: "list created successfully",
         token: token,
+        listingId: listing._id
       });
     } catch (error) {
       res.status(411).json({

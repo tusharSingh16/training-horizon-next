@@ -100,7 +100,6 @@ export function AddListing() {
       return response.data;
     } catch (error) {
       console.error('Error posting data:', error);
-      throw error;
     }
   };
 

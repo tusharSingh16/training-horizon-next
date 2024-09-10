@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@/lib/store/store';
 import React, { useState } from "react";
 import ReplyToListing from "./ReplyToListing";
+import MapWidget from './MapWidget';
 
 function SideLayout() {
   const [name, setName] = useState("user");
@@ -46,7 +47,7 @@ function SideLayout() {
         <div className="w-80 mx-auto p-4">
           {/* Price Section */}
           <div className="bg-white rounded-md shadow p-4 text-center mb-4">
-            <p className="text-lg font-medium">${form.price}</p>
+            <p className="text-lg font-medium">${form.price} {form.priceMode || "per month"}</p>
           </div>
 
           {/* Button Section */}
@@ -105,7 +106,7 @@ function SideLayout() {
           </div>
 
           {/* Map Section */}
-          <div className="bg-white rounded-md shadow p-4 mb-4">
+          {/* <div className="bg-white rounded-md shadow p-4 mb-4">
             <div className="relative h-64 w-full">
               <iframe
                 src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d12093.710241102668!2d-73.9881358!3d40.7325491!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c259af2f6f333d%3A0x479e7a2b14b9d17c!2sUnion%20Square%20Park!5e0!3m2!1sen!2sus!4v1628540715009!5m2!1sen!2sus"
@@ -113,7 +114,9 @@ function SideLayout() {
                 loading="lazy"
               ></iframe>
             </div>
-          </div>
+          </div> */}
+
+          <MapWidget></MapWidget>
         </div>
       </div>
     </>

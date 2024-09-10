@@ -10,10 +10,12 @@ import { setForm } from "@/lib/store/formSlice";
 interface ListingCardProps {
   category: string;
   title: string;
+  priceMode: string;
   price: string;
   mode: string;
   location: string;
   quantity: string;
+  classSize: string;
   startDate: string;
   endDate: string;
   days: string;
@@ -27,10 +29,12 @@ interface ListingCardProps {
 const ListingCard: React.FC<ListingCardProps> = ({
   category,
   title,
+  priceMode,
   price,
   mode,
   location,
   quantity,
+  classSize,
   startDate,
   endDate,
   days,
@@ -52,10 +56,12 @@ const ListingCard: React.FC<ListingCardProps> = ({
       setForm({
         category,
         title,
+        priceMode,
         price,
         mode,
         location,
         quantity,
+        classSize,
         startDate,
         endDate,
         days,
@@ -71,14 +77,10 @@ const ListingCard: React.FC<ListingCardProps> = ({
   return (
     <div
       className="flex-col max-sm:w-10/12 mx-4 rounded-2xl overflow-hidden hover:shadow-2xl shadow-lg bg-sky-400 w-full h-[22rem] "
-      onClick={
-        () =>{
-          sendData()
-         router.push(
-        "/courses/ListingDetail"
-        )
-        }
-      }
+      onClick={() => {
+        sendData();
+        router.push("/courses/ListingDetail");
+      }}
     >
       <div className=" rounded-b-2xl bg-white px-2">
         <div className="flex px-4 py-4">
@@ -111,10 +113,11 @@ const ListingCard: React.FC<ListingCardProps> = ({
             start:{startDate} <br />
             {/* end:{endDate} */}
           </p>
-          <p className="text-xs text-gray-700 py-3">{
-          
-          // description
-          }</p>
+          <p className="text-xs text-gray-700 py-3">
+            {
+              // description
+            }
+          </p>
         </div>
       </div>
       <div className="flex justify-center items-center py-4">

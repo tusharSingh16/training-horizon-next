@@ -108,7 +108,9 @@ const ListingsPage: React.FC = () => {
   useEffect(() => {
     fetch('http://localhost:3005/api/v1/listing/listing/')
       .then((res) => res.json())
-      .then((data) => setListings(data));
+      .then((data) => setListings(data)).catch((e)=>  {
+        console.log(e);
+      })
   }, []);
 
   const handleSearch = () => {

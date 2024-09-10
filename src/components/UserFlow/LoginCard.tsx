@@ -1,5 +1,5 @@
 "use client";
-import * as React from "react";
+import { useState } from "react";
 import { Button } from "@/components/Shared/ui/button";
 import {
   Card,
@@ -10,8 +10,30 @@ import {
 import { Input } from "@/components/Shared/ui/input";
 import { Label } from "@/components/Shared/ui/label";
 import Link from "next/link";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+
+
 
 function LoginCard() {
+  const [email, setEmail] = useState("");
+const [password, setPassword] = useState("");
+const router = useRouter();
+async function submitForm() {
+  try {
+    const res = await axios.post("http://localhost:3005/api/v1/user/signin", {
+      email,
+      password,
+    });
+
+    console.log(res.data.token);
+
+    window.localStorage.setItem("token", res.data.token);
+    router.push('/')
+  } catch (error) {
+    console.log(error);
+  }
+}
   return (
     <main className="bg-[#56C1FF] h-screen flex items-center justify-center p-10 w-full">
       <Card className="w-[600px] h-[550px] mx-auto p-6 shadow-lg border-2 border-blue-400">
@@ -24,7 +46,12 @@ function LoginCard() {
               <Label htmlFor="email" className="text-lg">
                 Email
               </Label>
-              <Input type="email" id="email" placeholder="Enter your email" />
+              <Input
+                type="email"
+                id="email"
+                placeholder="Enter your email"
+                onChange={(e) => setEmail(e.target.value)}
+              />
             </div>
             <div className="space-y-2">
               <Label htmlFor="password" className="text-lg">
@@ -34,12 +61,16 @@ function LoginCard() {
                 type="password"
                 id="password"
                 placeholder="Enter your password"
+                onChange={(e) => setPassword(e.target.value)}
               />
             </div>
           </div>
         </CardContent>
         <div className="flex justify-center">
-          <Button className="mt-1 w-[500px] bg-[#FDCE29] text-black hover:bg-yellow-500">
+          <Button
+            className="mt-1 w-[500px] bg-[#FDCE29] text-black hover:bg-yellow-500"
+            onClick={submitForm}
+          >
             Login
           </Button>
         </div>

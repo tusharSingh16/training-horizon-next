@@ -7,6 +7,7 @@ import MainDetailPage from "./MainDetailPage";
 import InstructorsPage from "../UserFlow/Instructor";
 import Reviews from "./Reviews";
 import GoogleMapComponent from "./GoogleMapComponent";
+import MapWidget from "./MapWidget";
 
 
 
@@ -20,7 +21,7 @@ const ListingDetail:React.FC =()=> {
   
   return (
     <>
-      <div className="bg-white shadow-md rounded-lg p-6 flex items-center space-x-6">
+      <div className="bg-white shadow-md rounded-lg p-6 flex items-center ">
       <MainDetailPage />
         
         <SideLayout />

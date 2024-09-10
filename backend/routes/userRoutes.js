@@ -135,7 +135,7 @@ userRouter.put("/",authMiddleware,async function (req,res) {
 
 
 // for user Dashboard
-userRouter.get("/me",authMiddleware,async function (req,res) {
+userRouter.get("/username",authMiddleware,async function (req,res) {
   const user=  await User.findOne({
         _id:res.userId
     })

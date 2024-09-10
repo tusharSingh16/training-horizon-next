@@ -91,6 +91,7 @@ export function TrainerForm() {
         message={popupMessage}
         isOpen={popupVisible}
         onClose={() => setPopupVisible(false)}
+        redirectTo="/"
       />
 
       <Form {...form}>

@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 const { string } = require('zod')
 
 const organizationSchema = new mongoose.Schema({
-    name: { type: String, required: true },
+    orgname: { type: String, required: true },
     linkedin: { type: String, required: true },
     courses: [{ type: mongoose.Schema.Types.ObjectId, ref: 'listing' }],
     email: { 
@@ -21,5 +21,5 @@ const organizationSchema = new mongoose.Schema({
     timestamps: true 
   });
 
-  module.exports = mongoose.model("OrganiztionModel", organizationSchema);
+  module.exports = mongoose.model("Organizations", organizationSchema);
   

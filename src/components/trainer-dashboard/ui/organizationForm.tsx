@@ -2,6 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import Popup from "../PopUp";
 import { z } from "zod";
 import axios from "axios";
 import { useState } from "react";
@@ -15,6 +16,7 @@ import {
   FormMessage,
 } from "@/components/trainer-dashboard/ui/form";
 import { Input } from "@/components/trainer-dashboard/ui/input";
+import Link from "next/link";
 
 // Schema definition with custom password confirmation validation
 const formSchema = z
@@ -22,14 +24,8 @@ const formSchema = z
     orgname: z.string().min(3, {
       message: "Enter at least 3 characters",
     }),
-    qualifications: z.string().min(1, {
-      message: "Please enter your qualifications",
-    }),
     linkedin: z.string().url({
       message: "Please enter a valid LinkedIn profile URL",
-    }),
-    experience: z.string().min(1, {
-      message: "Please enter your experience",
     }),
     email: z.string().email({
       message: "Please enter a valid email address",
@@ -60,9 +56,7 @@ export function OrganizationForm() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       orgname: "",
-      qualifications: "",
       linkedin: "",
-      experience: "",
       email: "",
       phone: "",
       address: "",
@@ -73,13 +67,13 @@ export function OrganizationForm() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      const response = await axios.post("http://localhost:3005/", values);
-      console.log("Trainer added" + response.data);
-      setPopupMessage("Trainer added successfully!");
+      const response = await axios.post("http://localhost:3005/api/v1/organizations/signup", values);
+      console.log("Organization added" + response.data);
+      setPopupMessage("Organization added successfully!");
       setPopupVisible(true);
     } catch (e) {
       if (axios.isAxiosError(e) && e.response?.status === 409) {
-        setPopupMessage("User already exists!");
+        setPopupMessage("Organization already exists!");
       } else {
         setPopupMessage("An error occurred. Please try again.");
       }
@@ -89,11 +83,12 @@ export function OrganizationForm() {
 
   return (
     <div>
-      {/* <Popup
+      <Popup
         message={popupMessage}
         isOpen={popupVisible}
         onClose={() => setPopupVisible(false)}
-      /> */}
+        redirectTo="/"
+      />
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-1">
@@ -116,20 +111,6 @@ export function OrganizationForm() {
                   />
                 </div>
               </div>
-
-              <FormField
-                name="qualifications"
-                control={form.control}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Qualifications</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Qualification" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
 
               <FormField
                 name="email"
@@ -196,24 +177,6 @@ export function OrganizationForm() {
               />
 
               <FormField
-                name="experience"
-                control={form.control}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Teaching Experience</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        placeholder="Enter your teaching experience in years"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
                 name="linkedin"
                 control={form.control}
                 render={({ field }) => (
@@ -248,9 +211,11 @@ export function OrganizationForm() {
           </div>
 
           <div className="flex justify-between py-4">
+            <Link href="/">
             <Button variant={"outline"} type="button">
               Cancel
             </Button>
+            </Link>
             <Button type="submit">Submit Details</Button>
           </div>
         </form>

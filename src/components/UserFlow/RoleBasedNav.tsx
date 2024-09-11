@@ -5,6 +5,7 @@ import Popup from '../trainer-dashboard/PopUp';
 
 const RoleBasedNav = () => {
     const [role , setRole] = useState("");
+    const [trainerId, setTrainerId] = useState();
     const [isApproved, setIsApproved] = useState(false);
   const [popupVisible, setPopupVisible] = useState(false);
   const [popupMessage, setPopupMessage] = useState("");
@@ -18,16 +19,35 @@ const RoleBasedNav = () => {
     setPopupVisible(true);
   }
   
-  useEffect(()=>{
-    axios.get("http://localhost:3005/api/v1/user/username",{
-      headers:{
-        Authorization:"Bearer "+ window.localStorage.getItem("token")
+  useEffect(() => {
+    const token = window.localStorage.getItem("token");
+    
+    axios.get("http://localhost:3005/api/v1/user/username", {
+      headers: {
+        Authorization: "Bearer " + token
       }
-    }).then((res)=> {
-        setRole(res.data.role);
-        setIsApproved(res.data.isApproved);
     })
-  },[])
+    .then((res) => {
+      setRole(res.data.role);
+      setTrainerId(res.data._id);
+      })
+    .catch((err) => {
+      console.error('Error fetching user data:', err);
+    });
+  }, []);
+  
+  // Fetch trainer data when trainerId is available
+  useEffect(() => {
+    if (trainerId) { // Ensure trainerId is set before making the API call
+      axios.get(`http://localhost:3005/api/v1/trainers/${trainerId}`)
+        .then((res) => {
+          setIsApproved(res.data.trainer.isApproved);
+        })
+        .catch((err) => {
+          console.error('Error fetching trainer data:', err);
+        });
+    }
+  }, [trainerId]); // This effect will run whenever trainerId is updated
   return (
     <div>
     {!isApproved && <Popup

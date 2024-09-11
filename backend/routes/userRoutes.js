@@ -93,7 +93,6 @@ userRouter.post("/signin",async function (req,res) {
 
             const token =jwt.sign({
                 userId : user._id,
-                isApproved: user.isApproved
             },JWT_SECRET)
     
             res.status(200).json({
@@ -144,9 +143,9 @@ userRouter.get("/username",authMiddleware,async function (req,res) {
         _id:res.userId
     })
     res.status(200).json({
+        _id:user._id,
         user:user.firstName,
         role:user.role,
-        isApproved:user.isApproved
     })
 })
 

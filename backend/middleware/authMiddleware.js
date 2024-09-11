@@ -1,6 +1,7 @@
 const jwt =require("jsonwebtoken");
 const JWT_SECRET=require("../config/jwt");
 const { User } = require("../models/User");
+const Trainer = require("../models/Trainer")
 
 
 function authMiddleware(req,res,next) {
@@ -36,9 +37,10 @@ async function trainerAuthMiddleware(req,res,next) {
    if (decoded) {
        const trainerId =decoded.userId;
         // console.log(trainerId.role);
-        const isValid = await User.findById({_id:trainerId});
+        const user = await User.findById({_id:trainerId});
+        const trainer = await Trainer.findById({_id:trainerId});
         
-      if (isValid.role=="trainer" && isValid.isApproved == true) {
+      if (user.role=="trainer" && trainer.isApproved == true) {
         res.trainerId = trainerId ;
         next();
       }else{

@@ -32,6 +32,10 @@ const userSchema=new mongoose.Schema({
         type: String,
         enum: ['user', 'admin', 'trainer'],
         default: 'user' 
+    },
+    isApproved:{
+        type:Boolean,
+        default:false
     }
 })
 

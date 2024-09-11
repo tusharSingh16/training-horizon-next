@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import UserDashboard from "./UserDashboard";
+import RoleBasedNav from "./RoleBasedNav";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -43,10 +44,10 @@ const Navbar = () => {
                 Contact
               </Link>
             </div>
-            <div>
+            <div className="flex gap-2">
               {/* <Link href="/Dashboard/Teacher/join_as_teacher" className="text-gray-700 hover:text-black px-3 py-2 rounded-md text-sm font-medium">
             </Link> */}
-              <Link
+              {loggedIn ? <RoleBasedNav/>: <div><Link
                 href="/userflow/addListing"
                 className="bg-blue-300 text-black px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-200"
               >
@@ -58,11 +59,11 @@ const Navbar = () => {
                 className="text-gray-700 hover:text-black px-3 py-2 rounded-md text-sm font-medium"
               >
                 Join as Teacher
-              </Link>
+              </Link></div>}
               {loggedIn ? (
                 <UserDashboard />
               ) : (
-                <>
+                <div>
                   <Link
                     href="/userflow/login"
                     className="text-gray-700 hover:text-black px-3 py-2 rounded-md text-sm font-medium"
@@ -75,7 +76,7 @@ const Navbar = () => {
                   >
                     Sign Up
                   </Link>
-                </>
+                  </div>
               )}
             </div>
           </div>

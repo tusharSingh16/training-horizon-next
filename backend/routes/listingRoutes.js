@@ -81,6 +81,35 @@ listingRouter.get("/listing", async function (req, res) {
   res.status(200).json(listings);
 });
 
+
+listingRouter.get("/listing/id/:trainerId", async function (req, res) {
+  const trainerId = req.params;
+  try {
+    // Fetch the listing from the database using the listingId
+    const listings = await Listing.findById(trainerId);
+
+    // Check if the listing exists
+    if (!listings) {
+      return res.status(404).json({
+        message: "Listing not found",
+      });
+    }
+
+    // Return the found listing
+    res.status(200).json({
+      message: "Listing retrieved successfully",
+      listings,
+    });
+  } catch (error) {
+    // Handle any errors that occur
+    res.status(500).json({
+      message: "Error fetching listing",
+      error,
+    });
+  }
+});
+
+
 listingRouter.get("/listing/:listingId", async function (req, res) {
   // Extract the listingId from the route parameter
   const { listingId } = req.params;

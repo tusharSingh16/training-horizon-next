@@ -145,6 +145,8 @@ userRouter.get("/username",authMiddleware,async function (req,res) {
     })
     res.status(200).json({
         user:user.firstName,
+        role:user.role,
+        isApproved:user.isApproved
     })
 })
 

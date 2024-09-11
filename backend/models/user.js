@@ -32,7 +32,7 @@ const userSchema=new mongoose.Schema({
         type: String,
         enum: ['user', 'admin', 'trainer'],
         default: 'user' 
-    }
+    },
 })
 
 const User=mongoose.model('users',userSchema);

@@ -61,8 +61,8 @@ const PreviewPage = () => {
             <p>
               <span className="font-semibold">Category:</span> {listing.category}
             </p>
-            <p>
-              <span className="font-semibold">Price:</span> ${listing.price}
+            <p >
+              <span className="font-semibold">Price:</span> ${listing.price} {listing.priceMode}
             </p>
             <p>
               <span className="font-semibold">Mode:</span> {listing.mode}

@@ -71,7 +71,34 @@ export function TrainerForm() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      const response = await axios.post("http://localhost:3005/api/v1/trainers/signup", values);
+      const payload = {
+        email: values.email,
+        firstName: values.fname,
+        lastName: values.lname,
+        password: values.password,
+        role: "trainer" // Hardcoding role as 'trainer'
+      };
+      const userResponse = await axios.post("http://localhost:3005/api/v1/user/signup", payload);
+
+      const userId = userResponse.data._id;
+      const trainerPayload = {
+        _id: userId, // Set _id to be the same as the user _id
+        fname: values.fname,
+        lname: values.lname,
+        qualifications: values.qualifications,
+        linkedin: values.linkedin,
+        experience: values.experience,
+        email: values.email,
+        phone: values.phone,
+        address: values.address,
+        availability: values.availability,
+        password: values.password, // Optional: If you need to store password in Trainer too
+    };
+      
+      const response = await axios.post("http://localhost:3005/api/v1/trainers/signup", trainerPayload);
+
+      
+      console.log(userResponse.data);
       console.log("Trainer added" + response.data)
       setPopupMessage("Trainer added successfully!");
       setPopupVisible(true);

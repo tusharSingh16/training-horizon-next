@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const { boolean } = require("zod");
 
 const trainerSchema = new mongoose.Schema({
+  _id:{type:mongoose.Schema.Types.ObjectId, ref: 'User'},
   fname: { type: String, required: true },
   lname: { type: String, required: true },
   qualifications: { type: String, required: true },

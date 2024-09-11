@@ -12,7 +12,7 @@ const containerStyle = {
 
 const MapWidget: React.FC = () => {
   const { isLoaded } = useLoadScript({
-    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string,
+    googleMapsApiKey: process.env.NEXT_PUBLIC_MAPS_API_KEY as string,
   });
 
   // const placeName = useSelector((state: RootState) => state.place.placeName); // Access place name from Redux store
@@ -29,7 +29,7 @@ const placeName=form.location
         const geocodeResponse = await fetch(
           `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
             placeName
-          )}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`
+          )}&key=${process.env.NEXT_PUBLIC_MAPS_API_KEY}`
         );
         const geocodeData = await geocodeResponse.json();
         if (geocodeData.results.length > 0) {

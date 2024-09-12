@@ -167,14 +167,14 @@ export function AddListing() {
   };
 
   return (
-    <div className="m-4">
-      <div className="text-xl font-bold">Add Listing</div>
+    <div className="m-4 flex justify-center">
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="w-full py-4 space-y-2"
+          className="w-1/2 py-4 space-y-2 border-2 border-gray-300 p-6 "
         >
           {/* Category Field */}
+        <div className="text-xl font-bold mb-3">Add Listing</div>
           <FormField
             name="category"
             control={form.control}
@@ -519,7 +519,7 @@ export function AddListing() {
           <div className="w-full flex justify-between">
             <Dialog open={isDialogOpen} onOpenChange={(open) => setIsDialogOpen(open)}>
               <DialogTrigger asChild>
-                <Button type="button" onClick={handleReviewClick}>Review</Button>
+                <Button type="button" className="" onClick={handleReviewClick}>Review</Button>
               </DialogTrigger>
               <DialogContent className="max-sm:w-[425px">
                 <DialogHeader>

@@ -56,8 +56,8 @@ const PreviewPage = () => {
   return (
     <div className="container mx-auto p-6">
       <div className="w-full flex items-center justify-between">
-      <h1 className="text-2xl font-bold ">Your Listing</h1>
-      <Pill text={`${!listing.isApproved ? `Pending for approval` : `Approved`}`}  color={`${!listing.isApproved ? `bg-yellow-200` : `bg-green-400`}`}/>
+        <h1 className="text-2xl font-bold ">Your Listing</h1>
+        <Pill text={`${!listing.isApproved ? `Pending for approval` : `Approved`}`} color={`${!listing.isApproved ? `bg-yellow-200` : `bg-green-400`}`} />
       </div>
       <div className="bg-white shadow-lg rounded-lg p-6">
         <h2 className="text-xl font-semibold mb-2"> {listing.title}</h2>
@@ -88,8 +88,11 @@ const PreviewPage = () => {
             <p>
               <span className="font-semibold">End Date:</span> {listing.endDate}
             </p>
-            <p>
-              <span className="font-semibold">Days:</span> {listing.days}
+            <p className="flex gap-2">
+              <span className="font-semibold">Days:</span><div className="flex gap-2">{listing.days.map((day: string) => (
+                <div className="flex " key={day}> {day}</div>
+              ))}
+              </div>
             </p>
             <p>
               <span className="font-semibold">Gender:</span> {listing.gender}

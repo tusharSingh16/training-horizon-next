@@ -43,7 +43,8 @@ const listingSchema = new mongoose.Schema({
     type: String,
   },
   days: {
-    type: String,
+    type: [String],
+    default: [],
     required: true,
     // minLength:1,
   },

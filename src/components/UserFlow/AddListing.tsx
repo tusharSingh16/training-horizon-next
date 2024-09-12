@@ -30,6 +30,7 @@ import {
   SelectValue,
 } from "@/components/trainer-dashboard/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "../trainer-dashboard/ui/dialog";
+import { MultiSelect } from "./MultiSelect";
 
 const libs: Library[] = ["places"]
 
@@ -46,14 +47,14 @@ export function AddListing() {
     classSize: z.string(),
     startDate: z.string(),
     endDate: z.string(),
-    days: z.string(),
+    days: z.array(z.string()),
     gender: z.string(),
     startTime: z.string().optional(),
     endTime: z.string().optional(),
     minAge: z.string(),
     maxAge: z.string(),
     preRequistes: z.string(),
-    description: z.string().min(100,{
+    description: z.string().min(100, {
       message: "Enter atleast 100 characters"
     }),
   });
@@ -73,6 +74,16 @@ export function AddListing() {
   const mode = ["Offline", "Online"] as const;
   const priceMode = ["Per day", "Per month", "Per Course"] as const;
   const classSize = ["Group", "1 to 1"] as const;
+  const dayOptions = [
+    { value: "Mon", label: "Mon" },
+    { value: "Tue", label: "Tue" },
+    { value: "Wed", label: "Wed" },
+    { value: "Thu", label: "Thu" },
+    { value: "Fri", label: "Fri" },
+    { value: "Sat", label: "Sat" },
+    { value: "Sun", label: "Sun" },
+
+  ]
 
   const inputRef = useRef<google.maps.places.SearchBox | null>(null);
   const router = useRouter();
@@ -84,6 +95,7 @@ export function AddListing() {
   const [selectedClassSize, setSelectedClassSize] = useState("");
   const [selectedPriceMode, setSelectedPriceMode] = useState("");
   const [formValues, setFormValues] = useState<z.infer<typeof formSchema>>(form.getValues());
+  const [selectedDays, setSelectedDays] = useState<string[]>([]);
 
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: process.env.NEXT_PUBLIC_MAPS_API_KEY!,
@@ -91,47 +103,48 @@ export function AddListing() {
   })
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    if(!id){try {
-      const token = localStorage.getItem("token")
+    if (!id) {
+      try {
+        const token = localStorage.getItem("token")
 
-      const response = await axios.post('http://localhost:3005/api/v1/listing/add-listing', values, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
+        const response = await axios.post('http://localhost:3005/api/v1/listing/add-listing', values, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
 
-      const listingId = response.data.listingId
+        const listingId = response.data.listingId
 
-      router.push(`/dashboard/teacher/preview?listingId=${listingId}`);
-      // router.push('/dashboard/teacher/thankyou')
-      return response.data;
-    } catch (error) {
-      console.error('Error posting data:', error);
+        router.push(`/dashboard/teacher/preview?listingId=${listingId}`);
+        // router.push('/dashboard/teacher/thankyou')
+        return response.data;
+      } catch (error) {
+        console.error('Error posting data:', error);
+      }
     }
-  }
-  else{
-    try {
+    else {
+      try {
 
-      const token = localStorage.getItem("token")
+        const token = localStorage.getItem("token")
 
-      const response = await axios.put(`http://localhost:3005/api/v1/listing/add-listing/${id}`, values, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
+        const response = await axios.put(`http://localhost:3005/api/v1/listing/add-listing/${id}`, values, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
 
-      const listingId = response.data.listingId
+        const listingId = response.data.listingId
 
-      router.push(`/dashboard/teacher/preview?listingId=${listingId}`);
-      // router.push('/dashboard/teacher/thankyou')
-      return response.data;
-    } catch (error) {
-      console.error('Error posting data:', error);
+        router.push(`/dashboard/teacher/preview?listingId=${listingId}`);
+        // router.push('/dashboard/teacher/thankyou')
+        return response.data;
+      } catch (error) {
+        console.error('Error posting data:', error);
+      }
     }
-  }
-};
+  };
   const handleDateChange = () => {
     const startDate = form.getValues("startDate");
     const endDate = form.getValues("endDate");
@@ -147,25 +160,22 @@ export function AddListing() {
         });
       } else {
         form.clearErrors("endDate");
-        const diffTime = Math.abs(end.getTime() - start.getTime());
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        form.setValue("days", String(diffDays));
       }
     }
   };
 
-  const handleAgeChange = () =>{
+  const handleAgeChange = () => {
     const minAge = form.getValues("minAge");
     const maxAge = form.getValues("maxAge");
 
-    if(minAge && maxAge){
+    if (minAge && maxAge) {
       const min = parseInt(minAge);
       const max = parseInt(maxAge);
 
-      if(max < min){
+      if (max < min) {
         form.setError("maxAge", {
           type: "manual",
-          message:"Max age must be greater than min age",
+          message: "Max age must be greater than min age",
         })
       } else {
         form.clearErrors("maxAge")
@@ -178,7 +188,7 @@ export function AddListing() {
       if (name === "startDate" || name === "endDate") {
         handleDateChange();
       }
-      if(name === "minAge" || name === "maxAge"){
+      if (name === "minAge" || name === "maxAge") {
         handleAgeChange();
       }
     });
@@ -469,7 +479,7 @@ export function AddListing() {
               </FormItem>
             )}
           />
-          
+
           {/* Start Date Field */}
           <FormField
             name="startDate"
@@ -506,7 +516,15 @@ export function AddListing() {
               <FormItem>
                 <FormLabel>DAYS</FormLabel>
                 <FormControl>
-                  <Input type="number" readOnly {...field} value={field.value ?? ""} />
+                  <MultiSelect
+                    options={dayOptions}
+                    onValueChange={(newDays) => {
+                      setSelectedDays(newDays)
+                      field.onChange(newDays)
+                    }}
+                    defaultValue={selectedDays}
+                    placeholder="Select Days"
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -580,7 +598,7 @@ export function AddListing() {
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Select age group" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="overflow-y-auto max-h-[15rem]">
                       <SelectGroup>
                         <SelectLabel>Min Age</SelectLabel>
                         {agegroup.map((agegroup) => (
@@ -601,13 +619,13 @@ export function AddListing() {
             control={form.control}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Max AgeP</FormLabel>
+                <FormLabel>Max Age</FormLabel>
                 <FormControl>
                   <Select onValueChange={field.onChange} value={field.value ?? ""}>
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Select age group" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="overflow-y-auto max-h-[15rem]">
                       <SelectGroup>
                         <SelectLabel>Age Group</SelectLabel>
                         {agegroup.map((agegroup) => (

@@ -20,7 +20,7 @@ const getListingSchema = zod.object({
   classSize: zod.string(),
   startDate: zod.string(),
   endDate: zod.string(),
-  days: zod.string(),
+  days: zod.array(zod.string()),
   gender: zod.string(),
   startTime: zod.string().optional(),
   endTime: zod.string().optional(),

@@ -43,7 +43,8 @@ const listingSchema = new mongoose.Schema({
     type: String,
   },
   days: {
-    type: String,
+    type: [String],
+    default: [],
     required: true,
     // minLength:1,
   },
@@ -61,9 +62,14 @@ const listingSchema = new mongoose.Schema({
     type: String,
     // required:true,
   },
-  ageGroup: {
-    type: String,
-    required: true,
+  minAge:{
+    type: String
+  },
+  maxAge:{
+    type: String
+  },
+  preRequistes: {
+    type: String
   },
   description: {
     type: String,

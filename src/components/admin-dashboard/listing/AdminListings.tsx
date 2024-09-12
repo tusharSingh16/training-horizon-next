@@ -1,12 +1,14 @@
-import { ColDef } from "ag-grid-community";
+import { ColDef, ICellRendererParams } from "ag-grid-community";
 import "ag-grid-community/styles/ag-grid.css"; // Mandatory CSS required by the Data Grid
 import "ag-grid-community/styles/ag-theme-quartz.css"; // Optional Theme applied to the Data Grid
 import { AgGridReact } from "ag-grid-react"; // React Data Grid Component
 import axios from "axios";
 import { useEffect, useState } from "react";
 import Sidebar from "../sideBar/SideBar";
+import Link from "next/link";
 
-function AdminListings() {
+const  AdminListings: React.FC = () => {
+   
   const [rowData, setRowData] = useState<
     { title: string; price: string; location: string; mode: string }[]
   >([]);
@@ -37,12 +39,19 @@ function AdminListings() {
       field: "ageGroup",
       headerClass: "font-bold border p-2 font-bold  text-md",
     },
-    {
-      headerName: "Remove",
-      field: "",
-      headerClass: "font-bold border p-2 font-bold  text-md",
+    { headerName:"Action" , field: "" ,  headerClass:"font-bold border p-2 font-bold  text-md",
+      cellRenderer:(data:ICellRendererParams)=> <div className="flex gap-8">
+      <Link href='/userflow/addListing' className='text-red-500 font-bold' >Edit</Link>
+      </div>
     },
   ]);
+
+
+const handleEditListing = (listingId:string) => {
+  // onClick={() => handleEditListing(data.data._id)
+};
+
+
 
   useEffect(() => {
     const fetchData = async () => {

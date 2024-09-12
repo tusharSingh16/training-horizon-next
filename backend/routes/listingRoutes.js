@@ -60,26 +60,26 @@ listingRouter.get("/listing", async function (req, res) {
   res.status(200).json(listings);
 });
 
-listingRouter.get("/listing", async function (req, res) {
-  const filter = req.query.filter || "";
-  const listings = await Listing.find({
-    $or: [
-      {
-        category: {
-          $regex: filter,
-        },
-      },
-      {
-        title: {
-          $regex: filter,
-        },
-      },
-    ],
-  });
-  // const listings = await Listing.find();
+// listingRouter.get("/listing", async function (req, res) {
+//   const filter = req.query.filter || "";
+//   const listings = await Listing.find({
+//     $or: [
+//       {
+//         category: {
+//           $regex: filter,
+//         },
+//       },
+//       {
+//         title: {
+//           $regex: filter,
+//         },
+//       },
+//     ],
+//   });
+//   // const listings = await Listing.find();
 
-  res.status(200).json(listings);
-});
+//   res.status(200).json(listings);
+// });
 
 
 listingRouter.get("/listing/id/:trainerId", async function (req, res) {

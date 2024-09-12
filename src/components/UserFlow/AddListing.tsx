@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -46,7 +46,7 @@ export function AddListing() {
     classSize: z.string(),
     startDate: z.string(),
     endDate: z.string(),
-    days: z.string(),
+    days: z.array(z.string()),
     gender: z.string(),
     startTime: z.string().optional(),
     endTime: z.string().optional(),
@@ -71,9 +71,21 @@ export function AddListing() {
   const mode = ["Offline", "Online"] as const;
   const priceMode = ["Per day", "Per month", "Per Course"] as const;
   const classSize = ["Group", "1 to 1"] as const;
+  const daysOptions = [
+    { value: 'Monday', label: 'Monday' },
+    { value: 'Tuesday', label: 'Tuesday' },
+    { value: 'Wednesday', label: 'Wednesday' },
+    { value: 'Thursday', label: 'Thursday' },
+    { value: 'Friday', label: 'Friday' },
+    { value: 'Saturday', label: 'Saturday' },
+    { value: 'Sunday', label: 'Sunday' },
+  ];
 
   const inputRef = useRef<google.maps.places.SearchBox | null>(null);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const id = searchParams.get("listingId");
+
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedMode, setSelectedMode] = useState("");
   const [selectedClassSize, setSelectedClassSize] = useState("");
@@ -86,7 +98,7 @@ export function AddListing() {
   })
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    try {
+    if(!id){try {
 
       const token = localStorage.getItem("token")
 
@@ -96,6 +108,7 @@ export function AddListing() {
           'Content-Type': 'application/json',
         },
       });
+
       const listingId = response.data.listingId
 
       router.push(`/dashboard/teacher/preview?listingId=${listingId}`);
@@ -104,8 +117,29 @@ export function AddListing() {
     } catch (error) {
       console.error('Error posting data:', error);
     }
-  };
+  }
+  else{
+    try {
 
+      const token = localStorage.getItem("token")
+
+      const response = await axios.put(`http://localhost:3005/api/v1/listing/add-listing/${id}`, values, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const listingId = response.data.listingId
+
+      router.push(`/dashboard/teacher/preview?listingId=${listingId}`);
+      // router.push('/dashboard/teacher/thankyou')
+      return response.data;
+    } catch (error) {
+      console.error('Error posting data:', error);
+    }
+  }
+};
   const handleDateChange = () => {
     const startDate = form.getValues("startDate");
     const endDate = form.getValues("endDate");
@@ -121,9 +155,6 @@ export function AddListing() {
         });
       } else {
         form.clearErrors("endDate");
-        const diffTime = Math.abs(end.getTime() - start.getTime());
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        form.setValue("days", String(diffDays));
       }
     }
   };
@@ -136,6 +167,50 @@ export function AddListing() {
     });
     return () => subscription.unsubscribe();
   }, [form.watch]);
+
+  useEffect(() => {
+    // Fetch data if listingId exists
+    if (id) {
+      const fetchListing = async () => {
+        try {
+          const token = localStorage.getItem("token");
+          const response = await axios.get(
+            `http://localhost:3005/api/v1/listing/listing/${id}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+
+          const listingData = response.data.listing
+          // Pre-fill form with fetched data
+          form.reset({
+            category: listingData.category || "",
+            title: listingData.title || "",
+            priceMode: listingData.priceMode || "",
+            price: listingData.price || "",
+            mode: listingData.mode || "",
+            location: listingData.location || "",
+            quantity: listingData.quantity || "",
+            classSize: listingData.classSize || "",
+            startDate: listingData.startDate || "",
+            endDate: listingData.endDate || "",
+            days: listingData.days || "",
+            gender: listingData.gender || "",
+            startTime: listingData.startTime || "",
+            endTime: listingData.endTime || "",
+            ageGroup: listingData.ageGroup || "",
+            description: listingData.description || "",
+          });
+        } catch (error) {
+          console.error("Error fetching listing data:", error);
+        }
+      };
+
+      fetchListing();
+    }
+  }, [id]);
 
   const handlePlaceSelect = () => {
     if (inputRef.current) {

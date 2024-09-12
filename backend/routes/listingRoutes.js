@@ -199,4 +199,57 @@ listingRouter.post("/add-listing", trainerAuthMiddleware,async function (req, re
   }
 );
 
+listingRouter.put("/add-listing/:id", trainerAuthMiddleware,async function (req, res) {
+  const inputFromTrainer = {
+    trainerId: req.params.id,
+    category: req.body.category,
+    priceMode: req.body.priceMode,
+    title: req.body.title,
+    price: req.body.price,
+    mode: req.body.mode,
+    location: req.body.location,
+    quantity: req.body.quantity,
+    classSize: req.body.quantity,
+    startDate: req.body.startDate,
+    endDate: req.body.endDate,
+    days: req.body.days,
+    gender: req.body.gender,
+    startTime: req.body.startTime,
+    endTime: req.body.endTime,
+    ageGroup: req.body.ageGroup,
+    description: req.body.description,
+    isApproved: false,
+  };
+  const result = getListingSchema.safeParse(inputFromTrainer);
+
+  if (!result.success) {
+    return res.status(411).json({
+      message: "Incorrect inputs",
+      result,
+    });
+  }
+  try {
+    
+    const listing = await Listing.findByIdAndUpdate(req.params.id,inputFromTrainer);
+    const token = jwt.sign(
+      {
+        listingId: listing._id,
+      },
+      JWT_SECRET
+    );
+
+    res.status(200).json({
+      message: "list created successfully",
+      token: token,
+      listingId: listing._id
+    });
+  } catch (error) {
+    res.status(411).json({
+      message: " Incorrect listing input",
+      error,
+    });
+  }
+}
+);
+
 module.exports = listingRouter;

@@ -1,12 +1,14 @@
 "use client";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Pill from "@/components/listing/Pill";
+import { Button } from "../trainer-dashboard/ui/button";
 
 const PreviewPage = () => {
   const searchParams = useSearchParams();
   const listingId = searchParams.get("listingId");
+  const router = useRouter();
 
   const [listing, setListing] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
@@ -34,6 +36,10 @@ const PreviewPage = () => {
     if (!listingId) return;
     console.log(listingId);
   };
+
+  const handleClick = () => {
+    router.push(`/userflow/addListing?listingId=${listingId}`);
+  }
 
   if (!listingId) {
     return <div>No data provided</div>;
@@ -116,6 +122,7 @@ const PreviewPage = () => {
           <p className="whitespace-pre-line">{listing.description}</p>
         </div>
       </div>
+      <Button onClick={handleClick}>Edit</Button>
 
     </div>
   );

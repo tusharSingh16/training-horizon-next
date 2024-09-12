@@ -24,7 +24,9 @@ const getListingSchema = zod.object({
   gender: zod.string(),
   startTime: zod.string().optional(),
   endTime: zod.string().optional(),
-  ageGroup: zod.string(),
+  minAge: zod.string(),
+  maxAge: zod.string(),
+  preRequistes: zod.string(),
   description: zod.string(),
 });
 const postListingSchema = zod.object({
@@ -156,7 +158,9 @@ listingRouter.post("/add-listing", trainerAuthMiddleware,async function (req, re
       gender: req.body.gender,
       startTime: req.body.startTime,
       endTime: req.body.endTime,
-      ageGroup: req.body.ageGroup,
+      minAge: req.body.minAge,
+      maxAge: req.body.maxAge,
+      preRequistes: req.body.preRequistes,
       description: req.body.description,
     };
     const result = getListingSchema.safeParse(inputFromTrainer);
@@ -216,7 +220,9 @@ listingRouter.put("/add-listing/:id", trainerAuthMiddleware,async function (req,
     gender: req.body.gender,
     startTime: req.body.startTime,
     endTime: req.body.endTime,
-    ageGroup: req.body.ageGroup,
+    minAge: req.body.minAge,
+    maxAge: req.body.maxAge,
+    preRequistes: req.body.preRequistes,
     description: req.body.description,
     isApproved: false,
   };

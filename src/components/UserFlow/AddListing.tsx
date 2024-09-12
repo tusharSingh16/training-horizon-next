@@ -46,11 +46,13 @@ export function AddListing() {
     classSize: z.string(),
     startDate: z.string(),
     endDate: z.string(),
-    days: z.array(z.string()),
+    days: z.string(),
     gender: z.string(),
     startTime: z.string().optional(),
     endTime: z.string().optional(),
-    ageGroup: z.string(),
+    minAge: z.string(),
+    maxAge: z.string(),
+    preRequistes: z.string(),
     description: z.string().min(100,{
       message: "Enter atleast 100 characters"
     }),
@@ -67,19 +69,10 @@ export function AddListing() {
 
   const categories = ["Basketball", "Table Tennis", "Yoga", "Other"] as const;
   const gender = ["Boys & Girls", "Boys Only", "Girls Only"] as const;
-  const agegroup = ["5-8", "8-12", "13-18", "18-21", "21+"] as const;
+  const agegroup = ["3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18+Adults", "55+Senior"] as const;
   const mode = ["Offline", "Online"] as const;
   const priceMode = ["Per day", "Per month", "Per Course"] as const;
   const classSize = ["Group", "1 to 1"] as const;
-  const daysOptions = [
-    { value: 'Monday', label: 'Monday' },
-    { value: 'Tuesday', label: 'Tuesday' },
-    { value: 'Wednesday', label: 'Wednesday' },
-    { value: 'Thursday', label: 'Thursday' },
-    { value: 'Friday', label: 'Friday' },
-    { value: 'Saturday', label: 'Saturday' },
-    { value: 'Sunday', label: 'Sunday' },
-  ];
 
   const inputRef = useRef<google.maps.places.SearchBox | null>(null);
   const router = useRouter();
@@ -99,7 +92,6 @@ export function AddListing() {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if(!id){try {
-
       const token = localStorage.getItem("token")
 
       const response = await axios.post('http://localhost:3005/api/v1/listing/add-listing', values, {
@@ -155,6 +147,28 @@ export function AddListing() {
         });
       } else {
         form.clearErrors("endDate");
+        const diffTime = Math.abs(end.getTime() - start.getTime());
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        form.setValue("days", String(diffDays));
+      }
+    }
+  };
+
+  const handleAgeChange = () =>{
+    const minAge = form.getValues("minAge");
+    const maxAge = form.getValues("maxAge");
+
+    if(minAge && maxAge){
+      const min = parseInt(minAge);
+      const max = parseInt(maxAge);
+
+      if(max < min){
+        form.setError("maxAge", {
+          type: "manual",
+          message:"Max age must be greater than min age",
+        })
+      } else {
+        form.clearErrors("maxAge")
       }
     }
   };
@@ -163,6 +177,9 @@ export function AddListing() {
     const subscription = form.watch((_, { name }) => {
       if (name === "startDate" || name === "endDate") {
         handleDateChange();
+      }
+      if(name === "minAge" || name === "maxAge"){
+        handleAgeChange();
       }
     });
     return () => subscription.unsubscribe();
@@ -200,7 +217,8 @@ export function AddListing() {
             gender: listingData.gender || "",
             startTime: listingData.startTime || "",
             endTime: listingData.endTime || "",
-            ageGroup: listingData.ageGroup || "",
+            minAge: listingData.minAge || "",
+            maxAge: listingData.maxAge || "",
             description: listingData.description || "",
           });
         } catch (error) {
@@ -231,10 +249,11 @@ export function AddListing() {
     handleDateChange();
 
     // Check if there are any validation errors
-    const hasErrors = form.formState.errors.startDate || form.formState.errors.endDate;
+    const hasErrors = form.formState.errors.startDate || form.formState.errors.endDate || form.formState.errors.maxAge;
 
     if (hasErrors) {
       // If there are errors, do not submit
+      console.log("Error");
       return;
     }
     form.handleSubmit(onSubmit)();
@@ -551,11 +570,38 @@ export function AddListing() {
           />
           {/* Age Group Field */}
           <FormField
-            name="ageGroup"
+            name="minAge"
             control={form.control}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>AGE GROUP</FormLabel>
+                <FormLabel>Min Age</FormLabel>
+                <FormControl>
+                  <Select onValueChange={field.onChange} value={field.value ?? ""}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select age group" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectLabel>Min Age</SelectLabel>
+                        {agegroup.map((agegroup) => (
+                          <SelectItem key={agegroup} value={agegroup}>
+                            {agegroup}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            name="maxAge"
+            control={form.control}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Max AgeP</FormLabel>
                 <FormControl>
                   <Select onValueChange={field.onChange} value={field.value ?? ""}>
                     <SelectTrigger className="w-full">
@@ -572,6 +618,19 @@ export function AddListing() {
                       </SelectGroup>
                     </SelectContent>
                   </Select>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            name="preRequistes"
+            control={form.control}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Pre-Requistes</FormLabel>
+                <FormControl>
+                  <Input {...field} value={field.value ?? ""} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -614,7 +673,9 @@ export function AddListing() {
                   <div className="flex justify-between"><strong>Gender:</strong> {formValues.gender}</div>
                   <div className="flex justify-between"><strong>Start Time:</strong> {formValues.startTime}</div>
                   <div className="flex justify-between"><strong>End Time:</strong> {formValues.endTime}</div>
-                  <div className="flex justify-between"><strong>Age Group:</strong> {formValues.ageGroup}</div>
+                  <div className="flex justify-between"><strong>Age Group:</strong> {formValues.minAge}</div>
+                  <div className="flex justify-between"><strong>Age Group:</strong> {formValues.maxAge}</div>
+                  <div className="flex justify-between"><strong>Pre-Requistes:</strong> {formValues.preRequistes}</div>
                   <div className="flex justify-between"><strong>Description:</strong> {formValues.description}</div>
                 </div><div className="flex justify-between mt-4">
                   <Button type="button" onClick={() => setIsDialogOpen(false)}>Edit</Button>

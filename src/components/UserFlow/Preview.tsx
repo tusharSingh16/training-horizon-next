@@ -109,8 +109,20 @@ const PreviewPage = () => {
           </div>
           <div>
             <p>
-              <span className="font-semibold">Age Group:</span>{" "}
-              {listing.ageGroup}
+              <span className="font-semibold">Min Age:</span>{" "}
+              {listing.minAge}
+            </p>
+          </div>
+          <div>
+            <p>
+              <span className="font-semibold">Max Age</span>{" "}
+              {listing.maxAge}
+            </p>
+          </div>
+          <div>
+            <p>
+              <span className="font-semibold">Pre-Requistes</span>{" "}
+              {listing.preRequistes}
             </p>
           </div>
         </div>

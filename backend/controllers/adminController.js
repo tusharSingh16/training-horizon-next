@@ -91,6 +91,7 @@ exports.discardPendingTrainers = async(req,res) => {
      res.status(500).json({error : e.message})
   }
 }
+
 //get all the listings
 exports.getListings = async(req, res) => {
     // res.json();

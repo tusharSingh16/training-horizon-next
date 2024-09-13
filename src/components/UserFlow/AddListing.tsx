@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -30,6 +30,7 @@ import {
   SelectValue,
 } from "@/components/trainer-dashboard/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "../trainer-dashboard/ui/dialog";
+import { MultiSelect } from "./MultiSelect";
 
 const libs: Library[] = ["places"]
 
@@ -46,12 +47,14 @@ export function AddListing() {
     classSize: z.string(),
     startDate: z.string(),
     endDate: z.string(),
-    days: z.string(),
+    days: z.array(z.string()),
     gender: z.string(),
     startTime: z.string().optional(),
     endTime: z.string().optional(),
-    ageGroup: z.string(),
-    description: z.string().min(100,{
+    minAge: z.string(),
+    maxAge: z.string(),
+    preRequistes: z.string(),
+    description: z.string().min(100, {
       message: "Enter atleast 100 characters"
     }),
   });
@@ -67,18 +70,32 @@ export function AddListing() {
 
   const categories = ["Basketball", "Table Tennis", "Yoga", "Other"] as const;
   const gender = ["Boys & Girls", "Boys Only", "Girls Only"] as const;
-  const agegroup = ["5-8", "8-12", "13-18", "18-21", "21+"] as const;
+  const agegroup = ["3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18+Adults", "55+Senior"] as const;
   const mode = ["Offline", "Online"] as const;
   const priceMode = ["Per day", "Per month", "Per Course"] as const;
   const classSize = ["Group", "1 to 1"] as const;
+  const dayOptions = [
+    { value: "Mon", label: "Mon" },
+    { value: "Tue", label: "Tue" },
+    { value: "Wed", label: "Wed" },
+    { value: "Thu", label: "Thu" },
+    { value: "Fri", label: "Fri" },
+    { value: "Sat", label: "Sat" },
+    { value: "Sun", label: "Sun" },
+
+  ]
 
   const inputRef = useRef<google.maps.places.SearchBox | null>(null);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const id = searchParams.get("listingId");
+
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedMode, setSelectedMode] = useState("");
   const [selectedClassSize, setSelectedClassSize] = useState("");
   const [selectedPriceMode, setSelectedPriceMode] = useState("");
   const [formValues, setFormValues] = useState<z.infer<typeof formSchema>>(form.getValues());
+  const [selectedDays, setSelectedDays] = useState<string[]>([]);
 
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: process.env.NEXT_PUBLIC_MAPS_API_KEY!,
@@ -86,26 +103,48 @@ export function AddListing() {
   })
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    try {
+    if (!id) {
+      try {
+        const token = localStorage.getItem("token")
 
-      const token = localStorage.getItem("token")
+        const response = await axios.post('http://localhost:3005/api/v1/listing/add-listing', values, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
 
-      const response = await axios.post('http://localhost:3005/api/v1/listing/add-listing', values, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-      const listingId = response.data.listingId
+        const listingId = response.data.listingId
 
-      router.push(`/dashboard/teacher/preview?listingId=${listingId}`);
-      // router.push('/dashboard/teacher/thankyou')
-      return response.data;
-    } catch (error) {
-      console.error('Error posting data:', error);
+        router.push(`/dashboard/teacher/preview?listingId=${listingId}`);
+        // router.push('/dashboard/teacher/thankyou')
+        return response.data;
+      } catch (error) {
+        console.error('Error posting data:', error);
+      }
+    }
+    else {
+      try {
+
+        const token = localStorage.getItem("token")
+
+        const response = await axios.put(`http://localhost:3005/api/v1/listing/add-listing/${id}`, values, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        const listingId = response.data.listingId
+
+        router.push(`/dashboard/teacher/preview?listingId=${listingId}`);
+        // router.push('/dashboard/teacher/thankyou')
+        return response.data;
+      } catch (error) {
+        console.error('Error posting data:', error);
+      }
     }
   };
-
   const handleDateChange = () => {
     const startDate = form.getValues("startDate");
     const endDate = form.getValues("endDate");
@@ -121,9 +160,25 @@ export function AddListing() {
         });
       } else {
         form.clearErrors("endDate");
-        const diffTime = Math.abs(end.getTime() - start.getTime());
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        form.setValue("days", String(diffDays));
+      }
+    }
+  };
+
+  const handleAgeChange = () => {
+    const minAge = form.getValues("minAge");
+    const maxAge = form.getValues("maxAge");
+
+    if (minAge && maxAge) {
+      const min = parseInt(minAge);
+      const max = parseInt(maxAge);
+
+      if (max < min) {
+        form.setError("maxAge", {
+          type: "manual",
+          message: "Max age must be greater than min age",
+        })
+      } else {
+        form.clearErrors("maxAge")
       }
     }
   };
@@ -133,9 +188,57 @@ export function AddListing() {
       if (name === "startDate" || name === "endDate") {
         handleDateChange();
       }
+      if (name === "minAge" || name === "maxAge") {
+        handleAgeChange();
+      }
     });
     return () => subscription.unsubscribe();
   }, [form.watch]);
+
+  useEffect(() => {
+    // Fetch data if listingId exists
+    if (id) {
+      const fetchListing = async () => {
+        try {
+          const token = localStorage.getItem("token");
+          const response = await axios.get(
+            `http://localhost:3005/api/v1/listing/listing/${id}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+
+          const listingData = response.data.listing
+          // Pre-fill form with fetched data
+          form.reset({
+            category: listingData.category || "",
+            title: listingData.title || "",
+            priceMode: listingData.priceMode || "",
+            price: listingData.price || "",
+            mode: listingData.mode || "",
+            location: listingData.location || "",
+            quantity: listingData.quantity || "",
+            classSize: listingData.classSize || "",
+            startDate: listingData.startDate || "",
+            endDate: listingData.endDate || "",
+            days: listingData.days || "",
+            gender: listingData.gender || "",
+            startTime: listingData.startTime || "",
+            endTime: listingData.endTime || "",
+            minAge: listingData.minAge || "",
+            maxAge: listingData.maxAge || "",
+            description: listingData.description || "",
+          });
+        } catch (error) {
+          console.error("Error fetching listing data:", error);
+        }
+      };
+
+      fetchListing();
+    }
+  }, [id]);
 
   const handlePlaceSelect = () => {
     if (inputRef.current) {
@@ -156,10 +259,11 @@ export function AddListing() {
     handleDateChange();
 
     // Check if there are any validation errors
-    const hasErrors = form.formState.errors.startDate || form.formState.errors.endDate;
+    const hasErrors = form.formState.errors.startDate || form.formState.errors.endDate || form.formState.errors.maxAge;
 
     if (hasErrors) {
       // If there are errors, do not submit
+      console.log("Error");
       return;
     }
     form.handleSubmit(onSubmit)();
@@ -167,14 +271,14 @@ export function AddListing() {
   };
 
   return (
-    <div className="m-4">
-      <div className="text-xl font-bold">Add Listing</div>
+    <div className="m-4 flex justify-center">
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="w-full py-4 space-y-2"
+          className="w-1/2 py-4 space-y-2 border-2 border-gray-300 p-6 "
         >
           {/* Category Field */}
+        <div className="text-xl font-bold mb-3">Add Listing</div>
           <FormField
             name="category"
             control={form.control}
@@ -375,7 +479,7 @@ export function AddListing() {
               </FormItem>
             )}
           />
-          
+
           {/* Start Date Field */}
           <FormField
             name="startDate"
@@ -412,7 +516,15 @@ export function AddListing() {
               <FormItem>
                 <FormLabel>DAYS</FormLabel>
                 <FormControl>
-                  <Input type="number" readOnly {...field} value={field.value ?? ""} />
+                  <MultiSelect
+                    options={dayOptions}
+                    onValueChange={(newDays) => {
+                      setSelectedDays(newDays)
+                      field.onChange(newDays)
+                    }}
+                    defaultValue={selectedDays}
+                    placeholder="Select Days"
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -476,17 +588,44 @@ export function AddListing() {
           />
           {/* Age Group Field */}
           <FormField
-            name="ageGroup"
+            name="minAge"
             control={form.control}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>AGE GROUP</FormLabel>
+                <FormLabel>Min Age</FormLabel>
                 <FormControl>
                   <Select onValueChange={field.onChange} value={field.value ?? ""}>
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Select age group" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="overflow-y-auto max-h-[15rem]">
+                      <SelectGroup>
+                        <SelectLabel>Min Age</SelectLabel>
+                        {agegroup.map((agegroup) => (
+                          <SelectItem key={agegroup} value={agegroup}>
+                            {agegroup}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            name="maxAge"
+            control={form.control}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Max Age</FormLabel>
+                <FormControl>
+                  <Select onValueChange={field.onChange} value={field.value ?? ""}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select age group" />
+                    </SelectTrigger>
+                    <SelectContent className="overflow-y-auto max-h-[15rem]">
                       <SelectGroup>
                         <SelectLabel>Age Group</SelectLabel>
                         {agegroup.map((agegroup) => (
@@ -497,6 +636,19 @@ export function AddListing() {
                       </SelectGroup>
                     </SelectContent>
                   </Select>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            name="preRequistes"
+            control={form.control}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Pre-Requistes</FormLabel>
+                <FormControl>
+                  <Input {...field} value={field.value ?? ""} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -519,7 +671,7 @@ export function AddListing() {
           <div className="w-full flex justify-between">
             <Dialog open={isDialogOpen} onOpenChange={(open) => setIsDialogOpen(open)}>
               <DialogTrigger asChild>
-                <Button type="button" onClick={handleReviewClick}>Review</Button>
+                <Button type="button" className="" onClick={handleReviewClick}>Review</Button>
               </DialogTrigger>
               <DialogContent className="max-sm:w-[425px">
                 <DialogHeader>
@@ -539,7 +691,9 @@ export function AddListing() {
                   <div className="flex justify-between"><strong>Gender:</strong> {formValues.gender}</div>
                   <div className="flex justify-between"><strong>Start Time:</strong> {formValues.startTime}</div>
                   <div className="flex justify-between"><strong>End Time:</strong> {formValues.endTime}</div>
-                  <div className="flex justify-between"><strong>Age Group:</strong> {formValues.ageGroup}</div>
+                  <div className="flex justify-between"><strong>Age Group:</strong> {formValues.minAge}</div>
+                  <div className="flex justify-between"><strong>Age Group:</strong> {formValues.maxAge}</div>
+                  <div className="flex justify-between"><strong>Pre-Requistes:</strong> {formValues.preRequistes}</div>
                   <div className="flex justify-between"><strong>Description:</strong> {formValues.description}</div>
                 </div><div className="flex justify-between mt-4">
                   <Button type="button" onClick={() => setIsDialogOpen(false)}>Edit</Button>

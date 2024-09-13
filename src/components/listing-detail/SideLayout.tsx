@@ -2,12 +2,22 @@
 "use client";
 import { useSelector } from 'react-redux';
 import { RootState } from '@/lib/store/store';
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ReplyToListing from "./ReplyToListing";
 import MapWidget from './MapWidget';
+import axios from 'axios';
 
 function SideLayout() {
+  
   const [name, setName] = useState("user");
+  useEffect(()=>{
+    axios.get("http://localhost:3005/api/v1/user/username",{
+      headers:{
+        Authorization:"Bearer "+ window.localStorage.getItem("token")
+      }
+    }).then((res)=> setName(res.data.user))
+  },[name])
+  
   const [review, setReview] = useState("");
   const [rating, setRating] = useState(5);
   const [activeTab, setActiveTab] = useState<string>("Overview");
@@ -38,7 +48,6 @@ function SideLayout() {
     } else {
       alert("Error submitting review.");
     }
-    
   };
   return (
     <>
@@ -83,6 +92,7 @@ function SideLayout() {
                   >
                     Cancel
                   </button>
+                  
                   <button
                     onClick={handleSubmit}
                     className="px-4 py-2 bg-[#17A8FC] hover:bg-blue-500 text-white rounded-md"
@@ -94,6 +104,7 @@ function SideLayout() {
               </div>
             </div>
           )}
+        
 
           {/* Review and Report Section */}
           <div className="bg-white rounded-md shadow p-4 text-center mb-4">

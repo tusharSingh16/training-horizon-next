@@ -20,11 +20,13 @@ const getListingSchema = zod.object({
   classSize: zod.string(),
   startDate: zod.string(),
   endDate: zod.string(),
-  days: zod.string(),
+  days: zod.array(zod.string()),
   gender: zod.string(),
   startTime: zod.string().optional(),
   endTime: zod.string().optional(),
-  ageGroup: zod.string(),
+  minAge: zod.string(),
+  maxAge: zod.string(),
+  preRequistes: zod.string(),
   description: zod.string(),
 });
 const postListingSchema = zod.object({
@@ -156,7 +158,9 @@ listingRouter.post("/add-listing", trainerAuthMiddleware,async function (req, re
       gender: req.body.gender,
       startTime: req.body.startTime,
       endTime: req.body.endTime,
-      ageGroup: req.body.ageGroup,
+      minAge: req.body.minAge,
+      maxAge: req.body.maxAge,
+      preRequistes: req.body.preRequistes,
       description: req.body.description,
     };
     const result = getListingSchema.safeParse(inputFromTrainer);
@@ -197,6 +201,61 @@ listingRouter.post("/add-listing", trainerAuthMiddleware,async function (req, re
       });
     }
   }
+);
+
+listingRouter.put("/add-listing/:id", trainerAuthMiddleware,async function (req, res) {
+  const inputFromTrainer = {
+    trainerId: req.params.id,
+    category: req.body.category,
+    priceMode: req.body.priceMode,
+    title: req.body.title,
+    price: req.body.price,
+    mode: req.body.mode,
+    location: req.body.location,
+    quantity: req.body.quantity,
+    classSize: req.body.quantity,
+    startDate: req.body.startDate,
+    endDate: req.body.endDate,
+    days: req.body.days,
+    gender: req.body.gender,
+    startTime: req.body.startTime,
+    endTime: req.body.endTime,
+    minAge: req.body.minAge,
+    maxAge: req.body.maxAge,
+    preRequistes: req.body.preRequistes,
+    description: req.body.description,
+    isApproved: false,
+  };
+  const result = getListingSchema.safeParse(inputFromTrainer);
+
+  if (!result.success) {
+    return res.status(411).json({
+      message: "Incorrect inputs",
+      result,
+    });
+  }
+  try {
+    
+    const listing = await Listing.findByIdAndUpdate(req.params.id,inputFromTrainer);
+    const token = jwt.sign(
+      {
+        listingId: listing._id,
+      },
+      JWT_SECRET
+    );
+
+    res.status(200).json({
+      message: "list created successfully",
+      token: token,
+      listingId: listing._id
+    });
+  } catch (error) {
+    res.status(411).json({
+      message: " Incorrect listing input",
+      error,
+    });
+  }
+}
 );
 
 module.exports = listingRouter;

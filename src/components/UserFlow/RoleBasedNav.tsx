@@ -15,7 +15,7 @@ const RoleBasedNav = () => {
   };
 
   const handleClick =() => {
-    setPopupMessage("Wait for admin approval");
+    setPopupMessage("Pending Approval");
     setPopupVisible(true);
   }
   

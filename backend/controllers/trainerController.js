@@ -55,6 +55,31 @@ exports.getTrainers = async (req, res) => {
   }
 };
 
+// controller to fetch all approved trainers
+
+exports.getApprovedTrainers = async(req,res) => {
+  try{
+
+     const approvedTrainers = await Trainer.find({
+         isApproved :true
+     });
+
+     if(!approvedTrainers){
+      res.json({
+        message:"No pending trainers"
+      })
+     }
+
+     res.status(200).json(approvedTrainers);
+
+  } catch(e){
+     res.status(500).json({
+      status:"error",
+      error : e.message});
+  }
+
+}
+
 // controller to fetch a single trainer by specific ID
 
 exports.getTrainerById = async (req, res) => {

@@ -6,6 +6,7 @@ const tac = require("../controllers/trainerAuthController"); // tac= trainerAuth
 // Trainer routes
 router.post("/trainers", tc.createTrainer);
 router.get("/trainers", tc.getTrainers);
+router.get("/approved-trainers",tc.getApprovedTrainers);
 router.get("/trainers/:id", tc.getTrainerById);
 router.put("/trainers/:id", tc.updateTrainer);
 router.delete("/trainers/:id", tc.deleteTrainer); 

@@ -41,7 +41,8 @@ async function trainerAuthMiddleware(req,res,next) {
         const trainer = await Trainer.findById({_id:trainerId});
         
       if (user.role=="trainer" && trainer.isApproved == true) {
-        res.trainerId = trainerId ;
+        res.trainerId = trainerId;
+        
         next();
       }else{
         res.json({

@@ -22,6 +22,7 @@ interface Listing {
   endTime:string,
   ageGroup: string,
   description:string,
+  trainerId: string
 }
 
 
@@ -39,7 +40,8 @@ const ListingsPage: React.FC = () => {
   useEffect(() => {
     fetch('http://localhost:3005/api/v1/listing/listing/')
       .then((res) => res.json())
-      .then((data) => setListings(data)).catch((e)=>  {
+      .then((data) => setListings(data))
+      .catch((e)=>  {
         console.log(e);
       })
   }, []);
@@ -63,8 +65,13 @@ const ListingsPage: React.FC = () => {
 
     setFilteredListings(filtered);
   };
+  // console.log(listings[0].trainerId);
 
-  return (
+
+  return (<>
+    <div>
+      {/* <h1>{listings[0].trainerId}</h1> */}
+    </div>
     <div className="min-h-screen flex flex-col">
       <header className="bg-white shadow">
         <div className="container mx-auto">
@@ -99,6 +106,7 @@ const ListingsPage: React.FC = () => {
         </main>
       </div>
     </div>
+</>
   );
 };
 

@@ -149,4 +149,25 @@ userRouter.get("/username",authMiddleware,async function (req,res) {
     })
 })
 
+// Add a family member for the logged-in user
+userRouter.post('/user/:userId/family', async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { name, relation, age } = req.body;
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const newMember = { name, relation, age };
+    user.familyMembers.push(newMember);
+    await user.save();
+
+    res.status(200).json({ message: 'Family member added', user });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to add family member' });
+  }
+});
+
 module.exports =userRouter;

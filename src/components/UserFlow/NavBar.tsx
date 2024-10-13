@@ -161,6 +161,13 @@ const Navbar = () => {
             className="text-gray-700 hover:text-black block px-3 py-2 rounded-md text-base font-medium"
           >
             {" "}
+            Register Member
+          </Link>
+          <Link
+            href="/userflow/addListing"
+            className="text-gray-700 hover:text-black block px-3 py-2 rounded-md text-base font-medium"
+          >
+            {" "}
             Add Listing
           </Link>
           <Link

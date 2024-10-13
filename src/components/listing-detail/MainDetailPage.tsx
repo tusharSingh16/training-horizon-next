@@ -49,6 +49,8 @@ const MainDetailPage = () => {
             <span>5 Projects</span>
             <span>37+ Reviews</span>
           </div>
+          <div>
+          </div>
           <div className="m-8">
             <button className="bg-[#17A8FC] text-white py-3 px-8 rounded mb-8 hover:bg-[#1782fc] shadow-xl">
               Learn {form.category}

@@ -65,42 +65,46 @@ const ListingsPage: React.FC = () => {
 
     setFilteredListings(filtered);
   };
+  // console.log(listings[0].trainerId);
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <header className="bg-white shadow">
-        <div className="container mx-auto">
-          <SearchBar
-            keywords={keywords}
-            setKeywords={setKeywords}
-            // location={location}
-            // setLocation={setLocation}
-            onSearch={handleSearch}
-          />
+    <>
+      <div>{/* <h1>{listings[0].trainerId}</h1> */}</div>
+      <div className="min-h-screen flex flex-col">
+        <header className="bg-white shadow">
+          <div className="container mx-auto">
+            <SearchBar
+              keywords={keywords}
+              setKeywords={setKeywords}
+              // location={location}
+              // setLocation={setLocation}
+              onSearch={handleSearch}
+            />
+          </div>
+        </header>
+
+        <div className="container mx-auto flex flex-1">
+          <aside className="w-1/4">
+            <FilterSidebar
+              selectedCategories={selectedCategories}
+              setSelectedCategories={setSelectedCategories}
+              onFilter={handleFilter}
+            />
+          </aside>
+
+          <main className="flex-1 p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {/* {filteredListings} */}
+            {listings.length > 0 ? (
+              listings.map((listing, idx) => (
+                <ListingCard key={idx} {...listing} />
+              ))
+            ) : (
+              <p>No listings found.</p>
+            )}
+          </main>
         </div>
-      </header>
-
-      <div className="container mx-auto flex flex-1">
-        <aside className="w-1/4">
-          <FilterSidebar
-            selectedCategories={selectedCategories}
-            setSelectedCategories={setSelectedCategories}
-            onFilter={handleFilter}
-          />
-        </aside>
-
-        <main className="flex-1 p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {/* {filteredListings} */}
-          {listings.length > 0 ? (
-            listings.map((listing, idx) => (
-              <ListingCard key={idx} {...listing} />
-            ))
-          ) : (
-            <p>No listings found.</p>
-          )}
-        </main>
       </div>
-    </div>
+    </>
   );
 };
 

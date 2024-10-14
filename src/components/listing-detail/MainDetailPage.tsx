@@ -58,8 +58,30 @@ const MainDetailPage = () => {
           </div>
         </div>
 
+<<<<<<< HEAD
         <div className="px-5">
           <Overview />
+=======
+        {/* Middle Section: Course Info */}
+        <div className="flex-grow">
+          <span className="bg-[#17A8FC] text-white p-1.5 rounded-3xl">
+            {form.category}
+          </span>
+          <h2 className="text-2xl font-bold mt-2">{form.title}</h2>
+          <p className="text-gray-600 mt-2">{form.description}</p>
+          <div className="mt-4 flex space-x-6 text-sm text-gray-600">
+            <span>50+ People Enrolled</span>
+            <span>5 Projects</span>
+            <span>37+ Reviews</span>
+          </div>
+          <div>
+          </div>
+          <div className="m-8">
+            <button className="bg-[#17A8FC] text-white py-3 px-8 rounded mb-8 hover:bg-[#1782fc] shadow-xl">
+              Learn {form.category}
+            </button>
+          </div>
+>>>>>>> 20dbaac052fc7c9e5d546bd7edf482c335d85544
         </div>
       </div>
     </>

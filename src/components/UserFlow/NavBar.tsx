@@ -45,6 +45,12 @@ const Navbar = () => {
               </Link>
             </div>
             <div className="flex gap-2">
+              <Link 
+                href="/trainers" 
+                className="text-gray-700 hover:text-black px-3 text-sm font-medium flex items-center"
+              >
+                Our Trainers
+              </Link>
               {/* <Link href="/Dashboard/Teacher/join_as_teacher" className="text-gray-700 hover:text-black px-3 py-2 rounded-md text-sm font-medium">
             </Link> */}
               {loggedIn ? <RoleBasedNav/>: <div><Link
@@ -56,7 +62,7 @@ const Navbar = () => {
               </Link>
               <Link
                 href="/dashboard/teacher/join_as_teacher"
-                className="text-gray-700 hover:text-black px-3 py-2 rounded-md text-sm font-medium"
+                className="text-gray-700 hover:text-black px-3 rounded-md text-sm font-medium "
               >
                 Join as Teacher
               </Link></div>}
@@ -155,6 +161,13 @@ const Navbar = () => {
             className="text-gray-700 hover:text-black block px-3 py-2 rounded-md text-base font-medium"
           >
             Contact
+          </Link>
+          <Link
+            href="/userflow/addListing"
+            className="text-gray-700 hover:text-black block px-3 py-2 rounded-md text-base font-medium"
+          >
+            {" "}
+            Register Member
           </Link>
           <Link
             href="/userflow/addListing"

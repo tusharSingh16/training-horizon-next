@@ -9,6 +9,7 @@ import Link from "next/link";
 
 const  AdminListings: React.FC = () => {
    
+  
   const [rowData, setRowData] = useState<
     { title: string; price: string; location: string; mode: string }[]
   >([]);
@@ -28,7 +29,6 @@ const  AdminListings: React.FC = () => {
       field: "location",
       headerClass: "font-bold border p-2 font-bold  text-md",
     },
-    // { headerName:"Mode" , field: "mode" , headerClass:"font-bold border p-2 font-bold  text-md" },
     {
       headerName: "Mode",
       field: "mode",
@@ -42,10 +42,16 @@ const  AdminListings: React.FC = () => {
     { headerName:"Action" , field: "" ,  headerClass:"font-bold border p-2 font-bold  text-md",
       cellRenderer:(data:ICellRendererParams)=> <div className="flex gap-8">
       <Link href='/userflow/addListing' className='text-red-500 font-bold' >Edit</Link>
+      <button onClick={() => {handleDelete(data.data._id,data.data.title)}} className='text-red-500 font-bold'>Delete</button>
       </div>
     },
   ]);
 
+const handleDelete = async(listingId:string,listingTitle:string) =>{
+  const response = await axios.delete('http://localhost:3005/api/v1/admin/discard-listing/'+ listingId.toString());
+  //  console.log(response.data);
+   setRowData(prevData => prevData.filter(row => row.title != listingTitle))
+}  
 
 const handleEditListing = (listingId:string) => {
   // onClick={() => handleEditListing(data.data._id)
@@ -59,12 +65,9 @@ const handleEditListing = (listingId:string) => {
         const response = await axios.get(
           "http://localhost:3005/api/v1/admin/listings"
         );
-        // const res = await axios.get('http://localhost:3005/api/v1/admin/pending-listings');
-        // console.log(response.data.pendingTrainers);
-        // if(Array.isArray(response.data.data))
+        
         setRowData(response.data.listings);
-        // setRowData2(res.data.pendingListings);
-        // else{ console.log("not an array")}
+  
       } catch (error) {
         console.log("error");
       }

@@ -21,7 +21,7 @@ interface FormState {
 }
 
 const initialState: FormState = {
-  category: 'Music',
+      category: 'Music',
       title: 'Violin Class',
       priceMode:'per day',
       price: "100",

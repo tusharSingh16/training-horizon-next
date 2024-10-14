@@ -6,7 +6,9 @@ const {Listing} = require('../models/Listing')
 exports.getTrainers = async(req, res) => {
     // res.json(teachers);
     try {
-      const trainer = await Trainer.find();
+      const trainer = await Trainer.find({
+        isApproved:true
+      });
       res.status(200).json({
         status:"success",
         trainer: trainer
@@ -91,11 +93,14 @@ exports.discardPendingTrainers = async(req,res) => {
      res.status(500).json({error : e.message})
   }
 }
+
 //get all the listings
 exports.getListings = async(req, res) => {
     // res.json();
     try {
-      const listings = await Listing.find();
+      const listings = await Listing.find({
+        isApproved:true
+      });
       res.status(200).json({
         status:"success",
         listings: listings
@@ -182,3 +187,14 @@ exports.discardPendingListings = async(req,res) => {
       res.status(500).json({error : e.message})
     }
 }
+
+// exports.editListing = async(req,res) => {
+//       const listingId = req.params.id;
+//       const listing = Listing.findById(listingId);
+//       if(!listing){
+//         res.status(404).json({
+//           msg:"listing not found"
+//         })
+//       }
+      
+// }

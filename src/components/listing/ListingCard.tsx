@@ -24,6 +24,7 @@ interface ListingCardProps {
   endTime: string;
   ageGroup: string;
   description: string;
+  trainerId: string;
 }
 
 const ListingCard: React.FC<ListingCardProps> = ({
@@ -43,6 +44,7 @@ const ListingCard: React.FC<ListingCardProps> = ({
   endTime,
   ageGroup,
   description,
+  trainerId,
 }) => {
   const [isSelecetd, setIsSeleceted] = useState<boolean>(false);
   const dispatch = useDispatch();
@@ -70,6 +72,7 @@ const ListingCard: React.FC<ListingCardProps> = ({
         endTime,
         ageGroup,
         description,
+        trainerId,
       })
     );
   };
@@ -80,8 +83,7 @@ const ListingCard: React.FC<ListingCardProps> = ({
       onClick={() => {
         sendData();
         router.push("/courses/ListingDetail");
-      }}
-    >
+      }}>
       <div className=" rounded-b-2xl bg-white px-2">
         <div className="flex px-4 py-4">
           <img

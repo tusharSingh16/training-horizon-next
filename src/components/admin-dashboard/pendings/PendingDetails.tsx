@@ -26,7 +26,6 @@ function PendingDetails() {
     { headerName:"Title",  field:"title"  ,  headerClass:"font-bold border p-2 font-bold  text-md"},
     { headerName:"Price" , field: "price" , headerClass:"font-bold border p-2 font-bold  text-md"},
     { headerName:"Location" , field: "location" , headerClass:"font-bold border p-2 font-bold  text-md" },
-    // { headerName:"Mode" , field: "mode" , headerClass:"font-bold border p-2 font-bold  text-md" },
     { headerName:"Action" , field: "action" ,  headerClass:"font-bold border p-2 font-bold  text-md",
       cellRenderer:(data:ICellRendererParams)=> <div className="flex gap-8">
       <button className='text-green-500 font-bold' onClick={() => handleApproveListing(data.data._id,data.data.title)}>Approve</button>

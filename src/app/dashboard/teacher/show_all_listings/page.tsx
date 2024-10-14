@@ -11,7 +11,7 @@ const page = () => {
       <Main />
       <Footer />
     </>
-  );
+  ); 
 }
 
 export default page

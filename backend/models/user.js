@@ -33,6 +33,12 @@ const userSchema=new mongoose.Schema({
         enum: ['user', 'admin', 'trainer'],
         default: 'user' 
     },
+    familyMembers: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'RegisteredMember',
+        },
+      ],
 })
 
 const User=mongoose.model('users',userSchema);

@@ -57,28 +57,17 @@ exports.getTrainers = async (req, res) => {
 
 // controller to fetch all approved trainers
 
-exports.getApprovedTrainers = async(req,res) => {
-  try{
-
-     const approvedTrainers = await Trainer.find({
-         isApproved :true
-     });
-
-     if(!approvedTrainers){
-      res.json({
-        message:"No pending trainers"
-      })
-     }
-
-     res.status(200).json(approvedTrainers);
-
-  } catch(e){
-     res.status(500).json({
-      status:"error",
-      error : e.message});
+exports.getApprovedTrainers = async (req, res) => {
+  try {
+    const approvedTrainers = await Trainer.find({ isApproved: true });
+    if (approvedTrainers.length === 0) {
+      return res.status(404).json({ message: "No approved trainers found" });
+    }
+    res.status(200).json(approvedTrainers);
+  } catch (error) {
+    handleErrors(res, error);
   }
-
-}
+};
 
 // controller to fetch a single trainer by specific ID
 
@@ -97,7 +86,6 @@ exports.getTrainerById = async (req, res) => {
 // controller to delete a trainer
 exports.deleteTrainer = async (req, res) => {
   try {
-    trainerSchema.parse(req.body);
     const trainer = await Trainer.findByIdAndDelete(req.params.id);
     if (!trainer)
       return res.status(500).json({ Error: "No trainer with this ID found" });

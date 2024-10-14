@@ -61,7 +61,14 @@ any) => {
   }, [id]);
 
   if (!trainer) {
-    return <p>Loading trainer details...</p>;
+    return (
+      <>
+        <Navbar />
+        <p className="my-52 mx-auto text-center ">
+          LOADING TRAINER DETAILS ...
+        </p>
+      </>
+    );
   }
   return (
     <>

@@ -1,48 +1,77 @@
 import React from "react";
-import { useState, useEffect, useRef} from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { AgGridReact } from "ag-grid-react"; // React Data Grid Component
 import "ag-grid-community/styles/ag-grid.css"; // Mandatory CSS required by the Data Grid
 import "ag-grid-community/styles/ag-theme-quartz.css"; // Optional Theme applied to the Data Grid
-import { ColDef, ICellRendererParams,GridApi} from "ag-grid-community";
+import { ColDef, ICellRendererParams, GridApi } from "ag-grid-community";
 
 function Trainers() {
-
-  const gridRef = useRef<AgGridReact<any>>(null);  
+  const gridRef = useRef<AgGridReact<any>>(null);
   let gridApi: GridApi | null = null;
   const onGridReady = (params: { api: GridApi }) => {
     gridApi = params.api;
-    gridApi.sizeColumnsToFit();  // Adjust column widths to fit the grid
+    gridApi.sizeColumnsToFit(); // Adjust column widths to fit the grid
   };
 
-
-  const [rowData, setRowData] = useState<{ fname: string; lname: string; email: string; phone: string; }[]>([]);
+  const [rowData, setRowData] = useState<
+    { fname: string; lname: string; email: string; phone: string }[]
+  >([]);
   const [colDefs, setColDefs] = useState<ColDef[]>([
-    { headerName:"Name", valueGetter: params => `${params.data.fname} ${params.data.lname}`  ,  headerClass:"font-bold border p-2 font-bold  text-md"},
-    { headerName:"Email" , field: "email" , headerClass:"font-bold border p-2 font-bold  text-md"},
-    { headerName:"Phone" , field: "phone" , headerClass:"font-bold border p-2 font-bold  text-md" },
-    { headerName:"Qualification" , field: "qualifications" ,  headerClass:"font-bold border p-2 font-bold  text-md",
-      },
-    { headerName:"Action" , field: "" ,  headerClass:"font-bold border p-2 font-bold  text-md",
-        cellRenderer:(data:ICellRendererParams)=> <div className="flex gap-8">
-        <button onClick={() => {handleRemove(data.data._id,data.data.email)}} className='text-red-500 font-bold'>Delete</button>
+    {
+      headerName: "Name",
+      valueGetter: (params) => `${params.data.fname} ${params.data.lname}`,
+      headerClass: "font-bold border p-2 font-bold  text-md",
+    },
+    {
+      headerName: "Email",
+      field: "email",
+      headerClass: "font-bold border p-2 font-bold  text-md",
+    },
+    {
+      headerName: "Phone",
+      field: "phone",
+      headerClass: "font-bold border p-2 font-bold  text-md",
+    },
+    {
+      headerName: "Qualification",
+      field: "qualifications",
+      headerClass: "font-bold border p-2 font-bold  text-md",
+    },
+    {
+      headerName: "Action",
+      field: "",
+      headerClass: "font-bold border p-2 font-bold  text-md",
+      cellRenderer: (data: ICellRendererParams) => (
+        <div className="flex gap-8">
+          <button
+            onClick={() => {
+              handleRemove(data.data._id, data.data.email);
+            }}
+            className="text-red-500 font-bold">
+            Delete
+          </button>
         </div>
-      },
-  ])
+      ),
+    },
+  ]);
 
+  const handleRemove = async (trainerID: string, trainerEmail: string) => {
+    const response = await axios.delete(
+      "http://localhost:3005/api/v1/admin/discard-trainer/" +
+        trainerID.toString()
+    );
+    //  console.log(response.data);
+    setRowData((prevData) =>
+      prevData.filter((row) => row.email != trainerEmail)
+    );
+  };
 
-  const handleRemove = async (trainerID:string,trainerEmail:string) => {
-    const response = await axios.delete('http://localhost:3005/api/v1/admin/discard-trainer/'+ trainerID.toString());
-   //  console.log(response.data);
-    setRowData(prevData => prevData.filter(row => row.email != trainerEmail))
-  }
-
-  useEffect(() => {
-    if (gridRef.current && gridApi) {
-      gridApi.sizeColumnsToFit();  // Re-fit columns when data changes
-    }
-  }, [rowData]);
-
+  // useEffect(() => {
+  //   if (gridRef.current && gridApi) {
+  //     gridApi.sizeColumnsToFit(); // Re-fit columns when data changes
+  //   }
+  // }, [rowData]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -50,11 +79,10 @@ function Trainers() {
         const response = await axios.get(
           "http://localhost:3005/api/v1/admin/trainers"
         );
-        
-        console.log(response);
-       
-        setRowData(response.data.trainer  );
-        
+
+        // console.log(response);
+
+        setRowData(response.data.trainer);
       } catch (error) {
         console.log("error");
       }
@@ -70,9 +98,15 @@ function Trainers() {
           <div className="overflow-y-auto h-64 w-[96%] ">
             <div
               className="ag-theme-quartz "
-              style={{ height: "100%", width: "100%" }}
-            >
-              <AgGridReact ref={gridRef} rowData={rowData || []} columnDefs={colDefs} onGridReady={() => {onGridReady}} />
+              style={{ height: "100%", width: "100%" }}>
+              <AgGridReact
+                ref={gridRef}
+                rowData={rowData || []}
+                columnDefs={colDefs}
+                onGridReady={() => {
+                  onGridReady;
+                }}
+              />
             </div>
           </div>
         </div>

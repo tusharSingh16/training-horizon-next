@@ -1,7 +1,7 @@
 "use client";
 import { useSelector } from "react-redux";
 import { RootState } from "@/lib/store/store";
-import Overview from "@/components/listing-detail/Overview"
+import Overview from "@/components/listing-detail/Overview";
 interface ChildComponentProps {
   category: string;
   title: string;
@@ -17,6 +17,7 @@ interface ChildComponentProps {
   endTime: string;
   ageGroup: string;
   description: string;
+  trainerId: string;
 }
 
 const MainDetailPage = () => {
@@ -25,41 +26,41 @@ const MainDetailPage = () => {
   return (
     <>
       <div>
-      <div className="flex">
-        {/* Left Section: Image or Icon */}
-        <div className="bg-white rounded-md p-4 mb-4">
-          <div className="relative h-64 w-full">
-            <img
-              className="h-[20rem] w-[55rem]"
-              src="/img/math.svg"
-              alt="Calculator and Tools"
-            />
+        <div className="flex">
+          {/* Left Section: Image or Icon */}
+          <div className="bg-white rounded-md p-4 mb-4">
+            <div className="relative h-64 w-full">
+              <img
+                className="h-[20rem] w-[55rem]"
+                src="/img/math.svg"
+                alt="Calculator and Tools"
+              />
+            </div>
+          </div>
+
+          {/* Middle Section: Course Info */}
+          <div className="flex-grow">
+            <span className="bg-[#17A8FC] text-white p-1.5 rounded-3xl">
+              {form.category}
+            </span>
+            <h2 className="text-2xl font-bold mt-2">{form.title}</h2>
+            <p className="text-gray-600 mt-2">{form.description}</p>
+            <div className="mt-4 flex space-x-6 text-sm text-gray-600">
+              <span>50+ People Enrolled</span>
+              <span>5 Projects</span>
+              <span>37+ Reviews</span>
+            </div>
+            <div className="m-8">
+              <button className="bg-[#17A8FC] text-white py-3 px-8 rounded mb-8 hover:bg-[#1782fc] shadow-xl">
+                Learn {form.category}
+              </button>
+            </div>
           </div>
         </div>
 
-        {/* Middle Section: Course Info */}
-        <div className="flex-grow">
-          <span className="bg-[#17A8FC] text-white p-1.5 rounded-3xl">
-            {form.category}
-          </span>
-          <h2 className="text-2xl font-bold mt-2">{form.title}</h2>
-          <p className="text-gray-600 mt-2">{form.description}</p>
-          <div className="mt-4 flex space-x-6 text-sm text-gray-600">
-            <span>50+ People Enrolled</span>
-            <span>5 Projects</span>
-            <span>37+ Reviews</span>
-          </div>
-          <div className="m-8">
-            <button className="bg-[#17A8FC] text-white py-3 px-8 rounded mb-8 hover:bg-[#1782fc] shadow-xl">
-              Learn {form.category}
-            </button>
-          </div>
+        <div className="px-5">
+          <Overview />
         </div>
-      </div>
-
-      <div className="px-5">
-        <Overview />
-      </div>
       </div>
     </>
   );

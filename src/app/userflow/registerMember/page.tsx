@@ -4,6 +4,8 @@ import Navbar from '@/components/UserFlow/NavBar';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+const axios =  require ('axios');
+import Popup from '@/components/trainer-dashboard/PopUp';
 
 // Zod schema for form validation
 const registerMemberSchema = z.object({
@@ -26,13 +28,31 @@ const RegisterMemberForm = () => {
     resolver: zodResolver(registerMemberSchema),
   });
 
-  const onSubmit = (data: any) => {
-    console.log(data);
-    reset(); // Reset the form after successful submission
+  const [showPopup, setShowPopup] = useState(false);
+  const [popUpMessage, setpopUpMessage] = useState("");
+
+  const onSubmit = async (data: any) => {
+    try {
+      const response = await axios.post('http://localhost:3005/api/v1/user/registerMember', data, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+      console.log(response.data);
+      setpopUpMessage("Member registered successfully");
+      setShowPopup(true);
+      reset();
+    } catch (error) {
+        setpopUpMessage("Error registering member");
+        setShowPopup(true);
+      console.error('Error registering member:', error);
+    }
   };
 
+
   return (
-    <>
+    <div>
+        
       <Navbar />
       <div className="max-w-2xl mx-auto p-8 mt-10 bg-gray-50 rounded-lg shadow-lg">
         <h2 className="text-2xl font-bold text-center mb-6 text-gray-800">Register Family Member</h2>
@@ -125,9 +145,15 @@ const RegisterMemberForm = () => {
           >
             Submit
           </button>
+          <Popup
+            message={popUpMessage}
+            isOpen={showPopup}
+            onClose={() => setShowPopup(false)}
+            redirectTo="/"
+        />
         </form>
       </div>
-    </>
+    </div>
   );
 };
 

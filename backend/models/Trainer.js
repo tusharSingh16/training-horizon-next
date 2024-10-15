@@ -19,6 +19,11 @@ const trainerSchema = new mongoose.Schema({
   phone: { type: String, required: true }, 
   address: { type: String, required: true },
   password: { type: String, required: true },
+  role:{
+    type: String,
+    enum: ['user', 'admin', 'trainer'],
+    default: 'trainer' 
+},
   isApproved: { type: Boolean, default: false } 
 }, {
   timestamps: true 

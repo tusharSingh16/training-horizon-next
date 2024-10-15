@@ -1,5 +1,6 @@
 "use client"
 import axios from 'axios';
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 const UserDashboard = () => {
@@ -46,7 +47,9 @@ const UserDashboard = () => {
           <ul className="py-2">
             <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">Favorites</li>
             <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">Settings</li>
+            <Link href="/userflow/familyMembers"><li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">Family Members</li></Link>
             <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={handleSignOut}>Sign Out</li>
+
           </ul>
         </div>
       )}

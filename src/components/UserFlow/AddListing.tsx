@@ -114,12 +114,13 @@ export function AddListing() {
         });
 
         const listingId = response.data.listingId
-        console.log(listingId);
+        // console.log("Listing ID is" + listingId);
         router.push(`/dashboard/teacher/preview?listingId=${listingId}`);
         // router.push('/dashboard/teacher/thankyou')
         return response.data;
       } catch (error) {
         console.error('Error posting data:', error);
+        
       }
     }
     else {

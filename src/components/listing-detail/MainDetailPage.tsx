@@ -1,7 +1,6 @@
 "use client";
-import { useSelector } from "react-redux";
 import { RootState } from "@/lib/store/store";
-import Overview from "@/components/listing-detail/Overview";
+import { useSelector } from "react-redux";
 interface ChildComponentProps {
   category: string;
   title: string;

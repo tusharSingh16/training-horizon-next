@@ -106,7 +106,6 @@ export function AddListing() {
     if (!id) {
       try {
         const token = localStorage.getItem("token")
-
         const response = await axios.post('http://localhost:3005/api/v1/listing/add-listing', values, {
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -115,7 +114,7 @@ export function AddListing() {
         });
 
         const listingId = response.data.listingId
-
+        console.log(listingId);
         router.push(`/dashboard/teacher/preview?listingId=${listingId}`);
         // router.push('/dashboard/teacher/thankyou')
         return response.data;

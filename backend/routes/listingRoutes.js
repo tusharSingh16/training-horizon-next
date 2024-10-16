@@ -143,7 +143,7 @@ listingRouter.get("/listing/:listingId", async function (req, res) {
 
 listingRouter.post("/add-listing", trainerAuthMiddleware,async function (req, res) {
     const inputFromTrainer = {
-      trainerId: res.trainerId,
+      trainerId: req.trainerId,
       category: req.body.category,
       priceMode: req.body.priceMode,
       title: req.body.title,

@@ -28,7 +28,30 @@ const ListingDetail: React.FC = () => {
   const tabs = ["Overview", "Instructors", "Curriculum", "Reviews", "FAQs"];
 
   const form = useSelector((state: RootState) => state.form);
-  // console.log(form.trainerId);
+  const [minAge, setMinAge] = useState<number>(0);
+  
+  useEffect(() => {
+    const ListingMinAge = async () => {
+      try {
+        const res = await axios.get("http://localhost:3005/api/v1/listing/listing/");
+        const data = res.data[0];
+        console.log(data);
+        if (data.length > 0) {
+          if(data.ageGroup === "21+")
+          setMinAge(21); 
+          else if(data.ageGroup === "18+")
+          setMinAge(18);
+          else if(data.ageGroup === "12+")
+          setMinAge(12);
+          else if(data.ageGroup === "6+")
+          setMinAge(6);
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    };
+    ListingMinAge();
+  }, []);
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -45,12 +68,19 @@ const ListingDetail: React.FC = () => {
 
     fetchData();
   }, [form.trainerId]);
-  // if (data) console.log(data);
+  // fetch the listing age limit from the listing
+  const ListingAgeLimit = async () => {
+    const response = await axios.get(
+      "http://localhost:3005/api/v1/listing/listing/"
+    );
+    console.log(response.data);
+  };
+
   return (
     <>
       <div className="bg-white shadow-md rounded-lg p-6 flex items-center ">
         <MainDetailPage />
-        <SideLayout />
+        <SideLayout listingAgeLimit={minAge} />
       </div>
       <Reviews />
       {/* <GoogleMapComponent apiKey={googleMapsApiKey} /> */}

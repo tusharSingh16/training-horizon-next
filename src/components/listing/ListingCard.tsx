@@ -22,7 +22,9 @@ interface ListingCardProps {
   gender: string;
   startTime: string;
   endTime: string;
-  ageGroup: string;
+  // ageGroup: string;
+  minAge: string,
+  maxAge: string,
   description: string;
   trainerId: string;
 }
@@ -42,7 +44,9 @@ const ListingCard: React.FC<ListingCardProps> = ({
   gender,
   startTime,
   endTime,
-  ageGroup,
+  // ageGroup,
+  minAge,
+  maxAge,
   description,
   trainerId,
 }) => {
@@ -70,7 +74,9 @@ const ListingCard: React.FC<ListingCardProps> = ({
         gender,
         startTime,
         endTime,
-        ageGroup,
+        // ageGroup,
+        minAge,
+        maxAge,
         description,
         trainerId,
       })
@@ -107,7 +113,7 @@ const ListingCard: React.FC<ListingCardProps> = ({
               />
             </div>
           </div>
-          <h3 className="text-lg m-2 p-2 font-semibold flex justify-center items-center">
+          <h3 className="text-lg m-2 p-2 font-sembold flex justify-center items-center">
             {title}
           </h3>
           <p className="text-sm m-2 p-2 text-gray-500 flex justify-center items-center font-thin">

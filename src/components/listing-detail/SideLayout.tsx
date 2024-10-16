@@ -6,7 +6,7 @@ import ReplyToListing from "./ReplyToListing";
 import MapWidget from './MapWidget';
 import axios from 'axios';
 
-function SideLayout({listingAgeLimit}: {listingAgeLimit: number}) {
+function SideLayout({minAgeLimit, maxAgeLimit}: {minAgeLimit: number, maxAgeLimit: number}) {
 
   const [name, setName] = useState("user");
   const [members, setMembers] = useState([]);
@@ -18,7 +18,11 @@ function SideLayout({listingAgeLimit}: {listingAgeLimit: number}) {
 
   const form = useSelector((state: RootState) => state.form);
   const tabs = ["Overview", "Instructors", "Curriculum", "Reviews", "FAQs"];
-
+  useEffect(()=>  {
+    // console.log(minAgeLimit, maxAgeLimit)
+    console.log(form.title),
+        console.log(form.ageGroup)
+  })
   // Fetch the username and members
   useEffect(() => {
     const fetchUserName = async () => {
@@ -85,7 +89,7 @@ function SideLayout({listingAgeLimit}: {listingAgeLimit: number}) {
             >
               <option value="">N/A</option>
               {members.filter((member: any)=> {
-                if(member.age >= listingAgeLimit){
+                if(member.age >= minAgeLimit && member.age <= maxAgeLimit){
                   return member;
                 }
               }).map((member: any) => (

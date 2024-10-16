@@ -16,7 +16,8 @@ interface ChildComponentProps {
   gender: string;
   startTime: string;
   endTime: string;
-  ageGroup: string;
+  minAge: string;
+  maxAge: string;
   description: string;
   trainerId: string;
 }
@@ -24,10 +25,8 @@ interface ChildComponentProps {
 const MainDetailPage = () => {
   const tabs = ["Overview", "Instructors", "Curriculum", "Reviews", "FAQs"];
   const form = useSelector((state: RootState) => state.form);
-  useEffect(()=>  {
-    console.log(form.ageGroup)
-  }, [])
   
+
   return (
     <>
       <div>
@@ -66,5 +65,5 @@ const MainDetailPage = () => {
     </>
   );
 };
-
+// .ageGroup.split("-")[0]
 export default MainDetailPage;

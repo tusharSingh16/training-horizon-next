@@ -22,8 +22,7 @@ const getListingSchema = zod.object({
   gender: zod.string(),
   startTime: zod.string().optional(),
   endTime: zod.string().optional(),
-  minAge: zod.string(),
-  maxAge: zod.string(),
+  ageGroup: zod.string(),
   description: zod.string(),
 });
 const postListingSchema = zod.object({
@@ -39,8 +38,7 @@ const postListingSchema = zod.object({
   gender: zod.string(),
   startTime: zod.string(),
   endTime: zod.string(),
-  minAge: zod.string(),
-  maxAge: zod.string(),
+  ageGroup: zod.string(),
   description: zod.string(),
 });
 
@@ -76,8 +74,7 @@ listingRouter.post("/add-listing",trainerAuthMiddleware,async function (req, res
       gender: req.body.gender,
       startTime: req.body.startTime,
       endTime: req.body.endTime,
-      minAge: req.body.minAge,
-      maxAge: req.maxAge,
+      ageGroup: req.body.ageGroup,
       description: req.body.description,
     };
     const result = getListingSchema.safeParse(inputFromTrainer);

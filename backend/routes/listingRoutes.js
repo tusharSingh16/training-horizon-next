@@ -43,6 +43,8 @@ const postListingSchema = zod.object({
   startTime: zod.string(),
   endTime: zod.string(),
   ageGroup: zod.string(),
+  // minAge: zod.string(),
+  // maxAge: zod.string(),
   description: zod.string(),
 });
 

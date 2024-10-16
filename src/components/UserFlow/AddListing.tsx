@@ -120,7 +120,6 @@ export function AddListing() {
         return response.data;
       } catch (error) {
         console.error('Error posting data:', error);
-        
       }
     }
     else {
@@ -210,7 +209,7 @@ export function AddListing() {
             }
           );
 
-          const listingData = response.data.listing
+          const listingData = response.data.listing;
           // Pre-fill form with fetched data
           form.reset({
             category: listingData.category || "",

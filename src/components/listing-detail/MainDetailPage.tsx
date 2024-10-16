@@ -57,8 +57,6 @@ const MainDetailPage = () => {
             </div>
           </div>
         </div>
-
-        
       </div>
     </>
   );

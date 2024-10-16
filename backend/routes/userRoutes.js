@@ -55,6 +55,7 @@ userRouter.post('/signup',async function (req,res) {
         const user =  await User.create(inputFromUser);
      const token = jwt.sign({
         userId : user._id,
+        role : user.role
     },JWT_SECRET);
         res.status(200).json({
             message:"user created successfully",
@@ -137,12 +138,10 @@ userRouter.put("/",authMiddleware,async function (req,res) {
     }
 })
 
-
-
 // for user Dashboard
 userRouter.get("/username",authMiddleware,async function (req,res) {
   const user=  await User.findOne({
-        _id:res.userId
+        _id:req.userId
     })
     res.status(200).json({
         _id:user._id,
@@ -151,13 +150,11 @@ userRouter.get("/username",authMiddleware,async function (req,res) {
     })
 })
 
-// Add a family member for the logged-in user
-userRouter.post('/registerMember', async (req, res) => {
+userRouter.post('/registerMember', authMiddleware, async (req, res) => {
     try {
       const { name, age, dob,relationship ,doctorName, doctorNumber, bloodGroup } = req.body;
-      const userId = req.body.userId; 
-  
-      // Create new family member
+      const userId = req.userId; // important 
+    console.log("The user Id is "+ userId);
       const newMember = new Member({
         name,
         age,
@@ -167,13 +164,12 @@ userRouter.post('/registerMember', async (req, res) => {
         doctorNumber,
         bloodGroup,
       });
-  
-      // Save the family member
+
       const savedMember = await newMember.save();
   
       // Add the member to the user's familyMembers array
       const user = await User.findById(userId);
-      user.familyMembers.push(savedMember._id); // Add family member's ID to the user's array
+      user.familyMembers.push(savedMember._id);
       await user.save();
   
       res.status(201).json({ message: 'Family member registered successfully', member: savedMember });
@@ -182,9 +178,9 @@ userRouter.post('/registerMember', async (req, res) => {
     }
   });
 
-  userRouter.get('/all', authMiddleware, async (req, res) => {
+  userRouter.get('/allmembers',authMiddleware, async (req, res) => {
     try {
-      const userId = req.user.id; // Get the logged-in user ID from auth middleware
+      const userId = req.userId; 
   
       // Find user and populate familyMembers field
       const user = await User.findById(userId).populate('familyMembers');
@@ -195,6 +191,36 @@ userRouter.post('/registerMember', async (req, res) => {
       res.status(200).json({ familyMembers: user.familyMembers });
     } catch (error) {
       res.status(500).json({ message: 'Error fetching family members', error: error.message });
+    }
+  });
+
+  userRouter.put('/members/:id', authMiddleware, async (req, res) => {
+    const memberId = req.params.id;
+    console.log(memberId);
+    const { name, age, dob, relationship, doctorName, doctorNumber, bloodGroup } = req.body;
+    try {
+      // Find the member by ID and update it
+      const updatedMember = await Member.findByIdAndUpdate(
+        memberId,
+        {
+          name,
+          age,
+          dob,
+          relationship,
+          doctorName,
+          doctorNumber,
+          bloodGroup,
+        },
+        { new: true } 
+      );
+  
+      if (!updatedMember) {
+        return res.status(404).json({ message: 'Family member not found' });
+      }
+  
+      res.status(200).json({ message: 'Family member updated successfully', updatedMember });
+    } catch (error) {
+      res.status(500).json({ message: 'Error updating family member', error: error.message });
     }
   });
 

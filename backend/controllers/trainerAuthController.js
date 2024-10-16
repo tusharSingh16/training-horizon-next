@@ -42,7 +42,10 @@ exports.signUpTrainer = async (req, res) => {
     await trainer.save();
 
     // Generate JWT
-    const token = jwt.sign({ id: trainer._id }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ 
+                id: trainer._id, 
+                role: trainer.role 
+              }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
 

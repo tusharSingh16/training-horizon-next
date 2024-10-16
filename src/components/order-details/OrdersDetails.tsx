@@ -51,10 +51,9 @@ function OrderDetails() {
     <>
       <div className="h-full w-full">
         <div className="bg-slate-300 p-3 m-3">
-        <div className="my-4  m-8 text-2xl flex flex-col text-center font-bold">
-          ORDERS
-        </div>
-        <p className="flex flex-col text-center">
+        <div className="w-full text-center text-3xl my-4 font-bold text-gray-700">ORDERS</div>
+        <hr className="w=full border-2 border-sky-500" />
+        <p className="flex p-4 flex-col text-center">
           Here the orders details will be shown when the user is able to order
           for the course <br />
           which will be fetch from the DB

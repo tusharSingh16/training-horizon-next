@@ -48,7 +48,6 @@ exports.updateTrainer = async (req, res) => {
 
 exports.getTrainers = async (req, res) => {
   try {
-    const trainer = await Trainer.find();
     res.status(200).json(trainer);
   } catch (e) {
     res.status(500).json({ error: e.message });

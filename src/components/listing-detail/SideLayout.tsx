@@ -1,4 +1,3 @@
-// components/CourseCard.tsx
 "use client";
 import { useSelector } from 'react-redux';
 import { RootState } from '@/lib/store/store';
@@ -10,29 +9,48 @@ import axios from 'axios';
 function SideLayout() {
   
   const [name, setName] = useState("user");
-  useEffect(()=>{
-    axios.get("http://localhost:3005/api/v1/user/username",{
-      headers:{
-        Authorization:"Bearer "+ window.localStorage.getItem("token")
-      }
-    }).then((res)=> setName(res.data.user))
-  },[name])
-  
+  const [members, setMembers] = useState([]);
+  const [selectedMember, setSelectedMember] = useState("");
   const [review, setReview] = useState("");
   const [rating, setRating] = useState(5);
   const [activeTab, setActiveTab] = useState<string>("Overview");
   const [isOpen, setIsOpen] = useState(false);
 
-
   const form = useSelector((state: RootState) => state.form);
   const tabs = ["Overview", "Instructors", "Curriculum", "Reviews", "FAQs"];
 
+  // Fetch the username and members
+  useEffect(() => {
+    const fetchUserName = async () => {
+      const res = await axios.get("http://localhost:3005/api/v1/user/username", {
+        headers: {
+          Authorization: "Bearer " + window.localStorage.getItem("token"),
+        },
+      });
+      setName(res.data.user);
+    };
+
+    const fetchMembers = async () => {
+      const res = await axios.get("http://localhost:3005/api/v1/user/allmembers", {
+        headers: {
+          Authorization: "Bearer " + window.localStorage.getItem("token"),
+        },
+      });
+      setMembers(res.data.familyMembers);
+      console.log("members are "+ JSON.stringify(res.data.familyMembers));
+    };
+
+    fetchUserName();
+    fetchMembers();
+  }, []);
+  
   const openPopup = () => setIsOpen(true);
   const closePopup = () => setIsOpen(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    closePopup();
     e.preventDefault();
+    closePopup();
+
     const response = await fetch("http://localhost:3005/api/v1/review/reviews", {
       method: "POST",
       headers: {
@@ -40,6 +58,7 @@ function SideLayout() {
       },
       body: JSON.stringify({ name, review, rating }),
     });
+    
     if (response.ok) {
       alert("Review submitted!");
       setName("");
@@ -49,18 +68,39 @@ function SideLayout() {
       alert("Error submitting review.");
     }
   };
+
   return (
     <>
       {/* Right Section: Class Details */}
       <div className="bg-blue-50 rounded-lg p-4 max-w-full">
         <div className="w-80 mx-auto p-4">
-          {/* Price Section */}
-          <div className="bg-white rounded-md shadow p-4 text-center mb-4">
-            <p className="text-lg font-medium">${form.price} {form.priceMode || "per month"}</p>
-          </div>
-
-          {/* Button Section */}
           <ReplyToListing />
+
+          {/* Dropdown for selecting registered members */}
+          <div className="mb-4">
+            <label className="block text-gray-700 mb-2">Select Member:</label>
+            <select
+              value={selectedMember}
+              onChange={(e) => setSelectedMember(e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded mb-2"
+            >
+              <option value="">N/A</option>
+              {members.map((member: any) => (
+                <option key={member._id} value={member._id}>
+                  {member.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          
+          {/* Register Now Button */}
+          <button
+            onClick={() => alert(`Registered ${selectedMember}`)} 
+            disabled={!selectedMember} // Button is disabled if no member is selected
+            className={`w-full p-2 mb-5 text-white rounded ${selectedMember ? 'bg-blue-500 hover:bg-blue-600' : 'bg-gray-300 cursor-not-allowed'}`}
+          >
+            Register Now
+          </button>
 
           {/* Pop-Up Card */}
           {isOpen && (
@@ -92,7 +132,6 @@ function SideLayout() {
                   >
                     Cancel
                   </button>
-                  
                   <button
                     onClick={handleSubmit}
                     className="px-4 py-2 bg-[#17A8FC] hover:bg-blue-500 text-white rounded-md"
@@ -100,11 +139,9 @@ function SideLayout() {
                     Send
                   </button>
                 </div>
-                <div className="container mx-auto"></div>
               </div>
             </div>
           )}
-        
 
           {/* Review and Report Section */}
           <div className="bg-white rounded-md shadow p-4 text-center mb-4">
@@ -117,17 +154,7 @@ function SideLayout() {
           </div>
 
           {/* Map Section */}
-          {/* <div className="bg-white rounded-md shadow p-4 mb-4">
-            <div className="relative h-64 w-full">
-              <iframe
-                src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d12093.710241102668!2d-73.9881358!3d40.7325491!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c259af2f6f333d%3A0x479e7a2b14b9d17c!2sUnion%20Square%20Park!5e0!3m2!1sen!2sus!4v1628540715009!5m2!1sen!2sus"
-                className="absolute inset-0 w-full h-full"
-                loading="lazy"
-              ></iframe>
-            </div>
-          </div> */}
-
-          <MapWidget></MapWidget>
+          <MapWidget />
         </div>
       </div>
     </>

@@ -69,15 +69,24 @@ const UserDashboard = () => {
             <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
               Settings
             </li>
-            <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
+            {/* <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
               <Link
                 className="py-2 hover:bg-gray-100 cursor-pointer"
-                href="/dashboard/order"
+                href=""
               >
                 Orders
               </Link>
-            </li>
-
+            </li> */}
+            <Link href="/dashboard/order">
+              <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                Orders
+              </li>
+            </Link>
+            <Link href="/userflow/familyMembers">
+              <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                Family Members
+              </li>
+            </Link>
             <li
               className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
               onClick={handleSignOut}

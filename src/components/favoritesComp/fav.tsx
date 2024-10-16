@@ -22,6 +22,7 @@ interface Listing {
     endTime: string;
     ageGroup: string;
     description: string;
+    trainerId: string;
     isfavorite:boolean;
 }
 
@@ -85,6 +86,7 @@ const FavoriteListingIds = () => {
                         priceMode={listing.priceMode}
                         price={listing.price}
                         mode={listing.mode}
+                        trainerId={listing.trainerId}
                         location={listing.location}
                         quantity={listing.quantity}
                         classSize={listing.classSize}

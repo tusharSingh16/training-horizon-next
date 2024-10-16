@@ -21,6 +21,7 @@ interface ListingCardProps {
     endTime: string;
     ageGroup: string;
     description: string;
+    trainerId: string;
     listingId: string;
     isFavorite: boolean; // Initial favorite state
 }
@@ -42,6 +43,7 @@ const ListingCard: React.FC<ListingCardProps> = ({
     endTime,
     ageGroup,
     description,
+    trainerId,
     listingId,
     isFavorite,
 }) => {

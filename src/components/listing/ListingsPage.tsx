@@ -104,7 +104,7 @@ const ListingsPage: React.FC = () => {
                 priceMode={listing.priceMode}
                 price={listing.price}
                 mode={listing.mode}
-                location={listing.location} quantity={''} classSize={''} startDate={''} endDate={''} days={''} gender={''} startTime={''} endTime={''} ageGroup={''} description={''} isFavorite={false}/>
+                location={listing.location} trainerId={listing.trainerId} quantity={''} classSize={''} startDate={''} endDate={''} days={''} gender={''} startTime={''} endTime={''} ageGroup={''} description={''} isFavorite={false}/>
             ))
           ) : (
             <p>No listings found.</p>

@@ -26,7 +26,7 @@ const MyOrders: React.FC = () => {
           try {
             const response = await axios.get("http://localhost:3005/api/v1/order/getOrdersByUserId/" + userId.toString());
             console.log(id);
-            setOrders(response.data.orders); // Assuming the API returns orders in `response.data.orders`
+            setOrders(response.data.orders); 
           } catch (err: any) {
             setError(err.response?.data?.message || 'Something went wrong');
           } finally {

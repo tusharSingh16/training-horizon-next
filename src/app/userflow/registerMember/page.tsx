@@ -8,7 +8,7 @@ const axios = require('axios');
 import Popup from '@/components/trainer-dashboard/PopUp';
 
 // Zod schema for form validation
-const registerMemberSchema = z.object({
+const registerMemberSchema = z.object({x
   name: z.string().min(2, 'Name must be at least 2 characters'),
   age: z
     .number()

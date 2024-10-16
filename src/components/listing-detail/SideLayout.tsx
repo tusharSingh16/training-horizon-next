@@ -6,8 +6,8 @@ import ReplyToListing from "./ReplyToListing";
 import MapWidget from './MapWidget';
 import axios from 'axios';
 
-function SideLayout() {
-  
+function SideLayout({minAgeLimit, maxAgeLimit}: {minAgeLimit: number, maxAgeLimit: number}) {
+
   const [name, setName] = useState("user");
   const [members, setMembers] = useState([]);
   const [selectedMember, setSelectedMember] = useState("");
@@ -18,7 +18,11 @@ function SideLayout() {
 
   const form = useSelector((state: RootState) => state.form);
   const tabs = ["Overview", "Instructors", "Curriculum", "Reviews", "FAQs"];
-
+  useEffect(()=>  {
+    // console.log(minAgeLimit, maxAgeLimit)
+    console.log(form.title),
+        console.log(form.ageGroup)
+  })
   // Fetch the username and members
   useEffect(() => {
     const fetchUserName = async () => {
@@ -29,7 +33,6 @@ function SideLayout() {
       });
       setName(res.data.user);
     };
-
     const fetchMembers = async () => {
       const res = await axios.get("http://localhost:3005/api/v1/user/allmembers", {
         headers: {
@@ -37,7 +40,6 @@ function SideLayout() {
         },
       });
       setMembers(res.data.familyMembers);
-      console.log("members are "+ JSON.stringify(res.data.familyMembers));
     };
 
     fetchUserName();
@@ -82,10 +84,15 @@ function SideLayout() {
             <select
               value={selectedMember}
               onChange={(e) => setSelectedMember(e.target.value)}
+              
               className="w-full p-2 border border-gray-300 rounded mb-2"
             >
               <option value="">N/A</option>
-              {members.map((member: any) => (
+              {members.filter((member: any)=> {
+                if(member.age >= minAgeLimit && member.age <= maxAgeLimit){
+                  return member;
+                }
+              }).map((member: any) => (
                 <option key={member._id} value={member._id}>
                   {member.name}
                 </option>

@@ -22,7 +22,9 @@ interface ListingCardProps {
   gender: string;
   startTime: string;
   endTime: string;
-  ageGroup: string;
+  // ageGroup: string;
+  minAge: string,
+  maxAge: string,
   description: string;
   trainerId: string;
 }
@@ -42,7 +44,9 @@ const ListingCard: React.FC<ListingCardProps> = ({
   gender,
   startTime,
   endTime,
-  ageGroup,
+  // ageGroup,
+  minAge,
+  maxAge,
   description,
   trainerId,
 }) => {
@@ -70,7 +74,9 @@ const ListingCard: React.FC<ListingCardProps> = ({
         gender,
         startTime,
         endTime,
-        ageGroup,
+        // ageGroup,
+        minAge,
+        maxAge,
         description,
         trainerId,
       })
@@ -79,26 +85,23 @@ const ListingCard: React.FC<ListingCardProps> = ({
 
   return (
     <div
-      className="flex-col max-sm:w-10/12 mx-4 rounded-2xl overflow-hidden hover:shadow-2xl shadow-lg bg-sky-400 w-full h-[22rem] "
+      className="flex-col max-sm:w-10/12 mx-4 rounded-lg overflow-hidden hover:scale-105 shadow-sm w-full h-[22rem] ring-1 ring-gray-100 "
       onClick={() => {
         sendData();
         router.push("/courses/ListingDetail");
-      }}>
-      <div className=" rounded-b-2xl bg-white px-2">
-        <div className="flex px-4 py-4">
+      }}
+    >
+      <div className=" rounded-b-lg bg-white px-2">
+        <div className="flex px-4 py-4 justify-center items-center">
           <img
             src={"/img/cricket.png"}
             alt={title}
             className="h-32 w-24 object-contain"
           />
-          <div className="flex w-full justify-end items-start">
-            <Pill text={startTime} color="bg-sky-400" icon="/icons/clock.png" />
-          </div>
         </div>
 
         <div>
           <div className="flex">
-            <Pill text={gender} color="bg-sky-400" icon="/icons/person.png" />
             <div className="flex flex-grow flexEnd justify-end items-center">
               <img
                 src={`${
@@ -110,9 +113,11 @@ const ListingCard: React.FC<ListingCardProps> = ({
               />
             </div>
           </div>
-          <h3 className="text-xl pt-1 font-semibold">{title}</h3>
-          <p className="text-xs text-gray-500 font-semibold">
-            start:{startDate} <br />
+          <h3 className="text-lg m-2 p-2 font-sembold flex justify-center items-center">
+            {title}
+          </h3>
+          <p className="text-sm m-2 p-2 text-gray-500 flex justify-center items-center font-thin">
+            Start Date: {startDate} <br />
             {/* end:{endDate} */}
           </p>
           <p className="text-xs text-gray-700 py-3">

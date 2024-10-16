@@ -2,6 +2,7 @@
 import { useSelector } from "react-redux";
 import { RootState } from "@/lib/store/store";
 import Overview from "@/components/listing-detail/Overview";
+import { useEffect } from "react";
 interface ChildComponentProps {
   category: string;
   title: string;
@@ -15,7 +16,8 @@ interface ChildComponentProps {
   gender: string;
   startTime: string;
   endTime: string;
-  ageGroup: string;
+  minAge: string;
+  maxAge: string;
   description: string;
   trainerId: string;
 }
@@ -23,6 +25,8 @@ interface ChildComponentProps {
 const MainDetailPage = () => {
   const tabs = ["Overview", "Instructors", "Curriculum", "Reviews", "FAQs"];
   const form = useSelector((state: RootState) => state.form);
+  
+
   return (
     <>
       <div>
@@ -61,5 +65,5 @@ const MainDetailPage = () => {
     </>
   );
 };
-
+// .ageGroup.split("-")[0]
 export default MainDetailPage;

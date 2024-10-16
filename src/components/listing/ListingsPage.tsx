@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import SearchBar from "./SearchBar";
 import FilterSidebar from "./FilterSideBar";
 import ListingCard from "./ListingCard";
+import axios from 'axios';
 
 interface Listing {
   category: string;
@@ -33,14 +34,15 @@ const ListingsPage: React.FC = () => {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [filteredListings, setFilteredListings] = useState<Listing[]>(listings);
 
-  useEffect(() => {
-    fetch("http://localhost:3005/api/v1/listing/listing/")
-      .then((res) => res.json())
-      .then((data) => setListings(data))
-      .catch((e) => {
-        console.log(e);
-      });
-  }, []);
+useEffect(()=>  {
+  const response =axios.get("http://localhost:3005/api/v1/listing/listing/")
+  .then((res)=> {
+    setListings(res.data);
+  })
+  .catch((err)=> {
+    console.log(err);
+  })
+},[])
 
   const handleSearch = () => {
     const filtered = listings.filter((listing) => {
@@ -92,8 +94,7 @@ const ListingsPage: React.FC = () => {
             />
           </aside>
 
-          <main className="flex-1 p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {/* {filteredListings} */}
+          <main className="flex-1 p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {listings.length > 0 ? (
               listings.map((listing, idx) => (
                 <ListingCard key={idx} {...listing} />

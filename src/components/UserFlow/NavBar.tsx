@@ -74,14 +74,14 @@ const Navbar = () => {
                     Join as Trainer
                   </Link>
                 )} */}
-                {
+                {/* {
                   <Link
                     href="/userflow/addListing"
                     className="bg-blue-300 text-black px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-200"
                   >
                     Add Listing
                   </Link>
-                }
+                } */}
                 {!isTrainer && (
                   <Link
                     href="/userflow/registerMember"

@@ -22,7 +22,8 @@ interface ListingCardProps {
   gender: string;
   startTime: string;
   endTime: string;
-  ageGroup: string;
+  minAge: string;
+  maxAge: string;
   description: string;
   trainerId: string;
 }
@@ -42,7 +43,8 @@ const ListingCard: React.FC<ListingCardProps> = ({
   gender,
   startTime,
   endTime,
-  ageGroup,
+  minAge,
+  maxAge,
   description,
   trainerId,
 }) => {
@@ -70,7 +72,8 @@ const ListingCard: React.FC<ListingCardProps> = ({
         gender,
         startTime,
         endTime,
-        ageGroup,
+        minAge,
+        maxAge,
         description,
         trainerId,
       })
@@ -78,55 +81,52 @@ const ListingCard: React.FC<ListingCardProps> = ({
   };
 
   return (
-    <div
-      className="flex-col max-sm:w-10/12 mx-4 rounded-2xl overflow-hidden hover:shadow-2xl shadow-lg bg-sky-400 w-full h-[22rem] "
-      onClick={() => {
-        sendData();
-        router.push("/courses/ListingDetail");
-      }}>
-      <div className=" rounded-b-2xl bg-white px-2">
-        <div className="flex px-4 py-4">
-          <img
-            src={"/img/cricket.png"}
-            alt={title}
-            className="h-32 w-24 object-contain"
-          />
-          <div className="flex w-full justify-end items-start">
-            <Pill text={startTime} color="bg-sky-400" icon="/icons/clock.png" />
+    <div className="flex-col max-sm:w-10/12 rounded-sm overflow-hidden hover:ring-sky-500 hover:scale-105 ring-1 ring-gray-200 shadow-3xl bg-white w-full h-[24rem]">
+      <div className="h-1/2 w-full">
+        <img
+          src={"/img/tempListingImg.jpg"}
+          alt={title}
+          className="w-full object-cover h-full"
+        />
+      </div>
+
+      <div className="h-1/2">
+
+        <div className="bg-white h-4/5 p-3 w-full ">
+          <h3 className="text-xl font-semibold truncate overflow-hidden whitespace-nowrap">{title}</h3>
+            <p className="text-sm text-gray-500">Starting: {startDate}</p>
+            <p className="text-xs text-gray-500">{gender}</p>
+            <p className="text-xs text-gray-500">{days}</p>
+            <p className="text-xs text-gray-500">Age: {minAge}-{maxAge}</p>
+          <div className="flex justify-end">
+            <a
+              className="text-sky-400 text-sm text-center cursor-pointer"
+              onClick={() => {
+                sendData();
+                router.push("/courses/ListingDetail");
+              }}
+            >
+              Know More
+            </a>
           </div>
+
         </div>
 
-        <div>
-          <div className="flex">
-            <Pill text={gender} color="bg-sky-400" icon="/icons/person.png" />
-            <div className="flex flex-grow flexEnd justify-end items-center">
-              <img
-                src={`${
-                  isSelecetd ? `/icons/filled_fav.png` : `/icons/fav.png`
-                }`}
-                alt="fav"
-                className="cursor-pointer"
-                onClick={handleOnClick}
-              />
-            </div>
+        <div className="w-full bg-white h-1/5 ring-1 ring-gray-200 flex flex-row justify-between p-3">
+          <div className="w-5/6 flex items-center justify-start">
+            <div className="text-lg">₹ {price}.00 <span className="text-gray-400 text-xs">{priceMode === "Per day" ? "/day" : priceMode === "Per month" ? "/month" : "/course"}</span></div>
           </div>
-          <h3 className="text-xl pt-1 font-semibold">{title}</h3>
-          <p className="text-xs text-gray-500 font-semibold">
-            start:{startDate} <br />
-            {/* end:{endDate} */}
-          </p>
-          <p className="text-xs text-gray-700 py-3">
-            {
-              // description
-            }
-          </p>
+          <div className="h-full flex items-center justify-center w-1/6">
+            <img
+              src={`${isSelecetd ? `/icons/filled_fav.png` : `/icons/fav.png`}`}
+              alt="fav"
+              className="cursor-pointer"
+              onClick={handleOnClick}
+            />
+          </div>
         </div>
       </div>
-      <div className="flex justify-center items-center py-4">
-        <button className=" text-white rounded">
-          {category == "Sports" ? "Play" : "Learn"} {title} Now
-        </button>
-      </div>
+
     </div>
   );
 };

@@ -43,6 +43,8 @@ const postListingSchema = zod.object({
   startTime: zod.string(),
   endTime: zod.string(),
   ageGroup: zod.string(),
+  // minAge: zod.string(),
+  // maxAge: zod.string(),
   description: zod.string(),
 });
 
@@ -143,7 +145,7 @@ listingRouter.get("/listing/:listingId", async function (req, res) {
 
 listingRouter.post("/add-listing", trainerAuthMiddleware,async function (req, res) {
     const inputFromTrainer = {
-      trainerId: res.trainerId,
+      trainerId: req.trainerId,
       category: req.body.category,
       priceMode: req.body.priceMode,
       title: req.body.title,

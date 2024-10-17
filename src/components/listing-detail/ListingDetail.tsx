@@ -28,7 +28,13 @@ const ListingDetail: React.FC = () => {
   const tabs = ["Overview", "Instructors", "Curriculum", "Reviews", "FAQs"];
 
   const form = useSelector((state: RootState) => state.form);
-  // console.log(form.trainerId);
+
+useEffect(()=>  {
+  console.log(form.minAge),
+  console.log(form.maxAge)
+
+})
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -45,12 +51,13 @@ const ListingDetail: React.FC = () => {
 
     fetchData();
   }, [form.trainerId]);
-  // if (data) console.log(data);
+
+
   return (
     <>
       <div className="bg-white shadow-md rounded-lg p-6 flex items-center ">
         <MainDetailPage />
-        <SideLayout />
+        <SideLayout minAgeLimit={Number(form.minAge)} maxAgeLimit={Number(form.maxAge)} />
       </div>
       <Reviews />
       {/* <GoogleMapComponent apiKey={googleMapsApiKey} /> */}

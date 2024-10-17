@@ -65,5 +65,6 @@ const MainDetailPage = () => {
     </>
   );
 };
-// .ageGroup.split("-")[0]
+
+
 export default MainDetailPage;

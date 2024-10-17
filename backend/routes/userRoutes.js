@@ -152,8 +152,8 @@ userRouter.get("/username",authMiddleware,async function (req,res) {
 
 userRouter.post('/registerMember', authMiddleware, async (req, res) => {
     try {
-      const { name, age, dob,relationship ,doctorName, doctorNumber, bloodGroup } = req.body;
-      const userId = req.userId; // important 
+      const { name, age, dob,relationship ,doctorName, doctorNumber, gender, city, address, postalCode, agreeToTerms} = req.body;
+      const userId = req.userId; 
     console.log("The user Id is "+ userId);
       const newMember = new Member({
         name,
@@ -162,7 +162,11 @@ userRouter.post('/registerMember', authMiddleware, async (req, res) => {
         relationship,
         doctorName,
         doctorNumber,
-        bloodGroup,
+        gender,
+        city,
+        address,
+        postalCode,
+        agreeToTerms
       });
 
       const savedMember = await newMember.save();
@@ -210,6 +214,11 @@ userRouter.post('/registerMember', authMiddleware, async (req, res) => {
           doctorName,
           doctorNumber,
           bloodGroup,
+          gender,
+          city,
+          address,
+          postalCode,
+          agreeToTerms
         },
         { new: true } 
       );

@@ -38,9 +38,10 @@ const userSchema=new mongoose.Schema({
           type: mongoose.Schema.Types.ObjectId,
           ref: 'RegisteredMember',
         },
-      ],favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Listing' }], // Storing the favorite listings
-});
-    
+      ],
+})
 
 const User=mongoose.model('users',userSchema);
-module.exports ={User};
+module.exports ={
+    User
+};

@@ -7,7 +7,6 @@ import ListingCard from "./ListingCard";
 import axios from 'axios';
 
 interface Listing {
-  _id:string;
   category: string;
   title: string;
   priceMode: string;
@@ -95,24 +94,7 @@ useEffect(()=>  {
             />
           </aside>
 
-          <main className="flex-1 p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {/* {filteredListings} */}
-          {listings.length > 0 ? (
-            listings.map((listing,idx) => (
-              <ListingCard 
-                listingId={listing._id} // Make sure listing._id is passed here
-                category={listing.category}
-                title={listing.title}
-                priceMode={listing.priceMode}
-                price={listing.price}
-                mode={listing.mode}
-                location={listing.location} trainerId={listing.trainerId} quantity={''} classSize={''} startDate={''} endDate={''} days={''} gender={''} startTime={''} endTime={''} ageGroup={''} description={''} isFavorite={false}/>
-            ))
-          ) : (
-            <p>No listings found.</p>
-          )}
-        </main>
-<!--           <main className="flex-1 p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <main className="flex-1 p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {listings.length > 0 ? (
               listings.map((listing, idx) => (
                 <ListingCard key={idx} {...listing} />
@@ -120,7 +102,7 @@ useEffect(()=>  {
             ) : (
               <p>No listings found.</p>
             )}
-          </main> -->
+          </main>
         </div>
       </div>
     </>

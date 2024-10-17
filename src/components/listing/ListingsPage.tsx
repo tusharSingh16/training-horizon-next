@@ -7,6 +7,7 @@ import ListingCard from "./ListingCard";
 import axios from 'axios';
 
 interface Listing {
+  _id: string;
   category: string;
   title: string;
   priceMode: string;
@@ -21,9 +22,12 @@ interface Listing {
   gender: string;
   startTime: string;
   endTime: string;
-  ageGroup: string;
+  minAge: string;
+  maxAge: string;
   description: string;
   trainerId: string;
+  listingId: string;
+  isFavorite: boolean;
 }
 
 const ListingsPage: React.FC = () => {

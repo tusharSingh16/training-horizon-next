@@ -21,7 +21,9 @@ interface Listing {
   gender: string;
   startTime: string;
   endTime: string;
-  ageGroup: string;
+  // ageGroup: string;
+  minAge: string;
+  maxAge: string;
   description: string;
   trainerId: string;
 }

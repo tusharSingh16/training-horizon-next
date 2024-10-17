@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 
 
 interface Trainer {
+  _id: string;
   fname: string;
   lname: string;
   email: string;
@@ -59,7 +60,7 @@ const Main = () => {
 
   return (
     <div className="w-full flex justify-center">
-      <div className="w-4/5">
+      <div className="w-3/4">
         <div className="w-full text-center text-3xl my-4 font-bold text-gray-700">OUR TRAINERS</div>
         <hr className="w=full border-2 border-sky-500" />
         <div className="w-full">

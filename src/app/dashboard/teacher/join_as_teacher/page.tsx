@@ -1,7 +1,7 @@
 
 
 import Main from '@/components/trainer-dashboard/main'
-import Navbar from '@/components/trainer-dashboard/NavBar';
+import Navbar from '@/components/UserFlow/NavBar';
 export default function Home() {
   return (
     <>

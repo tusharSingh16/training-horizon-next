@@ -18,11 +18,11 @@ function SideLayout({minAgeLimit, maxAgeLimit}: {minAgeLimit: number, maxAgeLimi
 
   const form = useSelector((state: RootState) => state.form);
   const tabs = ["Overview", "Instructors", "Curriculum", "Reviews", "FAQs"];
-  useEffect(()=>  {
-    // console.log(minAgeLimit, maxAgeLimit)
-    console.log(form.title),
-        console.log(form.ageGroup)
-  })
+  // useEffect(()=>  {
+  //   // console.log(minAgeLimit, maxAgeLimit)
+  //   console.log(form.title),
+  //       console.log(form.ageGroup)
+  // })
   // Fetch the username and members
   useEffect(() => {
     const fetchUserName = async () => {

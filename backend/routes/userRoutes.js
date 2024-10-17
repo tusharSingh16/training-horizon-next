@@ -2,7 +2,7 @@ const express=require("express");
 const zod=require("zod")
 const jwt=require("jsonwebtoken");
 const JWT_SECRET=require("../config/jwt")
-const {User }=require("../models/User")
+const {User }=require("../models/user")
 const {authMiddleware} =require("../middleware/authMiddleware");
 const Member = require('../models/Member');
 
@@ -100,6 +100,7 @@ userRouter.post("/signin",async function (req,res) {
             res.status(200).json({
                 msg: "User logged in successfully",
                 token: token,
+                _id: user._id
             })
         }else{
             res.status(411).json({

@@ -39,6 +39,7 @@ const userSchema=new mongoose.Schema({
           ref: 'RegisteredMember',
         },
       ],
+      favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Listing' }],
 })
 
 const User=mongoose.model('users',userSchema);

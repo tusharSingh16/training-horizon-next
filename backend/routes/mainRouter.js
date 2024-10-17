@@ -6,6 +6,7 @@ const trainerRouter = require("./trainerRoutes");
 const reviewRouter = require("./reviewRoutes");
 const router = express.Router();
 const orgRouter = require("./organizationRoutes")
+const favoritesRoutes=require("./favoritesRoutes");
 const orderRouter = require("./orderRouter")
 
 router.use("/user", userRouter);
@@ -14,7 +15,7 @@ router.use("/listing", listingRouter);
 router.use("/admin", adminRouter);
 router.use("/review", reviewRouter);
 router.use("/", orgRouter);
+router.use("/favorites", favoritesRoutes);
 router.use("/order", orderRouter);
-
 
 module.exports = router;

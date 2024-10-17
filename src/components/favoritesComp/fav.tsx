@@ -70,7 +70,7 @@ const FavoriteListingIds = () => {
             }
         };
 
-        if (Array.isArray(favoriteIds) && favoriteIds.length > 0) {
+        if (favoriteIds.length > 0) {
             fetchListingDetails(); // Fetch details only if favoriteIds is a non-empty array
         }
     }, [favoriteIds]);

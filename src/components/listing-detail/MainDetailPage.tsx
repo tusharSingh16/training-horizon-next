@@ -1,8 +1,8 @@
 "use client";
+import { useSelector } from "react-redux";
 import { RootState } from "@/lib/store/store";
 import Overview from "@/components/listing-detail/Overview";
 import { useEffect } from "react";
-import { useSelector } from "react-redux";
 interface ChildComponentProps {
   category: string;
   title: string;
@@ -56,7 +56,7 @@ const MainDetailPage = () => {
             </div>
             <div className="m-8">
               <button className="bg-[#17A8FC] text-white py-3 px-8 rounded mb-8 hover:bg-[#1782fc] shadow-xl">
-                Learn {form.title}
+                Learn {form.category}
               </button>
             </div>
           </div>

@@ -147,7 +147,7 @@ userRouter.get("/username", authMiddleware, async function (req, res) {
   });
   res.status(200).json({
     _id: user._id,
-    user: user.firstName,
+    user: user.firstName, 
     role: user.role,
   });
 });
@@ -247,7 +247,7 @@ userRouter.get("/allmembers", authMiddleware, async (req, res) => {
 userRouter.put("/members/:id", authMiddleware, async (req, res) => {
   const memberId = req.params.id;
   console.log(memberId);
-  const { name, age, dob, relationship, doctorName, doctorNumber, bloodGroup } =
+  const { name, age, dob, relationship, doctorName, doctorNumber, gender, city, address, postalCode, agreeToTerms } =
     req.body;
   try {
     // Find the member by ID and update it
@@ -260,7 +260,6 @@ userRouter.put("/members/:id", authMiddleware, async (req, res) => {
         relationship,
         doctorName,
         doctorNumber,
-        bloodGroup,
         gender,
         city,
         address,

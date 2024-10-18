@@ -66,6 +66,22 @@ export default function FamilyMembers() {
     setIsEditing(true);
   };
 
+  const calculateAge = (dob: string) => {
+    const birthDate = new Date(dob);
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDifference = today.getMonth() - birthDate.getMonth();
+
+    if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+
+    if(age <= 0){
+      return 0;
+    }
+    return age;
+  };
+
   const handleSaveChanges = async () => {
     try {
       const response = await axios.put(
@@ -197,6 +213,20 @@ export default function FamilyMembers() {
               className="border border-gray-300 rounded p-2 mb-2 w-full"
             />
             <input
+              type="date"
+              placeholder="Date of Birth"
+              value={updatedInfo.dob.split("T")[0]}
+              onChange={(e) => {
+                const dob = e.target.value;
+                setUpdatedInfo({
+                  ...updatedInfo,
+                  dob,
+                  age: calculateAge(dob).toString(), // Auto-calculate age
+                });
+              }}
+              className="border border-gray-300 rounded p-2 mb-2 w-full"
+            />
+              <input
               type="number"
               placeholder="Age"
               value={updatedInfo.age}
@@ -204,16 +234,9 @@ export default function FamilyMembers() {
                 setUpdatedInfo({ ...updatedInfo, age: e.target.value })
               }
               className="border border-gray-300 rounded p-2 mb-2 w-full"
+              disabled
             />
-            <input
-              type="date"
-              placeholder="Date of Birth"
-              value={updatedInfo.dob.split("T")[0]}
-              onChange={(e) =>
-                setUpdatedInfo({ ...updatedInfo, dob: e.target.value })
-              }
-              className="border border-gray-300 rounded p-2 mb-2 w-full"
-            />
+            
             <input
               type="text"
               placeholder="Relationship"

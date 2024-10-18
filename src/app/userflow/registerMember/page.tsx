@@ -4,7 +4,7 @@ import Navbar from '@/components/UserFlow/NavBar';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-const axios = require('axios');
+import axios from 'axios';
 import Popup from '@/components/trainer-dashboard/PopUp';
 
 // Zod schema for form validation
@@ -14,10 +14,14 @@ const registerMemberSchema = z.object({
     .number()
     .int({ message: 'Age must be a valid integer' })
     .min(0, 'Age must be greater than 0'),
-  dob: z.string().refine((date) => !isNaN(Date.parse(date)), {
-    message: 'Invalid date format',
-  }),
-  relationship: z.enum(['brother', 'child', 'father', 'mother'], 'Select a valid relationship'),
+    dob: z.string().refine((date) => {
+      const dob = new Date(date);
+      const today = new Date();
+      return dob <= today; // Ensure DOB is not in the future
+    }, {
+      message: 'Invalid date ',
+    }),
+  relationship: z.enum(['brother', 'child', 'father', 'mother'], {errorMap: () => ({message: 'Select a valid relationship'})}),
   gender: z.enum(['male', 'female', 'other'], { errorMap: () => ({ message: 'Select a valid gender' }) }),
   address: z.string().min(5, 'Address must be at least 5 characters'),
   city: z.string().min(2, 'City must be at least 2 characters'),
@@ -82,7 +86,7 @@ const RegisterMemberForm = () => {
               className={`mt-1 block w-full px-4 py-2   shadow-sm border ${errors.name ? 'border-red-500' : 'border-gray-300'}`}
               placeholder="Enter member's name"
             />
-            {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
+            {errors.name && <p className="text-red-500 text-sm">{errors.name.message as string}</p>}
           </div>
           {/* Date of Birth */}
           <div>
@@ -97,7 +101,7 @@ const RegisterMemberForm = () => {
                 calculateAge(dobValue); // Also calculates age
               }}
              />
-            {errors.dob && <p className="text-red-500 text-sm">{errors.dob.message}</p>}
+            {errors.dob && <p className="text-red-500 text-sm">{errors.dob.message as string}</p>}
           </div>
 
           {/* age */}
@@ -124,7 +128,7 @@ const RegisterMemberForm = () => {
               <option value="father">Father</option>
               <option value="mother">Mother</option>
             </select>
-            {errors.relationship && <p className="text-red-500 text-sm">{errors.relationship.message}</p>}
+            {errors.relationship && <p className="text-red-500 text-sm">{errors.relationship.message as string}</p>}
           </div>
 
           {/* Gender */}
@@ -139,7 +143,7 @@ const RegisterMemberForm = () => {
               <option value="female">Female</option>
               <option value="other">Other</option>
             </select>
-            {errors.gender && <p className="text-red-500 text-sm">{errors.gender.message}</p>}
+            {errors.gender && <p className="text-red-500 text-sm">{errors.gender.message as string}</p>}
           </div>
 
           {/* Address */}
@@ -150,7 +154,7 @@ const RegisterMemberForm = () => {
               className={`mt-1 block w-full px-4 py-2   shadow-sm border ${errors.address ? 'border-red-500' : 'border-gray-300'}`}
               placeholder="Enter address"
             />
-            {errors.address && <p className="text-red-500 text-sm">{errors.address.message}</p>}
+            {errors.address && <p className="text-red-500 text-sm">{errors.address.message as string}</p>}
           </div>
 
           {/* City */}
@@ -161,7 +165,7 @@ const RegisterMemberForm = () => {
               className={`mt-1 block w-full px-4 py-2   shadow-sm border ${errors.city ? 'border-red-500' : 'border-gray-300'}`}
               placeholder="Enter city"
             />
-            {errors.city && <p className="text-red-500 text-sm">{errors.city.message}</p>}
+            {errors.city && <p className="text-red-500 text-sm">{errors.city.message as string}</p>}
           </div>
 
           {/* Postal Code */}
@@ -172,7 +176,7 @@ const RegisterMemberForm = () => {
               className={`mt-1 block w-full px-4 py-2   shadow-sm border ${errors.postalCode ? 'border-red-500' : 'border-gray-300'}`}
               placeholder="Enter postal code"
             />
-            {errors.postalCode && <p className="text-red-500 text-sm">{errors.postalCode.message}</p>}
+            {errors.postalCode && <p className="text-red-500 text-sm">{errors.postalCode.message as string}</p>}
           </div>
 
 
@@ -206,7 +210,7 @@ const RegisterMemberForm = () => {
               />
               I agree to the terms and conditions
             </label>
-            {errors.agreeToTerms && <p className="text-red-500 text-sm">{errors.agreeToTerms.message}</p>}
+            {errors.agreeToTerms && <p className="text-red-500 text-sm">{errors.agreeToTerms.message as string}</p>}
           </div>
           <button
             type="submit"

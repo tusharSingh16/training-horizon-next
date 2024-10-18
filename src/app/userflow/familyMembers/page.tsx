@@ -182,13 +182,118 @@ export default function FamilyMembers() {
         )}
       </div>
 
-      {/* Edit Member Modal */}
-      {isEditing && (
+{/* Edit Member Modal */}
+{isEditing && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white rounded-lg p-6 w-1/3">
             <h2 className="text-xl font-semibold mb-4">Edit Family Member</h2>
-            {/* Add input fields for editing here */}
-            {/* ... */}
+            <input
+              type="text"
+              placeholder="Name"
+              value={updatedInfo.name}
+              onChange={(e) =>
+                setUpdatedInfo({ ...updatedInfo, name: e.target.value })
+              }
+              className="border border-gray-300 rounded p-2 mb-2 w-full"
+            />
+            <input
+              type="number"
+              placeholder="Age"
+              value={updatedInfo.age}
+              onChange={(e) =>
+                setUpdatedInfo({ ...updatedInfo, age: e.target.value })
+              }
+              className="border border-gray-300 rounded p-2 mb-2 w-full"
+            />
+            <input
+              type="date"
+              placeholder="Date of Birth"
+              value={updatedInfo.dob.split("T")[0]}
+              onChange={(e) =>
+                setUpdatedInfo({ ...updatedInfo, dob: e.target.value })
+              }
+              className="border border-gray-300 rounded p-2 mb-2 w-full"
+            />
+            <input
+              type="text"
+              placeholder="Relationship"
+              value={updatedInfo.relationship}
+              onChange={(e) =>
+                setUpdatedInfo({ ...updatedInfo, relationship: e.target.value })
+              }
+              className="border border-gray-300 rounded p-2 mb-2 w-full"
+            />
+            <select
+              value={updatedInfo.gender}
+              onChange={(e) =>
+                setUpdatedInfo({ ...updatedInfo, gender: e.target.value })
+              }
+              className="border border-gray-300 rounded p-2 mb-2 w-full"
+            >
+              <option value="">Select Gender</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="other">Other</option>
+            </select>
+            <input
+              type="text"
+              placeholder="Address"
+              value={updatedInfo.address}
+              onChange={(e) =>
+                setUpdatedInfo({ ...updatedInfo, address: e.target.value })
+              }
+              className="border border-gray-300 rounded p-2 mb-2 w-full"
+            />
+            <input
+              type="text"
+              placeholder="City"
+              value={updatedInfo.city}
+              onChange={(e) =>
+                setUpdatedInfo({ ...updatedInfo, city: e.target.value })
+              }
+              className="border border-gray-300 rounded p-2 mb-2 w-full"
+            />
+            <input
+              type="text"
+              placeholder="Postal Code"
+              value={updatedInfo.postalCode}
+              onChange={(e) =>
+                setUpdatedInfo({ ...updatedInfo, postalCode: e.target.value })
+              }
+              className="border border-gray-300 rounded p-2 mb-2 w-full"
+            />
+            <input
+              type="text"
+              placeholder="Doctor Name"
+              value={updatedInfo.doctorName}
+              onChange={(e) =>
+                setUpdatedInfo({ ...updatedInfo, doctorName: e.target.value })
+              }
+              className="border border-gray-300 rounded p-2 mb-2 w-full"
+            />
+            <input
+              type="text"
+              placeholder="Doctor Number"
+              value={updatedInfo.doctorNumber}
+              onChange={(e) =>
+                setUpdatedInfo({ ...updatedInfo, doctorNumber: e.target.value })
+              }
+              className="border border-gray-300 rounded p-2 mb-2 w-full"
+            />
+            <div className="flex items-center mb-2">
+              <input
+                type="checkbox"
+                checked={updatedInfo.agreeToTerms}
+                onChange={(e) =>
+                  setUpdatedInfo({
+                    ...updatedInfo,
+                    agreeToTerms: e.target.checked,
+                  })
+                }
+                className="mr-2"
+              />
+              <label>Agree to Terms and Conditions</label>
+            </div>
             <div className="flex justify-end mt-4">
               <button
                 className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition"
@@ -206,6 +311,8 @@ export default function FamilyMembers() {
           </div>
         </div>
       )}
+
+
        <style jsx>{`
               .loader {
         position: relative;

@@ -264,7 +264,7 @@ export default function FamilyMembers() {
             />
             <input
               type="text"
-              placeholder="Doctor Name"
+              placeholder="Doctor's Name"
               value={updatedInfo.doctorName}
               onChange={(e) =>
                 setUpdatedInfo({ ...updatedInfo, doctorName: e.target.value })
@@ -273,7 +273,7 @@ export default function FamilyMembers() {
             />
             <input
               type="text"
-              placeholder="Doctor Number"
+              placeholder="Doctor's Number"
               value={updatedInfo.doctorNumber}
               onChange={(e) =>
                 setUpdatedInfo({ ...updatedInfo, doctorNumber: e.target.value })
@@ -311,7 +311,6 @@ export default function FamilyMembers() {
           </div>
         </div>
       )}
-
 
        <style jsx>{`
               .loader {

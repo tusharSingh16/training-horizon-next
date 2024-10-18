@@ -27,6 +27,54 @@ const userUpdateSchema =zod.object({
         password:zod.string().optional(),
 })
 
+userRouter.post("/google-auth", async function (req, res) {
+  const inputFromUser = {
+    email: req.body.email,
+    firstName: req.body.firstName,
+    lastName: req.body.lastName,
+    password: req.body.password,
+    role: req.body.role || "user",
+  };
+  const result = userSignupSchema.safeParse(inputFromUser);
+
+  if (!result.success) {
+    return res.status(411).json({
+      message: " Incorrect inputs",
+    });
+  }
+  try {
+    try {
+      const user = await User.findOne({
+        email: inputFromUser.email,
+        // password: inputFromUser.password,
+      });
+
+      if (user) {
+        const token = jwt.sign({ userId: user._id }, JWT_SECRET);
+
+        res.status(200).json({
+          token: token,
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+
+    const user = await User.create(inputFromUser);
+    const token = jwt.sign({ userId: user._id }, JWT_SECRET);
+    res.status(200).json({
+      message: "user created successfully",
+      token: token,
+      _id: user._id,
+    });
+  } catch (error) {
+    // res.status(411).json({
+    //   message: error,
+    // });
+    // console.log(error);
+  }
+});
+
 userRouter.post('/signup',async function (req,res) {
     const inputFromUser={
         email:req.body.email,

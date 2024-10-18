@@ -32,7 +32,6 @@ interface Listing {
 
 const ListingsPage: React.FC = () => {
   const [listings, setListings] = useState<Listing[]>([]);
-
   const [keywords, setKeywords] = useState<string>("");
   const [location, setLocation] = useState<string>("");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
@@ -103,6 +102,7 @@ useEffect(()=>  {
               listings.map((listing, idx) => (
                 // <ListingCard key={idx} {...listing} />
                 <ListingCard 
+                key={idx}
                 listingId={listing._id} // Make sure listing._id is passed here
                 category={listing.category}
                 title={listing.title}

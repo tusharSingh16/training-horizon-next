@@ -53,7 +53,7 @@ const UserDashboard = () => {
         </div>
         <span className="text-yellow-500">{userName || "Loading..."}</span>
         <svg
-          className="w-4 h-4 text-gray-500"
+          className="w-4 h-[4 text-gray-500"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"

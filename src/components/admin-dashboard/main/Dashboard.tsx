@@ -1,13 +1,13 @@
 import { Divide } from "lucide-react";
 import AdminListings from "../listing/AdminListings";
 import PendingDetails from "../pendings/PendingDetails";
-import Trainers from "../trainers/Trainers"
+import Trainers from "../trainers/Trainers";
 
-interface ChildComponentProps{
+interface ChildComponentProps {
   value: string;
   setValue: React.Dispatch<React.SetStateAction<string>>;
 }
-const Dashboard:React.FC<ChildComponentProps> = ( {value ,setValue})=> {
+const Dashboard: React.FC<ChildComponentProps> = ({ value, setValue }) => {
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       <div className=" mb-6 flex justify-between items-center">
@@ -34,7 +34,7 @@ const Dashboard:React.FC<ChildComponentProps> = ( {value ,setValue})=> {
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-4 mb-6">
+      {/* <div className="grid grid-cols-3 gap-4 mb-6">
         <div className="bg-white rounded-lg shadow p-4 ">
           <div className="flex flex-row gap-1">
             <img src="/img/dashboard/user.svg" alt="user" />
@@ -63,11 +63,11 @@ const Dashboard:React.FC<ChildComponentProps> = ( {value ,setValue})=> {
             $500 <span className="text-green-500 text-sm">+40</span>
           </p>
         </div>
-      </div>
+      </div> */}
 
-         {value=='trainers'?<Trainers/>:<></> }
-         {value=='listings'? <AdminListings/>:<></>}
-         {value=='dashboard'? <PendingDetails />: <></>}
+      {value == "trainers" ? <Trainers /> : <></>}
+      {value == "listings" ? <AdminListings /> : <></>}
+      {value == "dashboard" ? <PendingDetails /> : <></>}
       <div className="grid grid-cols-2 gap-4">
         <div className="bg-white rounded-lg shadow p-4">
           <h3 className="text-lg font-semibold mb-4">Top Courses</h3>

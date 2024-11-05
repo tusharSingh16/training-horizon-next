@@ -33,7 +33,7 @@ const Sidebar: React.FC<ChildComponentProps> = ({ value, setValue }) => {
 
       <nav>
         <ul>
-          <li className="mb-2">
+          {/* <li className="mb-2">
             <button
               onClick={() => {
                 handleClick("Profile");
@@ -42,8 +42,7 @@ const Sidebar: React.FC<ChildComponentProps> = ({ value, setValue }) => {
                 activeButton === "Profile"
                   ? "bg-[#17A8FC] text-white"
                   : " text-black"
-              }`}
-            >
+              }`}>
               <img
                 className="mx-2"
                 src="/img/dashboard/profile.svg"
@@ -51,7 +50,7 @@ const Sidebar: React.FC<ChildComponentProps> = ({ value, setValue }) => {
               />
               Profile
             </button>
-          </li>
+          </li> */}
           <li className="mb-2">
             <button
               onClick={() => {
@@ -62,11 +61,10 @@ const Sidebar: React.FC<ChildComponentProps> = ({ value, setValue }) => {
                 activeButton === "Dashboard"
                   ? "bg-[#17A8FC] text-white"
                   : " text-black"
-              }`}
-            >
+              }`}>
               <img
                 className="mx-2"
-                src="/img/dashboard/dashboardlogo.svg"
+                src="/img/dashboard/setting.svg"
                 alt="dashboardlogo"
               />
               Dashboard
@@ -82,28 +80,25 @@ const Sidebar: React.FC<ChildComponentProps> = ({ value, setValue }) => {
                   activeButton === "Listing"
                     ? "bg-[#17A8FC] text-white"
                     : " text-black"
-                }`}
-              >
+                }`}>
                 <img
                   className="mx-2"
-                  src="/img/dashboard/profile.svg"
+                  src="/img/dashboard/setting.svg"
                   alt="dashboardlogo"
                 />
-                Listing
+                Listings
               </button>
 
               {isListingOpen && (
                 <div className="absolute left-full top-0 ml-2 w-48 bg-white border rounded-lg shadow-lg z-10">
                   <button
                     className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
-                    onClick={() => setValue("listings")}
-                  >
+                    onClick={() => setValue("listings")}>
                     Listings
                   </button>
                   <button
                     className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
-                    onClick={() => setValue("trainers")}
-                  >
+                    onClick={() => setValue("trainers")}>
                     Trainers
                   </button>
                 </div>
@@ -122,8 +117,7 @@ const Sidebar: React.FC<ChildComponentProps> = ({ value, setValue }) => {
                 activeButton === "Account Setting"
                   ? "bg-[#17A8FC] text-white"
                   : " text-black"
-              }`}
-            >
+              }`}>
               <img
                 className="mx-2"
                 src="/img/dashboard/setting.svg"
@@ -134,13 +128,28 @@ const Sidebar: React.FC<ChildComponentProps> = ({ value, setValue }) => {
           </li>
           <li className="mb-2">
             <button
+              onClick={() => handleClick("Order Status")}
+              className={`flex flex-row rounded-lg w-full p-2 ${
+                activeButton === "Order Status"
+                  ? "bg-[#17A8FC] text-white"
+                  : " text-black"
+              }`}>
+              <img
+                className="mx-2"
+                src="/img/dashboard/setting.svg"
+                alt="dashboardlogo"
+              />
+              Order Status
+            </button>
+          </li>
+          <li className="mb-2">
+            <button
               onClick={() => handleClick("Log Out")}
               className={`flex flex-row rounded-lg w-full p-2 ${
                 activeButton === "Log Out"
                   ? "bg-[#17A8FC] text-white"
                   : " text-black"
-              }`}
-            >
+              }`}>
               <img
                 className="mx-2"
                 src="/img/dashboard/logout.svg"

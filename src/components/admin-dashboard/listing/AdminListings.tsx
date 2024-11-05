@@ -7,9 +7,7 @@ import { useEffect, useState } from "react";
 import Sidebar from "../sideBar/SideBar";
 import Link from "next/link";
 
-const  AdminListings: React.FC = () => {
-   
-  
+const AdminListings: React.FC = () => {
   const [rowData, setRowData] = useState<
     { title: string; price: string; location: string; mode: string }[]
   >([]);
@@ -34,30 +32,48 @@ const  AdminListings: React.FC = () => {
       field: "mode",
       headerClass: "font-bold border p-2 font-bold  text-md",
     },
+    // {
+    //   headerName: "Age Group",
+    //   field: "ageGroup",
+    //   headerClass: "font-bold border p-2 font-bold  text-md",
+    // },
     {
-      headerName: "Age Group",
-      field: "ageGroup",
+      headerName: "Action",
+      field: "",
       headerClass: "font-bold border p-2 font-bold  text-md",
-    },
-    { headerName:"Action" , field: "" ,  headerClass:"font-bold border p-2 font-bold  text-md",
-      cellRenderer:(data:ICellRendererParams)=> <div className="flex gap-8">
-      <Link href='/userflow/addListing' className='text-red-500 font-bold' >Edit</Link>
-      <button onClick={() => {handleDelete(data.data._id,data.data.title)}} className='text-red-500 font-bold'>Delete</button>
-      </div>
+      cellRenderer: (data: ICellRendererParams) => (
+        <div className="flex gap-8">
+          <Link
+            href={`/dashboard/admin/editlisting/${data.data._id}`}
+            className="text-red-500 font-bold">
+            Edit
+          </Link>
+          <button
+            onClick={() => {
+              handleDelete(data.data._id, data.data.title);
+            }}
+            className="text-red-500 font-bold">
+            Delete
+          </button>
+        </div>
+      ),
     },
   ]);
 
-const handleDelete = async(listingId:string,listingTitle:string) =>{
-  const response = await axios.delete('http://localhost:3005/api/v1/admin/discard-listing/'+ listingId.toString());
-  //  console.log(response.data);
-   setRowData(prevData => prevData.filter(row => row.title != listingTitle))
-}  
+  const handleDelete = async (listingId: string, listingTitle: string) => {
+    const response = await axios.delete(
+      "http://localhost:3005/api/v1/admin/discard-listing/" +
+        listingId.toString()
+    );
+    //  console.log(response.data);
+    setRowData((prevData) =>
+      prevData.filter((row) => row.title != listingTitle)
+    );
+  };
 
-const handleEditListing = (listingId:string) => {
-  // onClick={() => handleEditListing(data.data._id)
-};
-
-
+  const handleEditListing = (listingId: string) => {
+    // onClick={() => handleEditListing(data.data._id)
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -65,9 +81,8 @@ const handleEditListing = (listingId:string) => {
         const response = await axios.get(
           "http://localhost:3005/api/v1/admin/listings"
         );
-        
+
         setRowData(response.data.listings);
-  
       } catch (error) {
         console.log("error");
       }
@@ -84,8 +99,7 @@ const handleEditListing = (listingId:string) => {
           <div className="overflow-y-auto h-64">
             <div
               className="ag-theme-quartz "
-              style={{ height: "100%", width: "100%" }}
-            >
+              style={{ height: "100%", width: "100%" }}>
               <AgGridReact rowData={rowData || []} columnDefs={colDefs} />
             </div>
           </div>
@@ -93,6 +107,6 @@ const handleEditListing = (listingId:string) => {
       </div>
     </>
   );
-}
+};
 
 export default AdminListings;

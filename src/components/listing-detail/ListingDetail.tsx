@@ -10,6 +10,7 @@ import { RootState } from "@/lib/store/store";
 import axios from "axios";
 import GoogleMapComponent from "./GoogleMapComponent";
 import MapWidget from "./MapWidget";
+import { useParams } from "next/navigation";
 
 interface TrainerData {
   _id: string;
@@ -22,18 +23,13 @@ interface TrainerData {
 }
 
 const ListingDetail: React.FC = () => {
+  const { id } = useParams<{ id: string }>();
   const [activeTab, setActiveTab] = useState<string>("Overview");
   const [isOpen, setIsOpen] = useState(false);
   const [data, setData] = useState<TrainerData | null>(null);
   const tabs = ["Overview", "Instructors", "Curriculum", "Reviews", "FAQs"];
 
   const form = useSelector((state: RootState) => state.form);
-
-useEffect(()=>  {
-  console.log(form.minAge),
-  console.log(form.maxAge)
-
-})
 
   useEffect(() => {
     const fetchData = async () => {
@@ -57,7 +53,7 @@ useEffect(()=>  {
     <>
       <div className="bg-white shadow-md rounded-lg p-6 flex items-center ">
         <MainDetailPage />
-        <SideLayout minAgeLimit={Number(form.minAge)} maxAgeLimit={Number(form.maxAge)} />
+        <SideLayout minAgeLimit={Number(form.minAge)} maxAgeLimit={Number(form.maxAge)} listingId={id} />
       </div>
       <Reviews />
       {/* <GoogleMapComponent apiKey={googleMapsApiKey} /> */}

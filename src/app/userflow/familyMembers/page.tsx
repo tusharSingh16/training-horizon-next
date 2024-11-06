@@ -69,7 +69,7 @@ export default function FamilyMembers() {
   const handleSaveChanges = async () => {
     try {
       const response = await axios.put(
-        `http://localhost:3005/api/v1/members/${currentMember._id}`,
+        `http://localhost:3005/api/v1/user/members/${currentMember._id}`,
         updatedInfo,
         {
           headers: {

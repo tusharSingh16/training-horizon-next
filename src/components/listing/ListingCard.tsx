@@ -160,7 +160,7 @@ return (
   <div className="flex-col max-sm:w-10/12 rounded-sm overflow-hidden hover:ring-sky-500 hover:scale-105 ring-1 ring-gray-200 shadow-3xl bg-white w-[18rem] h-[24rem]">
     <div className="h-5/6 cursor-pointer" onClick={() => {
       sendData();
-      router.push("/courses/ListingDetail");
+      router.push(`/courses/${listingId}`);
     }}>
       <div className="h-1/2 w-full">
         <img

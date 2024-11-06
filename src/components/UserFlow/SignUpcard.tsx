@@ -12,6 +12,7 @@ import { Label } from "@/components/Shared/ui/label";
 import Link from "next/link";
 import axios from "axios";
 import {useRouter} from "next/navigation";
+import GoogleAuth from "./GoogleAuth";
 
 function SignUpcard() {
   const [email, setEmail] = useState("");
@@ -39,7 +40,7 @@ function SignUpcard() {
 
   return (
     <main className="bg-[#56C1FF] h-screen flex items-center justify-center p-10 w-full">
-      <Card className="w-[600px] h-[600px] mx-auto p-6 shadow-lg border-2 border-blue-400">
+      <Card className="w-[600px] h-[700px] mx-auto p-6 shadow-lg border-2 border-blue-400">
         <CardHeader>
           <h2 className="text-2xl font-bold">Create your account</h2>
         </CardHeader>
@@ -99,6 +100,7 @@ function SignUpcard() {
             </Link>
           </div>
         </CardFooter>
+        <GoogleAuth />
       </Card>
     </main>
   );

@@ -12,6 +12,7 @@ import { Label } from "@/components/Shared/ui/label";
 import Link from "next/link";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import GoogleAuth from "./GoogleAuth";
 
 function LoginCard() {
   const [email, setEmail] = useState("");
@@ -101,6 +102,7 @@ function LoginCard() {
             </Link>
           </div>
         </CardFooter>
+        <GoogleAuth />
       </Card>
     </main>
   );

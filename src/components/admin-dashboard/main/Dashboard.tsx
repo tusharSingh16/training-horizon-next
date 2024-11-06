@@ -2,6 +2,7 @@ import { Divide } from "lucide-react";
 import AdminListings from "../listing/AdminListings";
 import PendingDetails from "../pendings/PendingDetails";
 import Trainers from "../trainers/Trainers"
+import OrderStatus from "../OrderStatus";
 
 interface ChildComponentProps{
   value: string;
@@ -68,6 +69,7 @@ const Dashboard:React.FC<ChildComponentProps> = ( {value ,setValue})=> {
          {value=='trainers'?<Trainers/>:<></> }
          {value=='listings'? <AdminListings/>:<></>}
          {value=='dashboard'? <PendingDetails />: <></>}
+         {value == 'orderStatus'? <OrderStatus /> :<></>}
       <div className="grid grid-cols-2 gap-4">
         <div className="bg-white rounded-lg shadow p-4">
           <h3 className="text-lg font-semibold mb-4">Top Courses</h3>

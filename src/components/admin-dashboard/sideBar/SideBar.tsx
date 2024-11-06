@@ -132,6 +132,23 @@ const Sidebar: React.FC<ChildComponentProps> = ({ value, setValue }) => {
               Account Setting
             </button>
           </li>
+          <li className="mb-2 mt-2 w-48">
+            <button
+              onClick={() => setValue('orderStatus')}
+              className={`flex flex-row rounded-lg w-full p-2 ${
+                activeButton === "Order Status"
+                  ? "bg-[#17A8FC] text-white"
+                  : " text-black"
+              }`}
+            >
+              <img
+                className="mx-2"
+                src="/img/dashboard/setting.svg"
+                alt="dashboardlogo"
+              />
+              Order Status
+            </button>
+          </li>
           <li className="mb-2">
             <button
               onClick={() => handleClick("Log Out")}

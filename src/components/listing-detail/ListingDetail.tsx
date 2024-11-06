@@ -52,7 +52,7 @@ const ListingDetail: React.FC = () => {
   return (
     <>
       <div className="bg-white shadow-md rounded-lg p-6 flex items-center ">
-        <MainDetailPage />
+        <MainDetailPage listingId={id}/>
         <SideLayout minAgeLimit={Number(form.minAge)} maxAgeLimit={Number(form.maxAge)} listingId={id} />
       </div>
       <Reviews />

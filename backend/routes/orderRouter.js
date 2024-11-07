@@ -9,7 +9,7 @@ router.post("/checkout", authMiddleware, async function (req, res) {
   try {
     const newOrderData = {
       ...req.body,
-      user: userId,  // Add the userId to the order data
+      user: userId,
     };
     const newOrder = new Orders(newOrderData);
     await newOrder.save();

@@ -27,13 +27,21 @@ const checkoutSchema = new mongoose.Schema(
         default: "ON HOLD",
         required: false,
     },
-    courseTitle:{
+    // courseTitle:{
+    //     type: String,
+    //     required: true,
+    // },
+    // coursePrice: {
+    //     type: String,
+    //     required: true
+    // },
+    listingId: {
         type: String,
         required: true,
     },
-    coursePrice: {
+    memberId: {
         type: String,
-        required: true
+        required: true,
     }
     // title: {type: String}, 
     // totalPrice: {type: String}

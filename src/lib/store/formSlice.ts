@@ -20,6 +20,7 @@ interface FormState {
   maxAge: string;
   description: string;
   trainerId: string;
+  isFavorite:boolean;
 }
 
 const initialState: FormState = {
@@ -41,6 +42,7 @@ const initialState: FormState = {
       minAge: '',
       maxAge: '',
       trainerId: '',
+      isFavorite:false,
       description: 'The violin, sometimes referred as a fiddle,[a] is a wooden chordophone, and is the smallest, and thus highest-pitched instrument (soprano) in regular use in the violin family. Smaller violin-type instruments exist, including the violino piccolo and the pochette, but these are virtually unused. Most violins have a hollow wooden body, and commonly have four strings (sometimes five), usually tuned in perfect fifths with notes G3, D4, A4, E5, and are most commonly played by drawing a bow across the strings.',
 };
 

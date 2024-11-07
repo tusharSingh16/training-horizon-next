@@ -78,6 +78,7 @@ const ListingCard: React.FC<ListingCardProps> = ({
         maxAge,
         description,
         trainerId,
+        isFavorite,
       })
     );
   };

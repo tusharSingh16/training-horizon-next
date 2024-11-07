@@ -64,6 +64,8 @@ const Dashboard:React.FC<ChildComponentProps> = ( {value ,setValue})=> {
             $500 <span className="text-green-500 text-sm">+40</span>
           </p>
         </div>
+
+    
       </div>
 
          {value=='trainers'?<Trainers/>:<></> }

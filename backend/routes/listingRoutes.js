@@ -48,15 +48,6 @@ const postListingSchema = zod.object({
   description: zod.string(),
 });
 
-// listingRouter.get("/listing", authMiddleware, async function (req, res) {
-//   const listing = await Listing.findOne({
-//     userId: res.userId,
-//   });
-//   res.status(200).json({
-//     balance: listing.balance,
-//   });
-// });
-//can be used in listing filtering
 listingRouter.get("/listing", async function (req, res) {
 
   const listings = await Listing.find();

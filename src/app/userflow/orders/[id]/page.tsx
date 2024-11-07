@@ -27,9 +27,12 @@ const MyOrders: React.FC = () => {
         if(!id) return;
         const fetchOrders = async (id: string) => {
           try {
-            const response = await axios.get("http://localhost:3005/api/v1/order/getOrdersByUserId/" + id.toString());
-            console.log(id);
-            setOrders(response.data.orders); // Assuming the API returns orders in `response.data.orders`
+            const response = await axios.get("http://localhost:3005/api/v1/order/getOrdersDetailsByUserId/" + id.toString());
+            const fetchedOrders = response.data.orders.map((order: any) => ({
+              ...order,
+              coursePrice: order.price, // Assuming `price` is returned from the API
+            }));
+            setOrders(fetchedOrders); // Assuming the API returns orders in `response.data.orders`
           } catch (err: any) {
             setError(err.response?.data?.message || 'Something went wrong');
           } finally {
@@ -44,6 +47,21 @@ const MyOrders: React.FC = () => {
         const date = new Date(dateString);
         return date.toISOString().split('T')[0]; // Returns YYYY-MM-DD
       };
+      const calculateTax = (price: string) => {
+        const parsedPrice = parseFloat(price) || 0;
+        return Number((0.18 * parsedPrice).toFixed(2)); // Tax is 18%
+      };
+    
+      const calculateTotal = (price: string) => {
+        const parsedPrice = parseFloat(price) || 0;
+        const tax = calculateTax(price);
+        const fee = calculateFee(price);
+        return (parsedPrice + tax + fee).toFixed(2); // Total = Subtotal + Tax
+      };
+      const calculateFee = (price: string) =>{
+        const parsedPrice = parseFloat(price) || 0;
+        return Number((0.10 * parsedPrice).toFixed(2)); //Service Fee is 10%
+      }
   return (
     <>
     <Navbar/>
@@ -69,7 +87,7 @@ const MyOrders: React.FC = () => {
                   {order.status}
                 </span>
               </td>
-              <td className="py-2 px-4">${order.coursePrice}</td>
+              <td className="py-2 px-4">${calculateTotal(order.coursePrice)}</td>
               <td className="py-2 px-4">
                 <Link className='text-blue-600' href={`/userflow/orderdetails/${order._id}`}> View</Link>
               </td>
@@ -77,11 +95,6 @@ const MyOrders: React.FC = () => {
           ))}
         </tbody>
       </table>
-      <div className="mt-4 flex justify-end">
-        <button className="bg-gray-200 hover:bg-gray-300 text-gray-700 py-2 px-4 rounded">
-          Next
-        </button>
-      </div>
     </div>
     <Footer/>
     </>

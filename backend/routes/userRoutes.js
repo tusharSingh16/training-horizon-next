@@ -5,26 +5,27 @@ const JWT_SECRET = require("../config/jwt");
 const { User } = require("../models/user");
 const { authMiddleware } = require("../middleware/authMiddleware");
 const Member = require("../models/Member");
+const sendEmail = require("../utils/sendEmail");
 
 const userRouter = express.Router();
 
 // input validation
-const userSignupSchema =zod.object({
-        email:zod.string().email(),
-        firstName:zod.string(),
-        lastName:zod.string(),
-        password:zod.string(),
-        role: zod.string(),
-})
-const userSigninSchema =zod.object({
-    email:zod.string().email(),
-    password:zod.string(),
-})
-const userUpdateSchema =zod.object({
-        firstName:zod.string().optional(),
-        lastName:zod.string().optional(),
-        password:zod.string().optional(),
-})
+const userSignupSchema = zod.object({
+  email: zod.string().email(),
+  firstName: zod.string(),
+  lastName: zod.string(),
+  password: zod.string(),
+  role: zod.string(),
+});
+const userSigninSchema = zod.object({
+  email: zod.string().email(),
+  password: zod.string(),
+});
+const userUpdateSchema = zod.object({
+  firstName: zod.string().optional(),
+  lastName: zod.string().optional(),
+  password: zod.string().optional(),
+});
 
 userRouter.post("/google-auth", async function (req, res) {
   const inputFromUser = {
@@ -74,65 +75,6 @@ userRouter.post("/google-auth", async function (req, res) {
   }
 });
 
-userRouter.post('/signup',async function (req,res) {
-    const inputFromUser={
-        email:req.body.email,
-        firstName:req.body.firstName,
-        lastName:req.body.lastName,
-        password:req.body.password,
-        role: req.body.role || 'user',
-    } 
-    const result =userSignupSchema.safeParse(inputFromUser);
-    
-    if (!result.success ) {
-       return res.status(411).json({
-            message:"Email already taken  1 / Incorrect inputs"
-        })
-    }
-    try {
-        const isValid= await User.findOne({
-            email:inputFromUser.email,
-        })
-        if (isValid) {
-            return res.status(411).json({
-                message: "Email already taken 2 /Incorrect inputs"
-            })
-        }
-
-        const user =  await User.create(inputFromUser);
-     const token = jwt.sign({
-        userId : user._id,
-        role : user.role
-    },JWT_SECRET);
-        res.status(200).json({
-            message:"user created successfully",
-            token:token,
-            _id: user._id,
-        })
-    } catch (error) {
-        res.status(411).json({
-            message:error
-        })
-    }
-})
-
-// const userSignupSchema = zod.object({
-//   email: zod.string().email(),
-//   firstName: zod.string(),
-//   lastName: zod.string(),
-//   password: zod.string(),
-//   role: zod.string(),
-// });
-// const userSigninSchema = zod.object({
-//   email: zod.string().email(),
-//   password: zod.string(),
-// });
-// const userUpdateSchema = zod.object({
-//   firstName: zod.string().optional(),
-//   lastName: zod.string().optional(),
-//   password: zod.string().optional(),
-// });
-
 userRouter.post("/signup", async function (req, res) {
   const inputFromUser = {
     email: req.body.email,
@@ -166,8 +108,21 @@ userRouter.post("/signup", async function (req, res) {
       },
       JWT_SECRET
     );
+
+    await sendEmail(
+      user.email,
+      'Member Registeration',
+      `Hello ${user.FirstName}, \n\nYou have successfully registered ${inputFromUser.firstName} as a member into your training horizon account.`
+    );
+    // member email not available yet!!
+    // await sendEmail(
+    //   inputFromUser.email,
+    //   'Member Registeration',
+    //   `Hello ${inputFromUser.firstName}, \n\nYou have successfully been registered by ${user.FirstName} as a member into their training horizon account.`
+    // );
+
     res.status(200).json({
-      message: "user created successfully",
+      message: "User created successfully",
       token: token,
       _id: user._id,
     });
@@ -177,6 +132,7 @@ userRouter.post("/signup", async function (req, res) {
     });
   }
 });
+
 
 userRouter.post("/signin", async function (req, res) {
   const userInput = {
@@ -194,7 +150,6 @@ userRouter.post("/signin", async function (req, res) {
       email: userInput.email,
       password: userInput.password,
     });
-
     if (user) {
       //admin role
       // const userRole = user.role;
@@ -206,6 +161,13 @@ userRouter.post("/signin", async function (req, res) {
           userId: user._id,
         },
         JWT_SECRET
+      );
+
+      // sending email;
+      await sendEmail(
+        user.email,
+        "Login Notification",
+        `Hello ${user.firstName}, \n\nYou have successfully logged into your account.`
       );
 
       res.status(200).json({
@@ -254,7 +216,7 @@ userRouter.get("/username", authMiddleware, async function (req, res) {
   });
   res.status(200).json({
     _id: user._id,
-    user: user.firstName, 
+    user: user.firstName,
     role: user.role,
   });
 });
@@ -269,9 +231,7 @@ userRouter.get("/getUserById/:id", authMiddleware, async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    res
-      .status(200)
-      .json({ message: "User retrieved successfully", user });
+    res.status(200).json({ message: "User retrieved successfully", user });
   } catch (error) {
     res
       .status(500)
@@ -317,19 +277,21 @@ userRouter.post("/registerMember", authMiddleware, async (req, res) => {
     user.familyMembers.push(savedMember._id);
     await user.save();
 
-    res
-      .status(201)
-      .json({
-        message: "Family member registered successfully",
-        member: savedMember,
-      });
+    await sendEmail(
+      user.email,
+      'Training Horizon Signup',
+      `Hello ${user.FirstName}, \n\nYou have successfully created your training horizon account.`
+    );
+
+    res.status(201).json({
+      message: "Family member registered successfully",
+      member: savedMember,
+    });
   } catch (error) {
-    res
-      .status(500)
-      .json({
-        message: "Error registering family member",
-        error: error.message,
-      });
+    res.status(500).json({
+      message: "Error registering family member",
+      error: error.message,
+    });
   }
 });
 
@@ -354,8 +316,19 @@ userRouter.get("/allmembers", authMiddleware, async (req, res) => {
 userRouter.put("/members/:id", authMiddleware, async (req, res) => {
   const memberId = req.params.id;
   console.log(memberId);
-  const { name, age, dob, relationship, doctorName, doctorNumber, gender, city, address, postalCode, agreeToTerms } =
-    req.body;
+  const {
+    name,
+    age,
+    dob,
+    relationship,
+    doctorName,
+    doctorNumber,
+    gender,
+    city,
+    address,
+    postalCode,
+    agreeToTerms,
+  } = req.body;
   try {
     // Find the member by ID and update it
     const updatedMember = await Member.findByIdAndUpdate(

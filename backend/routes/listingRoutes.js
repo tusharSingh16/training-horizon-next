@@ -47,7 +47,6 @@ const postListingSchema = zod.object({
   maxAge: zod.string(),
   description: zod.string(),
 });
-
 listingRouter.get("/listing", async function (req, res) {
 
   const listings = await Listing.find();
@@ -58,6 +57,7 @@ listingRouter.get("/listing", async function (req, res) {
 listingRouter.get("/bulk", async function (req, res) {
   const filter = req.query.filter || "";
   const listings = await Listing.find({
+    isApproved: true,
     $or: [
       {
         category: {

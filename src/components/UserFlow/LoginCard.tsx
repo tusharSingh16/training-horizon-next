@@ -87,7 +87,7 @@ function LoginCard() {
           <div className="flex justify-between w-[350px]">
             <div className="text-sm">
               Don't have an account?{" "}
-              <Link href="/login">
+              <Link href="/userflow/signup">
                 <span className="text-blue-600 cursor-pointer hover:underline">
                   Sign up!
                 </span>

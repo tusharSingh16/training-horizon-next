@@ -51,7 +51,6 @@ const ListingsPage: React.FC = () => {
           setListings( res.data);
         })
     },[keywords,selectedCategories])
-    // console.log(listings);
 
   const handleSearch = () => {
     const filtered = listings.filter((listing) => {

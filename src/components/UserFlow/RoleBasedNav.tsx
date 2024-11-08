@@ -7,10 +7,12 @@ const RoleBasedNav = () => {
     const [role , setRole] = useState("");
     const [trainerId, setTrainerId] = useState();
     const [isApproved, setIsApproved] = useState(false);
-  const [popupVisible, setPopupVisible] = useState(false);
-  const [popupMessage, setPopupMessage] = useState("");
-  const handleSignOut = () => {
-    localStorage.removeItem('token');
+    const [popupVisible, setPopupVisible] = useState(false);
+    const [popupMessage, setPopupMessage] = useState("");
+    const handleSignOut = () => {
+    window.localStorage.removeItem('token');
+    window.localStorage.removeItem('userId');
+    // window.localStorage.removeItem('role');
     window.location.reload();
   };
 

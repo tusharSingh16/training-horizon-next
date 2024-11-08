@@ -41,12 +41,14 @@ const RegisterMemberForm = () => {
     handleSubmit,
     formState: { errors },
     reset,
+    setValue,
   } = useForm({
     resolver: zodResolver(registerMemberSchema),
   });
 
   const [showPopup, setShowPopup] = useState(false);
   const [popUpMessage, setpopUpMessage] = useState("");
+  const [age, setAge] = useState<number | null>(null);
 
   const onSubmit = async (data: any) => {
     try {
@@ -68,6 +70,22 @@ const RegisterMemberForm = () => {
       setShowPopup(true);
       console.error("Error registering member:", error);
     }
+  };
+
+  const calculateAge = (dob: string) => {
+    const birthDate = new Date(dob);
+    const today = new Date();
+    let calculatedAge = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+
+    if (
+      monthDiff < 0 ||
+      (monthDiff === 0 && today.getDate() < birthDate.getDate())
+    ) {
+      calculatedAge--;
+    }
+
+    setAge(calculatedAge >= 0 ? calculatedAge : null);
   };
 
   return (
@@ -94,25 +112,6 @@ const RegisterMemberForm = () => {
               <p className="text-red-500 text-sm">{errors.name.message}</p>
             )}
           </div>
-
-          {/* Age */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Age
-            </label>
-            <input
-              type="number"
-              {...register("age", { valueAsNumber: true })}
-              className={`mt-1 block w-full px-4 py-2   shadow-sm border ${
-                errors.age ? "border-red-500" : "border-gray-300"
-              }`}
-              placeholder="Enter age"
-            />
-            {errors.age && (
-              <p className="text-red-500 text-sm">{errors.age.message}</p>
-            )}
-          </div>
-
           {/* Date of Birth */}
           <div>
             <label className="block text-sm font-medium text-gray-700">
@@ -124,10 +123,28 @@ const RegisterMemberForm = () => {
               className={`mt-1 block w-full px-4 py-2   shadow-sm border ${
                 errors.dob ? "border-red-500" : "border-gray-300"
               }`}
+              onChange={(e) => {
+                const dobValue = e.target.value;
+                setValue("dob", dobValue); // Ensures form state is updated
+                calculateAge(dobValue); // Also calculates age
+              }}
             />
             {errors.dob && (
               <p className="text-red-500 text-sm">{errors.dob.message}</p>
             )}
+          </div>
+
+          {/* age */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Age
+            </label>
+            <input
+              type="number"
+              value={age !== null ? age : ""}
+              className="mt-1 block w-full px-4 py-2 shadow-sm border border-gray-300 bg-gray-100"
+              readOnly
+            />
           </div>
 
           {/* Relationship */}

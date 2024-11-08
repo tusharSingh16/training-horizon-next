@@ -13,27 +13,35 @@ import Link from "next/link";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 
-
-
 function LoginCard() {
   const [email, setEmail] = useState("");
-const [password, setPassword] = useState("");
-const router = useRouter();
-async function submitForm() {
-  try {
-    const res = await axios.post("http://localhost:3005/api/v1/user/signin", {
-      email,
-      password,
-    });
+  const [password, setPassword] = useState("");
+  const router = useRouter();
 
-    console.log(res.data.token);
+  async function submitForm() {
+    try {
+      const res = await axios.post("http://localhost:3005/api/v1/user/signin", {
+        email,
+        password,
+      });
 
-    window.localStorage.setItem("token", res.data.token);
-    router.push('/')
-  } catch (error) {
-    console.log(error);
+      // Log user information
+      console.log(res.data._id); // Check what the response contains
+
+      // Store user ID and token in localStorage
+      window.localStorage.setItem("userId", res.data._id); 
+      console.log(res.data._id);
+      console.log("id saved");// Assuming the user ID is returned in the response
+      window.localStorage.setItem("token", res.data.token);
+      console.log("token saved"); // Store token
+
+      // Redirect after successful login
+      router.push('/');
+    } catch (error) {
+      console.log('Login failed:', error); // Handle login failure
+    }
   }
-}
+
   return (
     <main className="bg-[#56C1FF] h-screen flex items-center justify-center p-10 w-full">
       <Card className="w-[600px] h-[550px] mx-auto p-6 shadow-lg border-2 border-blue-400">
@@ -97,4 +105,5 @@ async function submitForm() {
     </main>
   );
 }
+
 export default LoginCard;

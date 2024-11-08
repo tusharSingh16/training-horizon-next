@@ -2,7 +2,7 @@ const express = require("express");
 const zod = require("zod");
 const jwt = require("jsonwebtoken");
 const JWT_SECRET = require("../config/jwt");
-const { User } = require("../models/User");
+const { User } = require("../models/user");
 const { authMiddleware } = require("../middleware/authMiddleware");
 const Member = require("../models/Member");
 const { Enrollment } = require("../models/Enrollment");
@@ -105,6 +105,7 @@ userRouter.post("/signin", async function (req, res) {
       res.status(200).json({
         msg: "User logged in successfully",
         token: token,
+        _id: user._id,
       });
     } else {
       res.status(411).json({
@@ -182,7 +183,84 @@ userRouter.post("/registerMember", authMiddleware, async (req, res) => {
       postalCode,
       agreeToTerms,
     });
+    userRouter.get("/username", authMiddleware, async function (req, res) {
+      const user = await User.findOne({
+        _id: req.userId,
+      });
+      res.status(200).json({
+        _id: user._id,
+        user: user.firstName,
+        role: user.role,
+      });
+    });
 
+    userRouter.get("/getUserById/:id", authMiddleware, async (req, res) => {
+      const userId = req.params.id;
+
+      try {
+        const user = await User.findById(userId);
+
+        if (!user) {
+          return res.status(404).json({ message: "User not found" });
+        }
+
+        res.status(200).json({ message: "User retrieved successfully", user });
+      } catch (error) {
+        res
+          .status(500)
+          .json({ message: "Error fetching user", error: error.message });
+      }
+    });
+
+    userRouter.post("/registerMember", authMiddleware, async (req, res) => {
+      try {
+        const {
+          name,
+          age,
+          dob,
+          relationship,
+          doctorName,
+          doctorNumber,
+          gender,
+          city,
+          address,
+          postalCode,
+          agreeToTerms,
+        } = req.body;
+        const userId = req.userId;
+        // console.log("The user Id is " + userId);
+        const newMember = new Member({
+          name,
+          age,
+          dob,
+          relationship,
+          doctorName,
+          doctorNumber,
+          gender,
+          city,
+          address,
+          postalCode,
+          agreeToTerms,
+        });
+
+        const savedMember = await newMember.save();
+
+        // Add the member to the user's familyMembers array
+        const user = await User.findById(userId);
+        user.familyMembers.push(savedMember._id);
+        await user.save();
+
+        res.status(201).json({
+          message: "Family member registered successfully",
+          member: savedMember,
+        });
+      } catch (error) {
+        res.status(500).json({
+          message: "Error registering family member",
+          error: error.message,
+        });
+      }
+    });
     const savedMember = await newMember.save();
 
     // Add the member to the user's familyMembers array
@@ -223,8 +301,19 @@ userRouter.get("/allmembers", authMiddleware, async (req, res) => {
 userRouter.put("/members/:id", authMiddleware, async (req, res) => {
   const memberId = req.params.id;
   console.log(memberId);
-  const { name, age, dob, relationship, doctorName, doctorNumber, bloodGroup } =
-    req.body;
+  const {
+    name,
+    age,
+    dob,
+    relationship,
+    doctorName,
+    doctorNumber,
+    gender,
+    city,
+    address,
+    postalCode,
+    agreeToTerms,
+  } = req.body;
   try {
     // Find the member by ID and update it
     const updatedMember = await Member.findByIdAndUpdate(
@@ -236,7 +325,6 @@ userRouter.put("/members/:id", authMiddleware, async (req, res) => {
         relationship,
         doctorName,
         doctorNumber,
-        bloodGroup,
         gender,
         city,
         address,
@@ -260,56 +348,239 @@ userRouter.put("/members/:id", authMiddleware, async (req, res) => {
   }
 });
 
-// Routes for enrollement logic
-// Enroll a user in a course
-userRouter.post("/enroll", async (req, res) => {
-  const { listingId, userId, memberId } = req.body;
-
-  if (!listingId || !userId || !memberId) {
-    return res
-      .status(400)
-      .json({ error: "Listing ID, User ID, and Member ID are required" });
-  }
+userRouter.get("/members/:id", authMiddleware, async (req, res) => {
+  const memberId = req.params.id;
 
   try {
-    const existingEnrollment = await Enrollment.findOne({
-      listingId,
-      userId,
-      memberId,
-    });
+    const member = await Member.findById(memberId);
 
-    if (existingEnrollment) {
-      return res
-        .status(400)
-        .json({ error: "User/Member already enrolled in this course" });
+    if (!member) {
+      return res.status(404).json({ message: "Family member not found" });
     }
-
-    const enrollment = new Enrollment({ listingId, userId, memberId });
-    await enrollment.save();
 
     res
       .status(200)
-      .json({ message: "User/Member enrolled successfully", enrollment });
+      .json({ message: "Family member retrieved successfully", member });
   } catch (error) {
-    console.error("Error enrolling user:", error);
-    res.status(500).json({ error: "Failed to enroll user/member" });
+    res
+      .status(500)
+      .json({ message: "Error fetching family member", error: error.message });
   }
 });
+// Routes for enrollement logic
+// Enroll a user in a course
+userRouter.post("/enroll", async (req, res) => {
+  const { listingId, memberIds } = req.body; // Accept an array of memberIds
 
-// Get enrollment count for a course
-userRouter.get("/enrollment/:listingId", async (req, res) => {
-  const { listingId } = req.params;
-
-  if (!listingId) {
-    return res.status(400).json({ error: "Course ID is required" });
+  if (!listingId || !Array.isArray(memberIds) || memberIds.length === 0) {
+    return res.status(400).json({
+      error: "Listing ID and an array of Member IDs are required",
+    });
   }
 
   try {
-    const count = await Enrollment.countDocuments({ listingId });
-    res.status(200).json({ listingId, enrollmentCount: count });
+    // Find the enrollment document for the given listingId
+    let enrollment = await Enrollment.findOne({ listingId });
+
+    if (!enrollment) {
+      enrollment = new Enrollment({
+        listingId,
+        memberIds: memberIds,
+      });
+      await enrollment.save();
+      return res.status(200).json({
+        message: "Enrollment created and members added",
+        enrollment,
+      });
+    }
+
+    // Filter out memberIds that are already in the members array
+    const newMembers = memberIds.filter(
+      (id) => !enrollment.memberIds.includes(id)
+    );
+
+    if (newMembers.length === 0) {
+      return res.status(400).json({
+        error: "All provided members are already enrolled in this listing",
+      });
+    }
+
+    // Add the new members to the array and save
+    enrollment.memberIds.push(...newMembers);
+    await enrollment.save();
+
+    res.status(200).json({
+      message: "New members added to the enrollment",
+      addedMembers: newMembers,
+      enrollment,
+    });
   } catch (error) {
-    console.error("Error fetching enrollment count:", error);
-    res.status(500).json({ error: "Failed to fetch enrollment count" });
+    console.error("Error enrolling members:", error);
+    res.status(500).json({ error: "Failed to enroll members" });
+  }
+});
+
+// userRouter.post("/enroll", async (req, res) => {
+//   const { listingId, memberId } = req.body;
+
+//   if (!listingId || !memberId) {
+//     return res
+//       .status(400)
+//       .json({ error: "Listing ID and Member ID are required" });
+//   }
+
+//   try {
+//     let enrollment = await Enrollment.findOne({ listingId });
+
+//     if (!enrollment) {
+//       // Create a new enrollment if it doesn't exist
+//       enrollment = new Enrollment({
+//         listingId,
+//         members: [memberId],
+//       });
+//       await enrollment.save();
+//       return res
+//         .status(200)
+//         .json({ message: "Enrollment created and member added", enrollment });
+//     }
+
+//     // Check if memberId already exists in members array
+//     if (enrollment.members.includes(memberId)) {
+//       return res
+//         .status(400)
+//         .json({ error: "Member already enrolled in this listing" });
+//     }
+
+//     // Add the new member to the array and save
+//     enrollment.members.push(memberId);
+//     await enrollment.save();
+
+//     res
+//       .status(200)
+//       .json({ message: "Member added to the enrollment", enrollment });
+//   } catch (error) {
+//     console.error("Error enrolling member:", error);
+//     res.status(500).json({ error: "Failed to enroll member" });
+//   }
+// });
+
+// userRouter.post("/enroll", async (req, res) => {
+//   const { listingId, userId, memberId } = req.body;
+
+//   if (!listingId || !userId || !memberId) {
+//     return res
+//       .status(400)
+//       .json({ error: "Listing ID, User ID, and Member ID are required" });
+//   }
+
+//   try {
+//     const existingEnrollment = await Enrollment.findOne({
+//       listingId,
+//       userId,
+//       memberId,
+//     });
+
+//     if (existingEnrollment) {
+//       return res
+//         .status(400)
+//         .json({ error: "User/Member already enrolled in this course" });
+//     }
+
+//     const enrollment = new Enrollment({ listingId, userId, memberId });
+//     await enrollment.save();
+
+//     res
+//       .status(200)
+//       .json({ message: "User/Member enrolled successfully", enrollment });
+//   } catch (error) {
+//     console.error("Error enrolling user:", error);
+//     res.status(500).json({ error: "Failed to enroll user/member" });
+//   }
+// });
+// userRouter.post("/enroll", async (req, res) => {
+//   const { listingId, userId, memberId } = req.body;
+
+//   if (!listingId || !userId || !memberId) {
+//     return res
+//       .status(400)
+//       .json({ error: "Listing ID, User ID, and Member ID are required" });
+//   }
+
+//   try {
+//     const enrollment = await Enrollment.findOne({ listingId, userId });
+
+//     if (!enrollment) {
+//       // Create a new enrollment if it doesn't exist
+//       const newEnrollment = new Enrollment({
+//         listingId,
+//         userId,
+//         members: [memberId],
+//       });
+//       await newEnrollment.save();
+//       return res.status(200).json({
+//         message: "Enrollment created and member added",
+//         enrollment: newEnrollment,
+//       });
+//     }
+
+//     // Check if memberId already exists in members array
+//     if (enrollment.members.includes(memberId)) {
+//       return res
+//         .status(400)
+//         .json({ error: "Member already enrolled in this course" });
+//     }
+
+//     // Add the new member to the array and save
+//     enrollment.members.push(memberId);
+//     await enrollment.save();
+
+//     res
+//       .status(200)
+//       .json({ message: "Member added to the enrollment", enrollment });
+//   } catch (error) {
+//     console.error("Error enrolling member:", error);
+//     res.status(500).json({ error: "Failed to enroll member" });
+//   }
+// });
+
+// Get enrollment count for a course
+// userRouter.get("/enrollment/:listingId", async (req, res) => {
+//   const { listingId } = req.params;
+
+//   if (!listingId) {
+//     return res.status(400).json({ error: "Course ID is required" });
+//   }
+
+//   try {
+//     const count = await Enrollment.countDocuments({ listingId });
+//     res.status(200).json({ listingId, enrollmentCount: count });
+//   } catch (error) {
+//     console.error("Error fetching enrollment count:", error);
+//     res.status(500).json({ error: "Failed to fetch enrollment count" });
+//   }
+// });
+userRouter.get("/enrolled/:listingId", async (req, res) => {
+  const { listingId } = req.params;
+
+  if (!listingId) {
+    return res.status(400).json({ error: "Listing ID is required" });
+  }
+
+  try {
+    const enrollment = await Enrollment.findOne({ listingId });
+
+    if (!enrollment) {
+      return res
+        .status(404)
+        .json({ error: "No enrollment found for this listing" });
+    }
+
+    const memberCount = enrollment.memberIds.length;
+
+    res.status(200).json({ listingId, memberCount });
+  } catch (error) {
+    console.error("Error counting members:", error);
+    res.status(500).json({ error: "Failed to count members" });
   }
 });
 

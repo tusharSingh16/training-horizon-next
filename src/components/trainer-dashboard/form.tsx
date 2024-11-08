@@ -76,13 +76,13 @@ export function TrainerForm() {
         firstName: values.fname,
         lastName: values.lname,
         password: values.password,
-        role: "trainer" // Hardcoding role as 'trainer'
+        role: "trainer" 
       };
       const userResponse = await axios.post("http://localhost:3005/api/v1/user/signup", payload);
 
       const userId = userResponse.data._id;
       const trainerPayload = {
-        _id: userId, // Set _id to be the same as the user _id
+        _id: userId, 
         fname: values.fname,
         lname: values.lname,
         qualifications: values.qualifications,

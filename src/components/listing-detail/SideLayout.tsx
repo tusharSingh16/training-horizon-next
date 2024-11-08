@@ -5,8 +5,9 @@ import React, { useEffect, useState } from "react";
 import ReplyToListing from "./ReplyToListing";
 import MapWidget from './MapWidget';
 import axios from 'axios';
+import { useRouter } from 'next/navigation';
 
-function SideLayout({minAgeLimit, maxAgeLimit}: {minAgeLimit: number, maxAgeLimit: number}) {
+function SideLayout({minAgeLimit, maxAgeLimit, listingId}: {minAgeLimit: number, maxAgeLimit: number, listingId: string}) {
 
   const [name, setName] = useState("user");
   const [members, setMembers] = useState([]);
@@ -15,14 +16,15 @@ function SideLayout({minAgeLimit, maxAgeLimit}: {minAgeLimit: number, maxAgeLimi
   const [rating, setRating] = useState(5);
   const [activeTab, setActiveTab] = useState<string>("Overview");
   const [isOpen, setIsOpen] = useState(false);
+  const router = useRouter();
 
   const form = useSelector((state: RootState) => state.form);
   const tabs = ["Overview", "Instructors", "Curriculum", "Reviews", "FAQs"];
-  useEffect(()=>  {
-    // console.log(minAgeLimit, maxAgeLimit)
-    console.log(form.title),
-        console.log(form.ageGroup)
-  })
+  // useEffect(()=>  {
+  //   // console.log(minAgeLimit, maxAgeLimit)
+  //   console.log(form.title),
+  //       console.log(form.ageGroup)
+  // })
   // Fetch the username and members
   useEffect(() => {
     const fetchUserName = async () => {
@@ -71,6 +73,12 @@ function SideLayout({minAgeLimit, maxAgeLimit}: {minAgeLimit: number, maxAgeLimi
     }
   };
 
+  const handleRegister = () => {
+    if (selectedMember) {
+      router.push(`/checkout/${listingId}?memberId=${selectedMember}`);
+    }
+  };
+
   return (
     <>
       {/* Right Section: Class Details */}
@@ -102,7 +110,7 @@ function SideLayout({minAgeLimit, maxAgeLimit}: {minAgeLimit: number, maxAgeLimi
           
           {/* Register Now Button */}
           <button
-            onClick={() => alert(`Registered ${selectedMember}`)} 
+            onClick={handleRegister} 
             disabled={!selectedMember} // Button is disabled if no member is selected
             className={`w-full p-2 mb-5 text-white rounded ${selectedMember ? 'bg-blue-500 hover:bg-blue-600' : 'bg-gray-300 cursor-not-allowed'}`}
           >

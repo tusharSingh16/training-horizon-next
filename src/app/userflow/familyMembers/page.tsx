@@ -1,4 +1,5 @@
-"use client";
+"use client"
+
 import Navbar from "@/components/UserFlow/NavBar";
 import axios from "axios";
 import Link from "next/link";
@@ -8,6 +9,7 @@ export default function FamilyMembers() {
   const [familyMembers, setFamilyMembers] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
   const [currentMember, setCurrentMember] = useState(null);
+  const [isLoading, setIsLoading] = useState(true); // Add loading state
   const [updatedInfo, setUpdatedInfo] = useState({
     name: "",
     age: "",
@@ -25,15 +27,22 @@ export default function FamilyMembers() {
 
   useEffect(() => {
     const fetchFamilyMembers = async () => {
-      const res = await axios.get(
-        "http://localhost:3005/api/v1/user/allmembers",
-        {
-          headers: {
-            Authorization: "Bearer " + window.localStorage.getItem("token"),
-          },
-        }
-      );
-      setFamilyMembers(res.data.familyMembers);
+      try {
+        await new Promise((resolve) => setTimeout(resolve,1200)); // to test loader 
+        const res = await axios.get(
+          "http://localhost:3005/api/v1/user/allmembers",
+          {
+            headers: {
+              Authorization: "Bearer " + window.localStorage.getItem("token"),
+            },
+          }
+        );
+        setFamilyMembers(res.data.familyMembers);
+      } catch (error) {
+        console.error("Error fetching family members:", error);
+      } finally {
+        setIsLoading(false); // Stop loading once data is fetched
+      }
     };
     fetchFamilyMembers();
   }, []);
@@ -60,7 +69,7 @@ export default function FamilyMembers() {
   const handleSaveChanges = async () => {
     try {
       const response = await axios.put(
-        `http://localhost:3005/api/v1/members/${currentMember._id}`,
+        `http://localhost:3005/api/v1/user/members/${currentMember._id}`,
         updatedInfo,
         {
           headers: {
@@ -70,7 +79,7 @@ export default function FamilyMembers() {
       );
       if (response.status === 200) {
         // Update the local state to reflect changes
-        setFamilyMembers((prevMembers) =>
+        setFamilyMembers((prevMembers: any) =>
           prevMembers.map((member: any) =>
             member._id === currentMember._id
               ? response.data.updatedMember
@@ -89,21 +98,24 @@ export default function FamilyMembers() {
     <>
       <Navbar />
       <div className="flex flex-wrap space-y-2 justify-center">
-
-        {familyMembers.length === 0 ? (
+        {isLoading ? ( // Display loading icon while data is being fetched
+          <div className="flex items-center justify-center h-screen">
+            <div className="loader"></div> {/* Add your spinner here */}
+          </div>
+        ) : familyMembers.length === 0 ? (
           <div className="bg-white p-6 mx-6 my-6 flex flex-col justify-center items-center gap-3">
             <div>
-                <h2 className="text-2xl font-semibold text-gray-800">
-                  No members available!{" "}
-                </h2>
+              <h2 className="text-2xl font-semibold text-gray-800">
+                No members available!{" "}
+              </h2>
             </div>
             <div>
-                <Link
-                  href="/userflow/registerMember"
-                  className="text-gray-700 hover:text-black px-3 py-2 rounded-md text-sm font-medium border border-gray-200 bg-blue-300"
-                >
-                  Register New Member
-                </Link>
+              <Link
+                href="/userflow/registerMember"
+                className="text-gray-700 hover:text-black px-3 py-2 rounded-md text-sm font-medium border border-gray-200 bg-blue-300"
+              >
+                Register New Member
+              </Link>
             </div>
           </div>
         ) : (
@@ -170,8 +182,8 @@ export default function FamilyMembers() {
         )}
       </div>
 
-      {/* Edit Member Modal */}
-      {isEditing && (
+{/* Edit Member Modal */}
+{isEditing && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white rounded-lg p-6 w-1/3">
             <h2 className="text-xl font-semibold mb-4">Edit Family Member</h2>
@@ -250,6 +262,24 @@ export default function FamilyMembers() {
               }
               className="border border-gray-300 rounded p-2 mb-2 w-full"
             />
+            <input
+              type="text"
+              placeholder="Doctor's Name"
+              value={updatedInfo.doctorName}
+              onChange={(e) =>
+                setUpdatedInfo({ ...updatedInfo, doctorName: e.target.value })
+              }
+              className="border border-gray-300 rounded p-2 mb-2 w-full"
+            />
+            <input
+              type="text"
+              placeholder="Doctor's Number"
+              value={updatedInfo.doctorNumber}
+              onChange={(e) =>
+                setUpdatedInfo({ ...updatedInfo, doctorNumber: e.target.value })
+              }
+              className="border border-gray-300 rounded p-2 mb-2 w-full"
+            />
             <div className="flex items-center mb-2">
               <input
                 type="checkbox"
@@ -281,6 +311,32 @@ export default function FamilyMembers() {
           </div>
         </div>
       )}
+
+       <style jsx>{`
+              .loader {
+        position: relative;
+        width: 100px;
+        height: 100px;
+      }
+
+      .loader:before , .loader:after{
+        content: '';
+        border-radius: 50%;
+        position: absolute;
+        inset: 0;
+        box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.3) inset;
+      }
+      .loader:after {
+        box-shadow: 0 2px 0 #FF3D00 inset;
+        animation: rotate 2s linear infinite;
+      }
+
+      @keyframes rotate {
+        0% {  transform: rotate(0)}
+        100% { transform: rotate(360deg)}
+      }
+      `}</style>
+
     </>
   );
 }

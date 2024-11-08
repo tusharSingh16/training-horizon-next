@@ -138,6 +138,23 @@ const Editlisting: React.FC = () => {
         return; // Stop the form submission
       }
     }
+    if (listing?.startTime && listing?.endTime) {
+      const [startHours, startMinutes] = listing.startTime
+        .split(":")
+        .map(Number);
+      const [endHours, endMinutes] = listing.endTime.split(":").map(Number);
+
+      const startTime = new Date();
+      startTime.setHours(startHours, startMinutes, 0);
+
+      const endTime = new Date();
+      endTime.setHours(endHours, endMinutes, 0);
+
+      if (startTime >= endTime) {
+        window.alert("Start Time must be earlier than End Time");
+        return; // Stop the form submission
+      }
+    }
     const updatedListing = {
       ...listing!, // Spread the existing listing details
       days: listing?.days || [], // Ensure days is submitted as an array

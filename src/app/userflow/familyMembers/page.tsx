@@ -5,10 +5,39 @@ import axios from "axios";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 
+export interface familyMember {
+  _id: string;
+  name: string;
+  age: number;
+  dob: Date;
+  relationship: 'brother' | 'child' | 'father' | 'mother';
+  gender: 'male' | 'female' | 'other';
+  address: string;
+  city: string;
+  postalCode: string;
+  agreeToTerms: boolean;
+  doctorName: string;
+  doctorNumber: string;
+}
+export interface currentmember {
+  _id: string;
+  name: string;
+  age: number;
+  dob: Date;
+  relationship: 'brother' | 'child' | 'father' | 'mother';
+  gender: 'male' | 'female' | 'other';
+  address: string;
+  city: string;
+  postalCode: string;
+  agreeToTerms: boolean;
+  doctorName: string;
+  doctorNumber: string;
+}
+
 export default function FamilyMembers() {
-  const [familyMembers, setFamilyMembers] = useState([]);
+  const [familyMembers, setFamilyMembers] = useState<familyMember[]>([]);
   const [isEditing, setIsEditing] = useState(false);
-  const [currentMember, setCurrentMember] = useState(null);
+  const [currentMember, setCurrentMember] = useState<familyMember | null>(null);
   const [isLoading, setIsLoading] = useState(true); // Add loading state
   const [updatedInfo, setUpdatedInfo] = useState({
     name: "",
@@ -83,6 +112,11 @@ export default function FamilyMembers() {
   };
 
   const handleSaveChanges = async () => {
+    if (!currentMember) {
+      console.error("Current member is not selected");
+      return;
+    }
+  
     try {
       const response = await axios.put(
         `http://localhost:3005/api/v1/user/members/${currentMember._id}`,

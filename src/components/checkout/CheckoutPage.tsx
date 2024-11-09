@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import axios from "axios";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   Form,
   FormItem,
@@ -125,6 +125,12 @@ function CheckoutPage() {
     setIsDialogOpen(true);
   };
 
+  const fillDefaultValues = useCallback ((userData: any) => {
+    form.setValue("firstName", userData.firstName || "");
+    form.setValue("lastName", userData.lastName || "");
+    form.setValue("email", userData.email || "");
+}, [form]);
+
   // Fetch user data
   useEffect(() => {
     const fetchUserData = async () => {
@@ -147,13 +153,9 @@ function CheckoutPage() {
     if (userId) {
       fetchUserData();
     }
-  }, [userId]);
+  }, [userId, fillDefaultValues]);
 
-  function fillDefaultValues(userData: any) {
-      form.setValue("firstName", userData.firstName || "");
-      form.setValue("lastName", userData.lastName || "");
-      form.setValue("email", userData.email || "");
-  }
+
 
   // Fetch listing data
   useEffect(() => {

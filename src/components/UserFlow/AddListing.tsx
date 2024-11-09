@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import axios from "axios";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useJsApiLoader, StandaloneSearchBox } from "@react-google-maps/api"
 import { Library } from "@googlemaps/js-api-loader"
 import { useRef } from "react";
@@ -87,6 +87,7 @@ export function AddListing() {
 
   const inputRef = useRef<google.maps.places.SearchBox | null>(null);
   const router = useRouter();
+  
   const searchParams = useSearchParams();
   const id = searchParams.get("listingId");
 
@@ -144,14 +145,14 @@ export function AddListing() {
       }
     }
   };
-  const handleDateChange = () => {
+  const handleDateChange = useCallback(() => {
     const startDate = form.getValues("startDate");
     const endDate = form.getValues("endDate");
-
+  
     if (startDate && endDate) {
       const start = new Date(startDate);
       const end = new Date(endDate);
-
+  
       if (end < start) {
         form.setError("endDate", {
           type: "manual",
@@ -161,9 +162,9 @@ export function AddListing() {
         form.clearErrors("endDate");
       }
     }
-  };
+  }, [form]);
 
-  const handleAgeChange = () => {
+  const handleAgeChange = useCallback ( () => {
     const minAge = form.getValues("minAge");
     const maxAge = form.getValues("maxAge");
 
@@ -180,7 +181,7 @@ export function AddListing() {
         form.clearErrors("maxAge")
       }
     }
-  };
+  }, [form]);
 
   useEffect(() => {
     const subscription = form.watch((_, { name }) => {
@@ -192,7 +193,7 @@ export function AddListing() {
       }
     });
     return () => subscription.unsubscribe();
-  }, [form.watch]);
+  }, [form, handleAgeChange, handleDateChange]);
 
   useEffect(() => {
     // Fetch data if listingId exists
@@ -237,7 +238,7 @@ export function AddListing() {
 
       fetchListing();
     }
-  }, [id]);
+  }, [id, form]);
 
   const handlePlaceSelect = () => {
     if (inputRef.current) {

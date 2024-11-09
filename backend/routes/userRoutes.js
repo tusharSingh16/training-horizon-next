@@ -111,7 +111,7 @@ userRouter.post("/signup", async function (req, res) {
 
     await sendEmail(
       user.email,
-      'Member Registeration',
+      "Member Registeration",
       `Hello ${user.FirstName}, \n\nYou have successfully registered ${inputFromUser.firstName} as a member into your training horizon account.`
     );
     // member email not available yet!!
@@ -132,7 +132,6 @@ userRouter.post("/signup", async function (req, res) {
     });
   }
 });
-
 
 userRouter.post("/signin", async function (req, res) {
   const userInput = {
@@ -255,7 +254,7 @@ userRouter.post("/registerMember", authMiddleware, async (req, res) => {
       agreeToTerms,
     } = req.body;
     const userId = req.userId;
-    // console.log("The user Id is " + userId);
+
     const newMember = new Member({
       name,
       age,
@@ -279,7 +278,7 @@ userRouter.post("/registerMember", authMiddleware, async (req, res) => {
 
     await sendEmail(
       user.email,
-      'Training Horizon Signup',
+      "Training Horizon Signup",
       `Hello ${user.FirstName}, \n\nYou have successfully created your training horizon account.`
     );
 

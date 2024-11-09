@@ -1,95 +1,66 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import UserDashboard from "./UserDashboard";
 import RoleBasedNav from "./RoleBasedNav";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [isTrainer, setIsTrainer] = useState(false);
 
-  // Check if the user is logged in by verifying the existence of a token in localStorage
-  const isUserLoggedIn = () => {
-    return !!localStorage.getItem("token");
-  };
-  const isUserTrainer = () => {
-    const userRole = localStorage.getItem("role");
-    return userRole === "trainer";
-  };
-  const loggedIn = isUserLoggedIn();
-  const isTrainer = isUserTrainer();
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const role = localStorage.getItem("role");
+
+    setLoggedIn(!!token);
+    setIsTrainer(role === "trainer");
+  }, []);
+
+  const navLinks = [
+    { href: "/", label: "Home" },
+    { href: "/courses", label: "Courses" },
+    { href: "/about", label: "About Us" },
+    { href: "/contact", label: "Contact" },
+    { href: "/trainer", label: "Our Trainers" },
+  ];
+
+  const renderNavLinks = (isMobile = false) =>
+    navLinks.map(({ href, label }) => (
+      <Link
+        key={href}
+        href={href}
+        className={`text-gray-700 hover:text-black ${
+          isMobile ? "block" : ""
+        } px-3 py-2 rounded-md text-sm font-medium`}
+      >
+        {label}
+      </Link>
+    ));
 
   return (
     <nav className="bg-white border-b border-gray-300 sticky top-0 z-50">
       <div className="container mx-auto p-5">
         {/* Desktop Navbar */}
         <div className="hidden md:flex justify-between items-center">
-          <div className="flex space-x-4">
-            <Link
-              href="/"
-              className="text-gray-700 hover:text-black px-3 py-2 rounded-md text-sm font-medium"
-            >
-              Home
-            </Link>
-            <Link
-              href="/courses"
-              className="text-gray-700 hover:text-black px-3 py-2 rounded-md text-sm font-medium"
-            >
-              Courses
-            </Link>
-            <Link
-              href="/about"
-              className="text-gray-700 hover:text-black px-3 py-2 rounded-md text-sm font-medium"
-            >
-              About Us
-            </Link>
-            <Link
-              href="/contact"
-              className="text-gray-700 hover:text-black px-3 py-2 rounded-md text-sm font-medium"
-            >
-              Contact
-            </Link>
-            <Link
-              href="/trainer"
-              className="text-gray-700 hover:text-black px-3 py-2 rounded-md text-sm font-medium"
-            >
-              Our Trainers
-            </Link>
-          </div>
+          <div className="flex space-x-4">{renderNavLinks()}</div>
           <div className="flex items-center space-x-4">
-            <Link
-              href="/dashboard/teacher/join_as_teacher"
-              className="bg-yellow-500 text-black px-3 py-2 rounded-md text-sm font-medium hover:bg-yellow-200"
-            >
-              Join as Trainer
-            </Link>
             {loggedIn ? (
               <>
-                <RoleBasedNav />
-                {/* {!isTrainer && (
-                  <Link
-                    href="/dashboard/teacher/join_as_teacher"
-                    className="bg-yellow-500 text-black px-3 py-2 rounded-md text-sm font-medium hover:bg-yellow-200"
-                  >
-                    Join as Trainer
-                  </Link>
-                )} */}
-                {/* {
-                  <Link
-                    href="/userflow/addListing"
-                    className="bg-blue-300 text-black px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-200"
-                  >
-                    Add Listing
-                  </Link>
-                } */}
-                {!isTrainer && (
-                  <Link
-                    href="/userflow/registerMember"
-                    className="text-gray-700 hover:text-black px-3 py-2 rounded-md text-sm font-medium"
-                  >
-                    Register Member
-                  </Link>
-                )}
+                {isTrainer ? <RoleBasedNav /> : null}
+                <Link
+                  href="/dashboard/teacher/join_as_teacher"
+                  className="bg-yellow-500 text-black px-3 py-2 rounded-md text-sm font-medium hover:bg-yellow-200"
+                >
+                  Join as Trainer
+                </Link>
+                <Link
+                  href="/userflow/registerMember"
+                  className="text-gray-700 hover:text-black px-3 py-2 rounded-md text-sm font-medium"
+                >
+                  Register Member
+                </Link>
                 <UserDashboard />
               </>
             ) : (
@@ -159,37 +130,8 @@ const Navbar = () => {
         {/* Mobile Navbar */}
         <div className={`${isOpen ? "block" : "hidden"} md:hidden`}>
           <div className="px-2 pt-2 pb-3 space-y-1">
-            <Link
-              href="/"
-              className="text-gray-700 hover:text-black block px-3 py-2 rounded-md text-base font-medium"
-            >
-              Home
-            </Link>
-            <Link
-              href="/courses"
-              className="text-gray-700 hover:text-black block px-3 py-2 rounded-md text-base font-medium"
-            >
-              Courses
-            </Link>
-            <Link
-              href="/about"
-              className="text-gray-700 hover:text-black block px-3 py-2 rounded-md text-base font-medium"
-            >
-              About Us
-            </Link>
-            <Link
-              href="/contact"
-              className="text-gray-700 hover:text-black block px-3 py-2 rounded-md text-base font-medium"
-            >
-              Contact
-            </Link>
-            <Link
-              href="/trainers"
-              className="text-gray-700 hover:text-black block px-3 py-2 rounded-md text-base font-medium"
-            >
-              Our Trainers
-            </Link>
-            {loggedIn && (
+            {renderNavLinks(true)}
+            {loggedIn ? (
               <>
                 <Link
                   href="/userflow/addListing"
@@ -203,10 +145,8 @@ const Navbar = () => {
                 >
                   Register Member
                 </Link>
+                <UserDashboard />
               </>
-            )}
-            {loggedIn ? (
-              <UserDashboard />
             ) : (
               <>
                 <Link

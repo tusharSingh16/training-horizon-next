@@ -44,7 +44,7 @@ const Sidebar: React.FC<ChildComponentProps> = ({ value, setValue }) => {
                   : " text-black"
               }`}
             >
-              <img
+              <Image
                 className="mx-2"
                 src="/img/dashboard/profile.svg"
                 alt="dashboardlogo"
@@ -64,7 +64,7 @@ const Sidebar: React.FC<ChildComponentProps> = ({ value, setValue }) => {
                   : " text-black"
               }`}
             >
-              <img
+              <Image
                 className="mx-2"
                 src="/img/dashboard/dashboardlogo.svg"
                 alt="dashboardlogo"
@@ -84,7 +84,7 @@ const Sidebar: React.FC<ChildComponentProps> = ({ value, setValue }) => {
                     : " text-black"
                 }`}
               >
-                <img
+                <Image
                   className="mx-2"
                   src="/img/dashboard/profile.svg"
                   alt="dashboardlogo"
@@ -124,7 +124,7 @@ const Sidebar: React.FC<ChildComponentProps> = ({ value, setValue }) => {
                   : " text-black"
               }`}
             >
-              <img
+              <Image
                 className="mx-2"
                 src="/img/dashboard/setting.svg"
                 alt="dashboardlogo"
@@ -141,7 +141,7 @@ const Sidebar: React.FC<ChildComponentProps> = ({ value, setValue }) => {
                   : " text-black"
               }`}
             >
-              <img
+              <Image
                 className="mx-2"
                 src="/img/dashboard/setting.svg"
                 alt="dashboardlogo"
@@ -158,7 +158,7 @@ const Sidebar: React.FC<ChildComponentProps> = ({ value, setValue }) => {
                   : " text-black"
               }`}
             >
-              <img
+              <Image
                 className="mx-2"
                 src="/img/dashboard/logout.svg"
                 alt="dashboardlogo"

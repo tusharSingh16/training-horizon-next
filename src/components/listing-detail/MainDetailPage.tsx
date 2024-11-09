@@ -7,6 +7,7 @@ import { useState } from "react"
 import { FormProvider } from "react-hook-form";
 import { Interface } from "readline";
 import router from "next/router";
+import Image from "next/image";
 interface ChildComponentProps {
   category: string;
   title: string;
@@ -117,7 +118,7 @@ if (response.ok) {
           {/* Left Section: Image or Icon */}
           <div className="bg-white rounded-md p-4 mb-4">
             <div className="relative h-64 w-full">
-              <img
+              <Image
                 className="h-[20rem] w-[55rem]"
                 src="/img/math.svg"
                 alt="Calculator and Tools"
@@ -142,7 +143,7 @@ if (response.ok) {
                 Learn {form.category}
               </button>
               <div className=" mt-3 m-3">
-              <img
+              <Image
              src={`${isSelected ? `/icons/filled_fav.png` : `/icons/fav.png`}`}
              alt="fav"
             className="cursor-pointer"

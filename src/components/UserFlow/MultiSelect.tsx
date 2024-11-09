@@ -266,3 +266,6 @@ export const MultiSelect = forwardRef<HTMLButtonElement, MultiSelectProp>(
         );
     }
 );
+
+
+MultiSelect.displayName = "MultiSelect";

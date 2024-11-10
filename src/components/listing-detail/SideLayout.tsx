@@ -73,11 +73,23 @@ function SideLayout({minAgeLimit, maxAgeLimit, listingId}: {minAgeLimit: number,
     }
   };
 
-  const handleRegister = () => {
+  const handleRegister = async () => {
     if (selectedMember) {
-      router.push(`/checkout/${listingId}?memberId=${selectedMember}`);
+      try {
+        const response = await axios.post("http://localhost:3005/api/v1/user/enroll", {
+          listingId, 
+          memberIds: [selectedMember]  // Wrap selectedMember in an array
+        });
+        if (response.status === 200 || response.status === 201) {
+          router.push(`/checkout/${listingId}?memberId=${selectedMember}`);
+        }
+      } catch (e) {
+        console.error("Error during enrollment:", e);
+        // Optionally set an error message state here to show to the user
+      }
     }
   };
+  
 
   return (
     <>

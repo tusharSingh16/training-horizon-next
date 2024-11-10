@@ -23,7 +23,7 @@ const PreviewPage = () => {
     const fetchListing = async (id: string) => {
       try {
         const response = await axios.get(
-          `http://localhost:3005/api/v1/listing/listing/${id}`
+          `${process.env.NEXT_PUBLIC_BASE_URL}/listing/listing/${id}`
         );
         const fetchedListing = response.data.listing;
         setListing(fetchedListing);
@@ -56,7 +56,7 @@ const PreviewPage = () => {
       }
 
       const response = await axios.delete(
-        `http://localhost:3005/api/v1/listing/deleteListingById/${listingId}`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}/listing/deleteListingById/${listingId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

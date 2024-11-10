@@ -13,7 +13,7 @@ const UserDashboard = () => {
   useEffect(() => {
     const fetchUserName = async () => {
       try {
-        const response = await axios.get("http://localhost:3005/api/v1/user/username", {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/user/username`, {
           headers: {
             Authorization: "Bearer " + window.localStorage.getItem("token"),
           },

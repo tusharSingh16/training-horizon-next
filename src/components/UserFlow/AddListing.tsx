@@ -137,7 +137,7 @@ export function AddListing() {
       try {
         const token = localStorage.getItem("token");
         const response = await axios.post(
-          "http://localhost:3005/api/v1/listing/add-listing",
+          `${process.env.NEXT_PUBLIC_BASE_URL}/listing/add-listing`,
           values,
           {
             headers: {
@@ -163,7 +163,7 @@ export function AddListing() {
         const token = localStorage.getItem("token");
 
         const response = await axios.put(
-          `http://localhost:3005/api/v1/listing/add-listing/${id}`,
+          `${process.env.NEXT_PUBLIC_BASE_URL}/listing/add-listing/${id}`,
           values,
           {
             headers: {
@@ -247,7 +247,7 @@ export function AddListing() {
         try {
           const token = localStorage.getItem("token");
           const response = await axios.get(
-            `http://localhost:3005/api/v1/listing/listing/${id}`,
+            `${process.env.NEXT_PUBLIC_BASE_URL}/listing/listing/${id}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,

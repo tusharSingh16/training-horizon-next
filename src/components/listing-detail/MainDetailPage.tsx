@@ -48,7 +48,7 @@ const MainDetailPage : React.FC<ListingId> = ({listingId , listingData})=>{
       }
 
       try {
-        const response = await fetch(`http://localhost:3005/api/v1/favorites/${userId}`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/favorites/${userId}`, {
           method: 'GET',
           headers: {
             Authorization: `Bearer ${ window.localStorage.getItem('token') }`,
@@ -86,7 +86,7 @@ const handleOnClick = async (event: React.MouseEvent<HTMLImageElement>) => {
   }
 
   try {
-    const response = await fetch('http://localhost:3005/api/v1/favorites', {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/favorites`, {
       method: newIsSelected ? 'POST' : 'DELETE',
       headers: {
         'Content-Type': 'application/json',

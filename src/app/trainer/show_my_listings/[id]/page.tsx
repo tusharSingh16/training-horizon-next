@@ -25,7 +25,7 @@ const MyListings: React.FC = () => {
     const fetchListings = async (id: string) => {
       try {
         const response = await axios.get(
-          "http://localhost:3005/api/v1/listing/getListingsByTrainerId/" + id
+          `${process.env.NEXT_PUBLIC_BASE_URL}/listing/getListingsByTrainerId/` + id
         );
         setListings(response.data.listings);
       } catch (err: any) {
@@ -45,7 +45,7 @@ const MyListings: React.FC = () => {
         listings.map(async (listing) => {
           try {
             const response = await axios.get(
-              `http://localhost:3005/api/v1/user/enrolled/${listing._id}`
+              `${process.env.NEXT_PUBLIC_BASE_URL}/user/enrolled/${listing._id}`
             );
             enrollmentCounts[listing._id] = response.data.memberCount;
           } catch (error) {

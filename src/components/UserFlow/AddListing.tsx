@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import axios from "axios";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, Suspense } from "react";
 import { useJsApiLoader, StandaloneSearchBox } from "@react-google-maps/api"
 import { Library } from "@googlemaps/js-api-loader"
 import { useRef } from "react";
@@ -114,7 +114,7 @@ export function AddListing() {
   const router = useRouter();
   
   const searchParams = useSearchParams();
-  const id = searchParams.get("listingId");
+      const id = searchParams.get("listingId");
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedMode, setSelectedMode] = useState("");
@@ -239,6 +239,7 @@ export function AddListing() {
     return () => subscription.unsubscribe();
   }, [form, handleAgeChange, handleDateChange]);
 
+
   useEffect(() => {
     // Fetch data if listingId exists
     if (id) {
@@ -253,7 +254,7 @@ export function AddListing() {
               },
             }
           );
-
+          
           const listingData = response.data.listing;
           // Pre-fill form with fetched data
           form.reset({
@@ -279,7 +280,7 @@ export function AddListing() {
           console.error("Error fetching listing data:", error);
         }
       };
-
+      
       fetchListing();
     }
   }, [id, form]);

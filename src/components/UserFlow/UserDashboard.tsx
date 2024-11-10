@@ -29,12 +29,14 @@ const UserDashboard = () => {
 
   const goToFavorites = () => {
     router.push("/favorites");
+
   };
 
   const handleSignOut = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("userId");
     window.location.reload();
+    router.push("/");
   };
 
   const handleDropdownToggle = () => {

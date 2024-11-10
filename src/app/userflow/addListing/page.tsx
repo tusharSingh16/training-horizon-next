@@ -1,15 +1,16 @@
-
-import Navbar from '@/components/UserFlow/NavBar'
-import { AddListing } from '@/components/UserFlow/AddListing'
-import React from 'react'
+import Navbar from "@/components/UserFlow/NavBar";
+import { AddListing } from "@/components/UserFlow/AddListing";
+import React, { Suspense } from "react";
 
 const listingPage = () => {
   return (
     <>
-    <Navbar/>
-    <AddListing/>
+      <Navbar />
+      <Suspense>
+        <AddListing />
+      </Suspense>
     </>
-  )
-}
+  );
+};
 
-export default listingPage
+export default listingPage;

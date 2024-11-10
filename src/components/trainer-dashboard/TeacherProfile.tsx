@@ -42,6 +42,7 @@ any) => {
   const { id } = useParams<{ id: string }>();
   console.log(id);
   const [trainer, setTrainer] = useState<TrainerData | null>(null);
+  
   useEffect(() => {
     const fetchData = async () => {
       try {

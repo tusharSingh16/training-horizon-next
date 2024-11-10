@@ -19,6 +19,7 @@ import Popup from "./PopUp";
 import { Card, CardContent} from './ui/card'
 import Image from 'next/image'
 import { Textarea } from "./ui/textarea";
+import Link from "next/link";
 
 export function TrainerForm() {
   const [popupVisible, setPopupVisible] = useState(false);
@@ -350,7 +351,7 @@ export function TrainerForm() {
 
           </div>
           <div className="flex justify-between py-4">
-            <a href="/"><Button variant={"outline"} type="button">Cancel</Button></a>
+            <Link href="/"><Button variant={"outline"} type="button">Cancel</Button></Link>
             <Button type="submit">Submit Details</Button>
           </div>
         </form>

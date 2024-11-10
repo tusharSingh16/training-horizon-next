@@ -1,5 +1,6 @@
 "use client"
 
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 
 interface Review {
@@ -26,7 +27,7 @@ const Reviews = () => {
         {reviews.map((review) => (
           <div key={review._id} className="p-4 bg-white shadow rounded-lg">
             <div className="flex items-center mb-2">
-              <img
+              <Image
                 src={`https://ui-avatars.com/api/?name=${review.name}&background=random`}
                 alt={review.name}
                 className="w-10 h-10 rounded-full mr-4"

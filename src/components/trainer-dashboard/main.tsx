@@ -4,7 +4,7 @@ import { TrainerForm } from "@/components/trainer-dashboard/form";
 import React, { useState } from "react";
 import { OrganizationForm } from "./ui/organizationForm";
 
-const main = () => {
+const Main = () => {
   const [role, setRole] = useState<"trainer" | "organization">("trainer");
   console.log(role);
   return (
@@ -50,4 +50,4 @@ const main = () => {
   );
 };
 
-export default main;
+export default Main;

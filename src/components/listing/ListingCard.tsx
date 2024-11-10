@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { setForm } from "@/lib/store/formSlice";
+import Image from "next/image";
 
 interface ListingCardProps {
   category: string;
@@ -164,10 +165,12 @@ return (
       router.push(`/courses/${listingId}`);
     }}>
       <div className="h-1/2 w-full">
-        <img
+        <Image
           src={"/img/tempListingImg.jpg"}
           alt={title}
           className="w-full object-cover h-full"
+          width={500}   
+          height={300}
         />
       </div>
       <div className="h-1/2">
@@ -186,10 +189,12 @@ return (
         <div className="text-xl">$ {price}.00 <span className="text-gray-400 text-xs">{priceMode === "Per day" ? "/day" : priceMode === "Per month" ? "/month" : "/course"}</span></div>
       </div>
       <div className="h-full flex items-center justify-center w-1/6">
-        <img
+        <Image
           src={`${isSelected ? `/icons/filled_fav.png` : `/icons/fav.png`}`}
           alt="fav"
           className="cursor-pointer"
+          width={500} 
+          height={300}   
           onClick={handleOnClick}
         />
       </div>

@@ -5,6 +5,7 @@ import { AgGridReact } from 'ag-grid-react'; // React Data Grid Component
 import "ag-grid-community/styles/ag-grid.css"; // Mandatory CSS required by the Data Grid
 import "ag-grid-community/styles/ag-theme-quartz.css"; // Optional Theme applied to the Data Grid
 import { ColDef , ICellRendererParams } from 'ag-grid-community';
+import Image from "next/image";
 
 
 function PendingDetails() {
@@ -94,7 +95,7 @@ function PendingDetails() {
           <h3 className="text-lg font-semibold mb-4">Customer Reaction</h3>
           <div className="mb-4">
             <div className="flex items-center space-x-2">
-              <img
+              <Image
                 src="/img/dashboard/image.svg"
                 alt="image"
                 height={40}
@@ -110,7 +111,7 @@ function PendingDetails() {
           </div>
           <div className="mb-4">
             <div className="flex items-center space-x-2">
-              <img
+              <Image
                 src="/img/dashboard/image.svg"
                 alt="image"
                 height={40}

@@ -150,8 +150,8 @@ if (response.ok) {
               <div className=" mt-3 m-3">
               <Image
              src={`${isSelected ? `/icons/filled_fav.png` : `/icons/fav.png`}`}
-             width={50}
-             height={50}
+             width={25}
+             height={25}
              alt="fav"
             className="cursor-pointer"
             onClick={handleOnClick}

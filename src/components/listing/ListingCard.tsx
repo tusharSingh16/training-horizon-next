@@ -193,8 +193,8 @@ return (
           src={`${isSelected ? `/icons/filled_fav.png` : `/icons/fav.png`}`}
           alt="fav"
           className="cursor-pointer"
-          width={500} 
-          height={300}   
+          width={25} 
+          height={25}   
           onClick={handleOnClick}
         />
       </div>

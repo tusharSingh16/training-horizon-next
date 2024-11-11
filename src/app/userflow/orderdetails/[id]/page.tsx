@@ -5,14 +5,17 @@ import { useParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import Navbar from '@/components/UserFlow/NavBar'
 import Footer from '@/components/UserFlow/Footer';
+import Link from 'next/link';
 
 type OrderDetails = {
   _id: number;
   createdAt: string;
   status: 'ON HOLD' | 'FAILED' | 'COMPLETED';
-  courseTitle: string;
-  coursePrice: string;
+  title: string;
+  price: string;
   total: string;
+  listingId: string;
+  memberId: string;
   paymentMethod: string;
     firstName: string;
     lastName: string;
@@ -32,9 +35,9 @@ const OrderDetailPage: React.FC = () => {
         if(!id) return;
         const fetchOrders = async (id: string) => {
           try {
-            const response = await axios.get("http://localhost:3005/api/v1/order/getOrderById/" + id.toString());
-            console.log(id);
-            setOrder(response.data.orders); // Assuming the API returns orders in `response.data.orders`
+            const response = await axios.get("http://localhost:3005/api/v1/order/getOrderDetailsByOrderId/" + id.toString());
+            
+            setOrder(response.data.order); // Assuming the API returns orders in `response.data.orders`
           } catch (err: any) {
             setError(err.response?.data?.message || 'Something went wrong');
           } finally {
@@ -71,9 +74,17 @@ const OrderDetailPage: React.FC = () => {
       <div className="mb-8">
         <h1 className="text-2xl font-bold">Order #{order?._id}</h1>
         <p className="text-gray-500">Placed on {order?.createdAt ? formatDate(order.createdAt) : 'Unknown date'}</p>
+        <div className='flex justify-between'>
         <span className={`${order?.status === "ON HOLD" ? `text-yellow-600 bg-yellow-100` : `${order?.status === "FAILED" ? `bg-red-500 text-white` :`bg-green-500 text-white`} `} py-1 px-3 rounded-full text-sm`}>
           {order?.status}
         </span>
+        {
+          order?.status === "FAILED" && <span className='bg-blue-500 py-1 px-3 rounded-full text-sm'>
+          <Link href={`/checkout/${order?.listingId}?memberId=${order?.memberId}`} className=' text-white'>Pay Again</Link>
+        </span>
+        
+        }
+        </div>
       </div>
 
       {/* Order Details */}
@@ -89,22 +100,22 @@ const OrderDetailPage: React.FC = () => {
           <tbody>
             <tr>
               <td className="py-2 px-4">
-                {order?.courseTitle}
+                {order?.title}
                 <br />
               </td>
-              <td className="py-2 px-4">{order?.coursePrice}</td>
+              <td className="py-2 px-4">{order?.price}</td>
             </tr>
             <tr>
               <td className="py-2 px-4 font-bold">Subtotal:</td>
-              <td className="py-2 px-4">{order?.coursePrice}</td>
+              <td className="py-2 px-4">{order?.price}</td>
             </tr>
             <tr>
               <td className="py-2 px-4 font-bold">Service Fee</td>
-              <td className="py-2 px-4">${calculateFee(order?.coursePrice ?? '0')}</td>
+              <td className="py-2 px-4">${calculateFee(order?.price ?? '0')}</td>
             </tr>
             <tr>
               <td className="py-2 px-4 font-bold">Tax:</td>
-              <td className="py-2 px-4">${calculateTax(order?.coursePrice ?? '0')}</td>
+              <td className="py-2 px-4">${calculateTax(order?.price ?? '0')}</td>
             </tr>
             <tr>
               <td className="py-2 px-4 font-bold">Payment method:</td>
@@ -112,7 +123,7 @@ const OrderDetailPage: React.FC = () => {
             </tr>
             <tr className="border-t">
                 <td className="py-2 px-4 font-bold">Total:</td>
-                <td className="py-2 px-4 font-bold">${calculateTotal(order?.coursePrice ?? '0')}</td>
+                <td className="py-2 px-4 font-bold">${calculateTotal(order?.price ?? '0')}</td>
               </tr>
           </tbody>
         </table>

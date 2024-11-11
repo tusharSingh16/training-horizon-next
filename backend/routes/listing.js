@@ -2,7 +2,7 @@ const express = require("express");
 const jwt=require("jsonwebtoken");
 const zod = require("zod");
 const JWT_SECRET=require("../config/jwt")
-const {Listing} = require('../models/Listing')
+const Listing = require('../models/listing')
 const {trainerAuthMiddleware } = require("../middleware/authMiddleware");
 // const { default: mongoose } = require("mongoose");
 
@@ -46,20 +46,25 @@ const postListingSchema = zod.object({
   description: zod.string(),
 });
 
-// listingRouter.get("/listing", authMiddleware, async function (req, res) {
-//   const listing = await Listing.findOne({
-//     userId: res.userId,
-//   });
-//   res.status(200).json({
-//     balance: listing.balance,
-//   });
-// });
-//can be used in listing filtering
 listingRouter.get("/listing", async function (req, res) {
-  const filter = req.query.filter || "";
   const listings = await Listing.find();
 
-  res.status(200).json(listings);
+  res.status(200).json({listings});
+});
+
+listingRouter.get("/approvedListing", async (req, res) => {
+  try {
+    const listings = await Listing.find( {isApproved: true} );
+    
+    if (listings.length === 0) {
+      return res.status(404).json({ message: "No approved listings found" });
+    }
+
+    res.status(200).json({listings});
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "An error occurred while fetching approved listings" });
+  }
 });
 
 

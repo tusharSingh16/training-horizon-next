@@ -36,16 +36,23 @@ import {
 import { Textarea } from "@/components/trainer-dashboard/ui/textarea";
 import { useSelector } from "react-redux";
 import { RootState } from "@/lib/store/store";
+import { useRouter } from 'next/navigation';
 
 function CheckoutPage() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const { id } = useParams<{ id: string }>();
   const listingId = id;
   const memberId = searchParams.get("memberId");
   const userId = localStorage.getItem("userId");
+  const [orderId, setOrderId] = useState(null);
 
-  const [listingData, setListingData] = useState(null);
-  const [memberData, setMemberData] = useState(null);
+  const [listingData, setListingData] = useState({
+    "title": "",
+    "priceMode": "",
+    "price": "",
+  });
+  const [memberData, setMemberData] = useState({"name": ""});
   const [userData, setUserData] = useState(null);
 
   const countries = ["USA", "Canada", "UK", "Australia", "India"];
@@ -79,7 +86,7 @@ function CheckoutPage() {
       country: "",
       paymentMethod: "Credit Card",
       orderNotes: "",
-      listingId: listingId || "", // Use listingId from route params
+      listingId: listingId || "",
       memberId: memberId || "",
     },
   });
@@ -110,7 +117,7 @@ function CheckoutPage() {
 
   const handleSubmit = () => {
     form.handleSubmit(onSubmit)();
-    setIsDialogOpen(false);
+    router.push(`/userflow/orders/${userId}`);
   };
 
   const handleReviewClick = () => {

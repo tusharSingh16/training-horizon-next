@@ -10,22 +10,129 @@ const { Enrollment } = require("../models/Enrollment");
 const userRouter = express.Router();
 
 // input validation
-const userSignupSchema = zod.object({
-  email: zod.string().email(),
-  firstName: zod.string(),
-  lastName: zod.string(),
-  password: zod.string(),
-  role: zod.string(),
+const userSignupSchema =zod.object({
+        email:zod.string().email(),
+        firstName:zod.string(),
+        lastName:zod.string(),
+        password:zod.string(),
+        role: zod.string(),
+})
+const userSigninSchema =zod.object({
+    email:zod.string().email(),
+    password:zod.string(),
+})
+const userUpdateSchema =zod.object({
+        firstName:zod.string().optional(),
+        lastName:zod.string().optional(),
+        password:zod.string().optional(),
+})
+
+userRouter.post("/google-auth", async function (req, res) {
+  const inputFromUser = {
+    email: req.body.email,
+    firstName: req.body.firstName,
+    lastName: req.body.lastName,
+    password: req.body.password,
+    role: req.body.role || "user",
+  };
+  const result = userSignupSchema.safeParse(inputFromUser);
+
+  if (!result.success) {
+    return res.status(411).json({
+      message: " Incorrect inputs",
+    });
+  }
+  try {
+    try {
+      const user = await User.findOne({
+        email: inputFromUser.email,
+        // password: inputFromUser.password,
+      });
+
+      if (user) {
+        const token = jwt.sign({ userId: user._id }, JWT_SECRET);
+
+        res.status(200).json({
+          token: token,
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+
+    const user = await User.create(inputFromUser);
+    const token = jwt.sign({ userId: user._id }, JWT_SECRET);
+    res.status(200).json({
+      message: "user created successfully",
+      token: token,
+      _id: user._id,
+    });
+  } catch (error) {
+    // res.status(411).json({
+    //   message: error,
+    // });
+    // console.log(error);
+  }
 });
-const userSigninSchema = zod.object({
-  email: zod.string().email(),
-  password: zod.string(),
-});
-const userUpdateSchema = zod.object({
-  firstName: zod.string().optional(),
-  lastName: zod.string().optional(),
-  password: zod.string().optional(),
-});
+
+userRouter.post('/signup',async function (req,res) {
+    const inputFromUser={
+        email:req.body.email,
+        firstName:req.body.firstName,
+        lastName:req.body.lastName,
+        password:req.body.password,
+        role: req.body.role || 'user',
+    } 
+    const result =userSignupSchema.safeParse(inputFromUser);
+    
+    if (!result.success ) {
+       return res.status(411).json({
+            message:"Email already taken  1 / Incorrect inputs"
+        })
+    }
+    try {
+        const isValid= await User.findOne({
+            email:inputFromUser.email,
+        })
+        if (isValid) {
+            return res.status(411).json({
+                message: "Email already taken 2 /Incorrect inputs"
+            })
+        }
+
+        const user =  await User.create(inputFromUser);
+     const token = jwt.sign({
+        userId : user._id,
+        role : user.role
+    },JWT_SECRET);
+        res.status(200).json({
+            message:"user created successfully",
+            token:token,
+            _id: user._id,
+        })
+    } catch (error) {
+        res.status(411).json({
+            message:error
+        })
+    }
+})
+
+// const userSignupSchema = zod.object({
+//   email: zod.string().email(),
+//   firstName: zod.string(),
+//   lastName: zod.string(),
+//   password: zod.string(),
+//   role: zod.string(),
+// });
+// const userSigninSchema = zod.object({
+//   email: zod.string().email(),
+//   password: zod.string(),
+// });
+// const userUpdateSchema = zod.object({
+//   firstName: zod.string().optional(),
+//   lastName: zod.string().optional(),
+//   password: zod.string().optional(),
+// });
 
 userRouter.post("/signup", async function (req, res) {
   const inputFromUser = {
@@ -420,6 +527,30 @@ userRouter.post("/enroll", async (req, res) => {
   }
 });
 
+userRouter.get("/enrolled/:listingId", async (req, res) => {
+  const { listingId } = req.params;
+
+  if (!listingId) {
+    return res.status(400).json({ error: "Listing ID is required" });
+  }
+
+  try {
+    const enrollment = await Enrollment.findOne({ listingId });
+
+    if (!enrollment) {
+      return res
+        .status(404)
+        .json({ error: "No enrollment found for this listing" });
+    }
+
+    const memberCount = enrollment.memberIds.length;
+
+    res.status(200).json({ listingId, memberCount });
+  } catch (error) {
+    console.error("Error counting members:", error);
+    res.status(500).json({ error: "Failed to count members" });
+  }
+});
 // userRouter.post("/enroll", async (req, res) => {
 //   const { listingId, memberId } = req.body;
 
@@ -559,29 +690,4 @@ userRouter.post("/enroll", async (req, res) => {
 //     res.status(500).json({ error: "Failed to fetch enrollment count" });
 //   }
 // });
-userRouter.get("/enrolled/:listingId", async (req, res) => {
-  const { listingId } = req.params;
-
-  if (!listingId) {
-    return res.status(400).json({ error: "Listing ID is required" });
-  }
-
-  try {
-    const enrollment = await Enrollment.findOne({ listingId });
-
-    if (!enrollment) {
-      return res
-        .status(404)
-        .json({ error: "No enrollment found for this listing" });
-    }
-
-    const memberCount = enrollment.memberIds.length;
-
-    res.status(200).json({ listingId, memberCount });
-  } catch (error) {
-    console.error("Error counting members:", error);
-    res.status(500).json({ error: "Failed to count members" });
-  }
-});
-
 module.exports = userRouter;

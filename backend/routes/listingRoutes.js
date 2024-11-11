@@ -48,15 +48,6 @@ const postListingSchema = zod.object({
   description: zod.string(),
 });
 
-// listingRouter.get("/listing", authMiddleware, async function (req, res) {
-//   const listing = await Listing.findOne({
-//     userId: res.userId,
-//   });
-//   res.status(200).json({
-//     balance: listing.balance,
-//   });
-// });
-//can be used in listing filtering
 listingRouter.get("/listing", async function (req, res) {
 
   const listings = await Listing.find();
@@ -64,26 +55,27 @@ listingRouter.get("/listing", async function (req, res) {
   res.status(200).json(listings);
 });
 
-// listingRouter.get("/listing", async function (req, res) {
-//   const filter = req.query.filter || "";
-//   const listings = await Listing.find({
-//     $or: [
-//       {
-//         category: {
-//           $regex: filter,
-//         },
-//       },
-//       {
-//         title: {
-//           $regex: filter,
-//         },
-//       },
-//     ],
-//   });
-//   // const listings = await Listing.find();
+listingRouter.get("/bulk", async function (req, res) {
+  const filter = req.query.filter || "";
+  const listings = await Listing.find({
+    $or: [
+      {
+        category: {
+          $regex: filter,
+          $options: "i", 
+        },
+      },
+      {
+        title: {
+          $regex: filter,
+          $options: "i", 
+        },
+      },
+    ],
+  });
 
-//   res.status(200).json(listings);
-// });
+  res.status(200).json(listings);
+});
 
 
 listingRouter.get("/listing/id/:trainerId", async function (req, res) {

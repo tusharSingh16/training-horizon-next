@@ -8,6 +8,8 @@ const UserDashboard = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const router = useRouter();
 
+  const userId=window.localStorage.getItem("userId");
+
   useEffect(() => {
     const fetchUserName = async () => {
       try {
@@ -68,6 +70,9 @@ const UserDashboard = () => {
           <ul className="py-2">
             <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={goToFavorites}>Favorites</li>
             <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">Settings</li>
+            <Link href={`/userflow/orders/${userId}`}>
+              <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">Orders</li>
+            </Link>
             <Link href="/userflow/familyMembers">
               <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">Family Members</li>
             </Link>

@@ -4,7 +4,7 @@ import Navbar from "@/components/UserFlow/NavBar";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-const axios = require("axios");
+import axios from "axios";
 import Popup from "@/components/trainer-dashboard/PopUp";
 
 // Zod schema for form validation
@@ -14,13 +14,19 @@ const registerMemberSchema = z.object({
     .number()
     .int({ message: "Age must be a valid integer" })
     .min(0, "Age must be greater than 0"),
-  dob: z.string().refine((date) => !isNaN(Date.parse(date)), {
-    message: "Invalid date format",
-  }),
-  relationship: z.enum(
-    ["brother", "child", "father", "mother"],
-    "Select a valid relationship"
+  dob: z.string().refine(
+    (date) => {
+      const dob = new Date(date);
+      const today = new Date();
+      return dob <= today; // Ensure DOB is not in the future
+    },
+    {
+      message: "Invalid date ",
+    }
   ),
+  relationship: z.enum(["brother", "child", "father", "mother"], {
+    errorMap: () => ({ message: "Select a valid relationship" }),
+  }),
   gender: z.enum(["male", "female", "other"], {
     errorMap: () => ({ message: "Select a valid gender" }),
   }),
@@ -109,7 +115,9 @@ const RegisterMemberForm = () => {
               placeholder="Enter member's name"
             />
             {errors.name && (
-              <p className="text-red-500 text-sm">{errors.name.message}</p>
+              <p className="text-red-500 text-sm">
+                {errors.name.message as string}
+              </p>
             )}
           </div>
           {/* Date of Birth */}
@@ -130,7 +138,9 @@ const RegisterMemberForm = () => {
               }}
             />
             {errors.dob && (
-              <p className="text-red-500 text-sm">{errors.dob.message}</p>
+              <p className="text-red-500 text-sm">
+                {errors.dob.message as string}
+              </p>
             )}
           </div>
 
@@ -165,7 +175,7 @@ const RegisterMemberForm = () => {
             </select>
             {errors.relationship && (
               <p className="text-red-500 text-sm">
-                {errors.relationship.message}
+                {errors.relationship.message as string}
               </p>
             )}
           </div>
@@ -186,7 +196,9 @@ const RegisterMemberForm = () => {
               <option value="other">Other</option>
             </select>
             {errors.gender && (
-              <p className="text-red-500 text-sm">{errors.gender.message}</p>
+              <p className="text-red-500 text-sm">
+                {errors.gender.message as string}
+              </p>
             )}
           </div>
 
@@ -203,7 +215,9 @@ const RegisterMemberForm = () => {
               placeholder="Enter address"
             />
             {errors.address && (
-              <p className="text-red-500 text-sm">{errors.address.message}</p>
+              <p className="text-red-500 text-sm">
+                {errors.address.message as string}
+              </p>
             )}
           </div>
 
@@ -220,7 +234,9 @@ const RegisterMemberForm = () => {
               placeholder="Enter city"
             />
             {errors.city && (
-              <p className="text-red-500 text-sm">{errors.city.message}</p>
+              <p className="text-red-500 text-sm">
+                {errors.city.message as string}
+              </p>
             )}
           </div>
 
@@ -238,7 +254,7 @@ const RegisterMemberForm = () => {
             />
             {errors.postalCode && (
               <p className="text-red-500 text-sm">
-                {errors.postalCode.message}
+                {errors.postalCode.message as string}
               </p>
             )}
           </div>
@@ -279,7 +295,7 @@ const RegisterMemberForm = () => {
             </label>
             {errors.agreeToTerms && (
               <p className="text-red-500 text-sm">
-                {errors.agreeToTerms.message}
+                {errors.agreeToTerms.message as string}
               </p>
             )}
           </div>

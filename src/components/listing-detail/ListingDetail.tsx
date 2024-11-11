@@ -21,39 +21,101 @@ interface TrainerData {
   qualifications: string;
   [key: string]: any; // Optional: for additional properties
 }
+interface ListingData {
+  trainerId: string;
+  category: string;
+  title: string;
+  priceMode: string;
+  price: string;
+  mode: string;
+  location: string;
+  quantity: string;
+  classSize: string;
+  startDate: string;
+  endDate: string;
+  days: string[];
+  gender: string;
+  startTime: string;
+  endTime: string;
+  minAge: string;
+  maxAge: string;
+  preRequistes: string;
+  description: string;
+}
 
 const ListingDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [activeTab, setActiveTab] = useState<string>("Overview");
   const [isOpen, setIsOpen] = useState(false);
   const [data, setData] = useState<TrainerData | null>(null);
+  const [listingData, setlistingData] = useState<ListingData | null>(null);
   const tabs = ["Overview", "Instructors", "Curriculum", "Reviews", "FAQs"];
 
   const form = useSelector((state: RootState) => state.form);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchlistingData = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:3005/api/v1/trainers/" + form.trainerId.toString()
+          "http://localhost:3005/api/v1/listing/listing/" + id.toString()
         );
-        // console.log(response.data.trainer);
-        setData(response.data.trainer);
+        // console.log(response.data);
+        setlistingData(response.data.listing);
         // console.log(data);
       } catch (error) {
-        console.log("error");
+        console.log("error in fetching listing");
       }
     };
 
-    fetchData();
-  }, [form.trainerId]);
+    fetchlistingData();
+  }, [id]);
 
+  useEffect(() => {
+    if (listingData) {
+      const trainerId = listingData.trainerId;
+      const fetchData = async () => {
+        try {
+          const response = await axios.get(
+            "http://localhost:3005/api/v1/trainers/" + trainerId.toString()
+          );
+          // console.log(response.data.trainer);
+          setData(response.data.trainer);
+          // console.log(data);
+        } catch (error) {
+          console.log("error in fetching trainer");
+        }
+      };
+      fetchData();
+    }
+  }, [listingData]);
+
+  // useEffect(() => {
+  //   const fetchData = async () => {
+
+  //       try {
+  //         const response = await axios.get(
+  //           "http://localhost:3005/api/v1/trainers/" + trainerId.toString()
+  //         );
+  //         // console.log(response.data.trainer);
+  //         setData(response.data.trainer);
+  //         // console.log(data);
+  //       } catch (error) {
+  //         console.log("error");
+  //       }
+  //   };
+
+  //   fetchData();
+  // }, [form.trainerId]);
 
   return (
     <>
       <div className="bg-white shadow-md rounded-lg p-6 flex items-center ">
-        <MainDetailPage />
-        <SideLayout minAgeLimit={Number(form.minAge)} maxAgeLimit={Number(form.maxAge)} listingId={id} />
+        <MainDetailPage listingId={id} />
+        <SideLayout
+          minAgeLimit={Number(form.minAge)}
+          maxAgeLimit={Number(form.maxAge)}
+          listingId={id}
+        />
       </div>
       <Reviews />
       {/* <GoogleMapComponent apiKey={googleMapsApiKey} /> */}

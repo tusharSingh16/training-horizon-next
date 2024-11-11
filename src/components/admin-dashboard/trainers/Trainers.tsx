@@ -9,9 +9,13 @@ import { ColDef, ICellRendererParams, GridApi } from "ag-grid-community";
 function Trainers() {
   const gridRef = useRef<AgGridReact<any>>(null);
   let gridApi: GridApi | null = null;
+  // const onGridReady = (params: { api: GridApi }) => {
+  //   gridApi = params.api;
+  //   gridApi.sizeColumnsToFit(); // Adjust column widths to fit the grid
+  // };
   const onGridReady = (params: { api: GridApi }) => {
-    gridApi = params.api;
-    gridApi.sizeColumnsToFit(); // Adjust column widths to fit the grid
+    gridRef.current!.api = params.api;
+    gridRef.current!.api.sizeColumnsToFit(); // Adjust column widths to fit the grid
   };
 
   const [rowData, setRowData] = useState<
@@ -99,13 +103,19 @@ function Trainers() {
             <div
               className="ag-theme-quartz "
               style={{ height: "100%", width: "100%" }}>
-              <AgGridReact
+              {/* <AgGridReact
                 ref={gridRef}
                 rowData={rowData || []}
                 columnDefs={colDefs}
                 onGridReady={() => {
                   onGridReady;
                 }}
+              /> */}
+              <AgGridReact
+                ref={gridRef}
+                rowData={rowData || []}
+                columnDefs={colDefs}
+                onGridReady={onGridReady}
               />
             </div>
           </div>

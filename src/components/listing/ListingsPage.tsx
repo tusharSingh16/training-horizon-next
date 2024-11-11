@@ -37,15 +37,21 @@ const ListingsPage: React.FC = () => {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [filteredListings, setFilteredListings] = useState<Listing[]>(listings);
 
-useEffect(()=>  {
-  const response =axios.get("http://localhost:3005/api/v1/listing/listing/")
-  .then((res)=> {
-    setListings(res.data);
-  })
-  .catch((err)=> {
-    console.log(err);
-  })
-},[])
+// useEffect(()=>  {
+//   const response =axios.get("http://localhost:3005/api/v1/listing/listing/")
+//   .then((res)=> {
+//     setListings(res.data);
+//   })
+//   .catch((err)=> {
+//     console.log(err);
+//   })
+// },[])
+    useEffect(()=>{
+        axios.get(`http://localhost:3005/api/v1/listing/bulk?filter=${keywords || selectedCategories }`).then((res)=>{
+          setListings( res.data);
+        })
+    },[keywords,selectedCategories])
+    // console.log(listings);
 
   const handleSearch = () => {
     const filtered = listings.filter((listing) => {
@@ -93,7 +99,7 @@ useEffect(()=>  {
             <FilterSidebar
               selectedCategories={selectedCategories}
               setSelectedCategories={setSelectedCategories}
-              onFilter={handleFilter}
+              // onFilter={handleFilter}
             />
           </aside>
 

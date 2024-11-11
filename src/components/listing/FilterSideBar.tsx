@@ -1,13 +1,11 @@
-
 import React from 'react';
 
 interface FilterSidebarProps {
   selectedCategories: string[];
   setSelectedCategories: React.Dispatch<React.SetStateAction<string[]>>;
-  onFilter: () => void;
 }
 
-const FilterSidebar: React.FC<FilterSidebarProps> = ({ selectedCategories, setSelectedCategories, onFilter }) => {
+const FilterSidebar: React.FC<FilterSidebarProps> = ({ selectedCategories, setSelectedCategories }) => {
 
   const handleCheckboxChange = (category: string) => {
     setSelectedCategories(prevCategories =>
@@ -21,7 +19,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ selectedCategories, setSe
     <div className="p-4 space-y-4">
       <h2 className="font-bold">Categories</h2>
       <ul className="space-y-2">
-        {['Educational', 'Sports', 'Music',].map((category) => (
+        {['Education', 'Sports', 'Music', 'Other'].map((category) => (
           <li key={category}>
             <label className="flex items-center space-x-2">
               <input
@@ -29,17 +27,11 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ selectedCategories, setSe
                 checked={selectedCategories.includes(category)}
                 onChange={() => handleCheckboxChange(category)}
               />
-              <span>{category.replace('-', ' ')}</span>
+              <span>{category}</span>
             </label>
           </li>
         ))}
       </ul>
-      <button 
-        className="bg-[#56C1FF] hover:bg-[#4cabe2] text-white w-full py-2 rounded mt-4"
-        onClick={onFilter}
-      >
-        Filter
-      </button>
     </div>
   );
 };

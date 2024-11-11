@@ -52,6 +52,13 @@ function SideLayout({minAgeLimit, maxAgeLimit, listingId}: {minAgeLimit: number,
   const closePopup = () => setIsOpen(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
+
+  const userId = window.localStorage.getItem('userId');
+  if (!userId) {
+    alert("Please log in to use this feature");
+    router.push("/userflow/login");
+    return;
+  }
     e.preventDefault();
     closePopup();
 
@@ -60,7 +67,7 @@ function SideLayout({minAgeLimit, maxAgeLimit, listingId}: {minAgeLimit: number,
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ name, review, rating }),
+      body: JSON.stringify({ listingId,name, review, rating,date:new Date() }),
     });
     
     if (response.ok) {
@@ -68,6 +75,8 @@ function SideLayout({minAgeLimit, maxAgeLimit, listingId}: {minAgeLimit: number,
       setName("");
       setReview("");
       setRating(5);
+      //fresh the page
+      router.refresh();
     } else {
       alert("Error submitting review.");
     }
@@ -165,6 +174,7 @@ function SideLayout({minAgeLimit, maxAgeLimit, listingId}: {minAgeLimit: number,
                   >
                     Send
                   </button>
+                  
                 </div>
               </div>
             </div>

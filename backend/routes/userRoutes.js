@@ -191,12 +191,14 @@ userRouter.put("/", authMiddleware, async function (req, res) {
   const isValid = userUpdateSchema.safeParse(userInput);
   if (!isValid.success) {
     return res.status(411).json({
-      essage: "Error while updating information",
+      message: "Error while updating information",
     });
   }
   try {
     // console.log(" is it correct ?"+res.userId);
-    await User.updateOne({ _id: res.userId }, { $set: userInput });
+    await User.updateOne({ _id: req.userId }, { $set: userInput });
+    // console.log(req.userId);
+    
     res.status(200).json({
       message: "Updated successfully",
     });
@@ -217,7 +219,9 @@ userRouter.get("/username", authMiddleware, async function (req, res) {
   res.status(200).json({
     _id: user._id,
     user: user.firstName,
+    userLastName: user.lastName, 
     role: user.role,
+    email: user.email,
   });
 });
 

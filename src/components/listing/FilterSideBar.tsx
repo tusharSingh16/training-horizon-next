@@ -52,13 +52,13 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
   const [getCategories ,setCategories] = useState<Category[]>([]);
   const [getSubCategory, setSubCategory] = useState([]);
   useEffect(()=>{
-    axios.get(`http://localhost:3005/api/v1/admin/category`).then((res)=>{
+    axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/admin/category`).then((res)=>{
       setCategories( res.data);
     })
 },[])
 useEffect(() => {
   axios
-    .get(`http://localhost:3005/api/v1/admin/category/${selectedCategory}`)
+    .get(`${process.env.NEXT_PUBLIC_BASE_URL}/admin/category/${selectedCategory}`)
     .then((res) => {
       setSubCategory(res.data);
 

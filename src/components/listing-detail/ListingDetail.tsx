@@ -57,7 +57,7 @@ const ListingDetail: React.FC<ListingDetailPageProps> = ({id}) => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3005/api/v1/listing/listing/${id}`
+          `${process.env.NEXT_PUBLIC_BASE_URL}/listing/listing/${id}`
         );
         setListing(response.data.listing);
       } catch (error) {
@@ -72,7 +72,7 @@ const ListingDetail: React.FC<ListingDetailPageProps> = ({id}) => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:3005/api/v1/trainers/" + form.trainerId.toString()
+          `${process.env.NEXT_PUBLIC_BASE_URL}/trainers/` + form.trainerId.toString()
         );
         // console.log(response.data.trainer);
         setData(response.data.trainer);

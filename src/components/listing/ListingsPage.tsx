@@ -47,11 +47,12 @@ const ListingsPage: React.FC<{categoryName:string ,subCategoryName:string}> = ({
   const [selectedGender, setSelectedGender] = useState<string | null>(null);
   const [get, set] = useState<boolean>(false);
 
-    // useEffect(()=>{
-    //     axios.get(`http://localhost:3005/api/v1/listing/bulk?filter=${keywords || selectedCategories }`).then((res)=>{
-    //       setListings( res.data);
-    //     })
-    // },[keywords,selectedCategories])
+  //   useEffect(()=>{
+  //     axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/listing/bulk?filter=${keywords || selectedCategories }`).then((res)=>{
+  //       setListings( res.data);
+  //     })
+  // },[keywords,selectedCategories])
+
 
   const handleSearch = () => {
     const filtered = listings.filter((listing) => {
@@ -80,7 +81,7 @@ const ListingsPage: React.FC<{categoryName:string ,subCategoryName:string}> = ({
       }).toString();
    
       
-      const res = await fetch(`http://localhost:3005/api/v1/listing?${query}`);
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/listing?${query}`);
       const data = await res.json();
       setListings(data);
   };

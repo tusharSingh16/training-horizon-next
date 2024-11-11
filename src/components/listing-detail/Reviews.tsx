@@ -15,7 +15,7 @@ const Reviews = () => {
   const [reviews, setReviews] = useState<Review[]>([]);
 
   useEffect(() => {
-    fetch('http://localhost:3005/api/v1/review/reviews')
+    fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/review/reviews`)
       .then((res) => res.json())
       .then((data) => setReviews(data));
   }, []);

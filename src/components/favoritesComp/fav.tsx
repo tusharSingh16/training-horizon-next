@@ -87,6 +87,8 @@ const FavoriteListingIds = () => {
             {listingDetails.length > 0 ? (
               listingDetails.map(listing => (
                 <ListingCard
+                  categoryName={""}
+                  subCategoryName={""}
                   key={listing._id}
                   listingId={listing._id}
                   category={listing.category}

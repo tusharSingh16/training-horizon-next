@@ -8,6 +8,7 @@ const router = express.Router();
 const orgRouter = require("./organizationRoutes")
 const favoritesRoutes=require("./favoritesRoutes");
 const orderRouter = require("./orderRouter")
+const searchAlertRouter=require("./searchAlertRouter")
 
 router.use("/user", userRouter);
 router.use("/", trainerRouter);
@@ -17,5 +18,6 @@ router.use("/review", reviewRouter);
 router.use("/", orgRouter);
 router.use("/favorites", favoritesRoutes);
 router.use("/order", orderRouter);
+router.use("/search-alert",searchAlertRouter);
 
 module.exports = router;

@@ -30,27 +30,28 @@ interface Listing {
   isFavorite: boolean;
 }
 
-const ListingsPage: React.FC = () => {
+const ListingsPage: React.FC<{categoryName:string ,subCategoryName:string}> = ({categoryName,subCategoryName}) => {
   const [listings, setListings] = useState<Listing[]>([]);
   const [keywords, setKeywords] = useState<string>("");
   const [location, setLocation] = useState<string>("");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [filteredListings, setFilteredListings] = useState<Listing[]>(listings);
 
-// useEffect(()=>  {
-//   const response =axios.get("http://localhost:3005/api/v1/listing/listing/")
-//   .then((res)=> {
-//     setListings(res.data);
-//   })
-//   .catch((err)=> {
-//     console.log(err);
-//   })
-// },[])
-    useEffect(()=>{
-        axios.get(`http://localhost:3005/api/v1/listing/bulk?filter=${keywords || selectedCategories }`).then((res)=>{
-          setListings( res.data);
-        })
-    },[keywords,selectedCategories])
+  const [isFilterOpen, setFilterOpen] = useState(true);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedSubCategory, setSelectedSubCategory] = useState<string | null>(
+    null
+  );
+  const [RateRange, setRateRange] = useState<[number, number]>([10, 9980]);
+  const [ageLimit, setAgeLimit] = useState<[number, number]>([2, 90]);
+  const [selectedGender, setSelectedGender] = useState<string | null>(null);
+  const [get, set] = useState<boolean>(false);
+
+    // useEffect(()=>{
+    //     axios.get(`http://localhost:3005/api/v1/listing/bulk?filter=${keywords || selectedCategories }`).then((res)=>{
+    //       setListings( res.data);
+    //     })
+    // },[keywords,selectedCategories])
 
   const handleSearch = () => {
     const filtered = listings.filter((listing) => {
@@ -64,6 +65,28 @@ const ListingsPage: React.FC = () => {
 
     setFilteredListings(filtered);
   };
+  
+  useEffect(() => {
+    const fetchCourses = async () => {
+      const query = new URLSearchParams({
+        title: keywords || '', 
+        category: selectedCategory || '', 
+        selectedSubCategory: selectedSubCategory || '', 
+        minPrice: RateRange[0].toString(), 
+        maxPrice: RateRange[1].toString(),
+        minAge: ageLimit[0].toString(),
+        maxAge: ageLimit[1].toString(),
+        gender: selectedGender || '', 
+      }).toString();
+   
+      
+      const res = await fetch(`http://localhost:3005/api/v1/listing?${query}`);
+      const data = await res.json();
+      setListings(data);
+  };
+
+    fetchCourses();
+  }, [get,keywords]);
 
   const handleFilter = () => {
     const filtered = listings.filter((listing) => {
@@ -98,7 +121,19 @@ const ListingsPage: React.FC = () => {
             <FilterSidebar
               selectedCategories={selectedCategories}
               setSelectedCategories={setSelectedCategories}
-              // onFilter={handleFilter}
+              onFilter={handleFilter}
+              selectedCategory={selectedCategory}
+              setSelectedCategory={setSelectedCategory}
+              selectedSubCategory={selectedSubCategory}
+              setSelectedSubCategory={setSelectedSubCategory}
+              RateRange={RateRange}
+              setRateRange={setRateRange}
+              ageLimit={ageLimit}
+              setAgeLimit={setAgeLimit}
+              selectedGender={selectedGender}
+              setSelectedGender={setSelectedGender}
+              get ={get}
+              set ={set}
             />
           </aside>
 
@@ -106,7 +141,9 @@ const ListingsPage: React.FC = () => {
             {listings.length > 0 ? (
               listings.map((listing, idx) => (
                 // <ListingCard key={idx} {...listing} />
-                <ListingCard 
+                <ListingCard
+                subCategoryName={subCategoryName}
+                categoryName={categoryName}
                 key={idx}
                 listingId={listing._id} // Make sure listing._id is passed here
                 category={listing.category}

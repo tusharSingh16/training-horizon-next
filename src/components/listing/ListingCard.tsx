@@ -28,6 +28,8 @@ interface ListingCardProps {
   trainerId: string;
   listingId: string;
   isFavorite: boolean;
+  categoryName:string;
+  subCategoryName:string;
 }
 
 const ListingCard: React.FC<ListingCardProps> = ({
@@ -51,6 +53,8 @@ const ListingCard: React.FC<ListingCardProps> = ({
   trainerId,
   listingId,
   isFavorite,
+  categoryName,
+  subCategoryName
 }) => {
   const [isSelected, setIsSelected] = useState<boolean>(isFavorite);
   const [favorites, setFavorites] = useState<string[]>([]);
@@ -162,7 +166,7 @@ return (
   <div className="flex-col max-sm:w-10/12 rounded-sm overflow-hidden hover:ring-sky-500 hover:scale-105 ring-1 ring-gray-200 shadow-3xl bg-white w-[18rem] h-[24rem]">
     <div className="h-5/6 cursor-pointer" onClick={() => {
       sendData();
-      router.push(`/courses/${listingId}`);
+      router.push(`/${categoryName}/${subCategoryName}/${listingId}`);
     }}>
       <div className="h-1/2 w-full">
         <Image

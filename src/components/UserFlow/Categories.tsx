@@ -1,7 +1,9 @@
 "use client";
+import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 const categories = [
   { name: "Education", image: "/img/p1.svg" },
   { name: "Sports", image: "/img/p2.svg" },
@@ -16,8 +18,20 @@ const categories = [
 
   // Add the rest of the categories here...
 ];
+interface Listing {
+  _id: string;
+  category: string;
+  subCategory: string[];
+
+}
 const Categories = () => {
+  const [getCategories ,setCategories] = useState<Listing[]>([]);
   const router = useRouter();
+  useEffect(()=>{
+    axios.get(`http://localhost:3005/api/v1/admin/category`).then((res)=>{
+      setCategories( res.data);
+    })
+},[])
   return (
     <section className="py-2">
       <div className="flex justify-between items-center px-4 pb-8">
@@ -29,22 +43,22 @@ const Categories = () => {
         </Link>
       </div>
       <div className="px-2 sm:px-20 grid grid-cols-2  md:grid-cols-5 gap-4 0  ">
-        {categories.map((category, index) => (
+        {getCategories.map((category, index) => (
           <div
             onClick={() => {
-              router.push("/courses");
+              router.push(`/${category.category}`);
             }}
             key={index}
             className="text-center p-4 border rounded-xl shadow-lg  hover:shadow-2xl cursor-pointer hover:bg-blue-100"
           >
             <Image
-              src={category.image}
-              alt={category.name}
+              src="/img/p1.svg"
+              alt="?"
               width={28}
               height={36}
               className="w-28 h-36 mx-auto mb-4 "
             />
-            <h3 className="font-medium">{category.name}</h3>
+            <h3 className="font-medium">{category.category}</h3>
           </div>
         ))}
       </div>

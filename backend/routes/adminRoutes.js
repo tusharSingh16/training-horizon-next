@@ -1,9 +1,9 @@
 const express = require('express');
 const ac = require("../controllers/adminController");
-
+const categoryRouter = require("./categoryRouter")
 const router = express.Router();
 
-
+router.use('/category', categoryRouter);
 
 // Route to view all courses
 router.get('/listings' , ac.getListings);

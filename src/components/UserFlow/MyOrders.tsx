@@ -62,7 +62,9 @@ const MyOrders: React.FC = () => {
                   {order.status}
                 </span>
               </td>
+
               <td className="py-2 px-4">{order.total} for {order.items} item{order.items > 1 && 's'}</td>
+              
               <td className="py-2 px-4">
                 <button className="bg-gray-200 hover:bg-gray-300 text-gray-700 py-1 px-4 rounded">
                   View

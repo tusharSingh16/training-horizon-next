@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const { boolean } = require("zod");
+const { boolean, number } = require("zod");
 
 const trainerSchema = new mongoose.Schema({
   _id: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
@@ -16,7 +16,7 @@ const trainerSchema = new mongoose.Schema({
     match: /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/
   },
   availability: { type: [String], default: [], required: false },
-  phone: { type: String, required: true },
+  phone: { type: Number, required: true },
   address: { type: String, required: true },
   password: { type: String, required: true },
   role: {

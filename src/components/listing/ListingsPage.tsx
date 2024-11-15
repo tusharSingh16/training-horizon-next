@@ -49,13 +49,6 @@ const ListingsPage: React.FC<{categoryName:string ,subCategoryName:string}> = ({
   const [selectedGender, setSelectedGender] = useState<string | null>(null);
   const [get, set] = useState<boolean>(false);
 
-  //   useEffect(()=>{
-  //     axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/listing/bulk?filter=${keywords || selectedCategories }`).then((res)=>{
-  //       setListings( res.data);
-  //     })
-  // },[keywords,selectedCategories])
-
-
   const handleSearch = () => {
     const filtered = listings.filter((listing) => {
       const matchesKeywords =
@@ -68,6 +61,7 @@ const ListingsPage: React.FC<{categoryName:string ,subCategoryName:string}> = ({
 
     setFilteredListings(filtered);
   };
+  // console.log("Listings are: "= );
   
   useEffect(() => {
     const fetchCourses = async () => {
@@ -81,15 +75,24 @@ const ListingsPage: React.FC<{categoryName:string ,subCategoryName:string}> = ({
         maxAge: ageLimit[1].toString(),
         gender: selectedGender || '', 
       }).toString();
-   
       
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/listing?${query}`);
-      const data = await res.json();
-      setListings(data);
-  };
-
+      console.log("Fetching courses with query:", query);
+      
+      try {
+        const { data } = await axios.get(
+          `${process.env.NEXT_PUBLIC_BASE_URL}/listing/?${query}`
+        );
+        console.log("Fetched data:", data);
+        setListings(data);
+        setFilteredListings(data);
+      } catch (error) {
+        console.error("Failed to fetch listings:", error);
+      }
+    };
+  
     fetchCourses();
-  }, [get,keywords]);
+  }, [get, keywords, selectedCategory, selectedSubCategory, RateRange, ageLimit, selectedGender]);
+  
 
   const handleFilter = () => {
     const filtered = listings.filter((listing) => {
@@ -157,7 +160,7 @@ const ListingsPage: React.FC<{categoryName:string ,subCategoryName:string}> = ({
                 location={listing.location} avgRating={listing.avgRating} trainerId={listing.trainerId} quantity={listing.quantity} classSize={listing.classSize} startDate={listing.startDate} endDate={listing.endDate} days={listing.days} gender={listing.gender} startTime={listing.startTime} endTime={listing.endTime} minAge={listing.minAge} maxAge={listing.maxAge} description={listing.description} isFavorite={false}/>
               ))
             ) : (
-              <p>No listings found.</p>
+              <p>No listings fossund.</p>
             )}
           </main>
         </div>

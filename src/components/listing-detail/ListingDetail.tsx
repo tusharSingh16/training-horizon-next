@@ -19,7 +19,9 @@ interface TrainerData {
   email: string;
   experience: string;
   qualifications: string;
-  [key: string]: any; // Optional: for additional properties
+  phone: string;
+  [key: string]: any; 
+  
 }
 interface ListingDetailPageProps {
   id:string; 
@@ -84,13 +86,14 @@ const ListingDetail: React.FC<ListingDetailPageProps> = ({id}) => {
 
     fetchData();
   }, [form.trainerId]);
-
+  console.log("Phone is: "+data?.phone);
+  
 
   return (
     <>
       <div className="bg-white shadow-md rounded-lg p-6 flex items-center ">
-        <MainDetailPage  listingId ={id} listingData= {getListing} />
-        <SideLayout minAgeLimit={Number(form.minAge)} maxAgeLimit={Number(form.maxAge)} listingId={id} />
+        <MainDetailPage  listingId ={id} listingData= {getListing}  />
+        <SideLayout minAgeLimit={Number(form.minAge)} maxAgeLimit={Number(form.maxAge)} listingId={id} trainerPhone={data?.phone ?? ''}/>
       </div>
       <Reviews listingId={id}/>
       {/* <GoogleMapComponent apiKey={googleMapsApiKey} /> */}

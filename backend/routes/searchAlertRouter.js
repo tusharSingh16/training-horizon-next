@@ -1,10 +1,11 @@
 const express = require("express");
 const zod = require("zod");
 const { SearchAlert } = require("../models/SearchAlert");
+const { authMiddleware } = require("../middleware/authMiddleware");
 const searchAlertRouter = express.Router();
 
 const Schema = zod.object({
-  userId: zod.string(),
+  // userId: zod.string(),
   category: zod.string().optional(),
   minPrice: zod.string().optional(),
   maxPrice: zod.string().optional(),
@@ -16,9 +17,8 @@ const Schema = zod.object({
   minAge: zod.string().optional(),
   maxAge: zod.string().optional(),
 });
-searchAlertRouter.post("/", async function (req, res) {
+searchAlertRouter.post("/",authMiddleware, async function (req, res) {
   const inputData = req.body
-  console.log(inputData);
   
   const result = Schema.safeParse(inputData);
 
@@ -30,14 +30,14 @@ searchAlertRouter.post("/", async function (req, res) {
   }
 
   try {
-    const isUnique = await SearchAlert.findOne(inputData);
+    const isUnique = await SearchAlert.findOne({...inputData, userId: req.userId });
     if (isUnique) {
       return res.status(411).json({
         message: "Similar searchAlert found ",
       });
     }
 
-    const result = await SearchAlert.create(inputData);
+    const result = await SearchAlert.create({...inputData, userId: req.userId });
     res.status(200).json({
       message: "searchAlert created successfully",
       searchAlert:result
@@ -50,10 +50,9 @@ searchAlertRouter.post("/", async function (req, res) {
   }
 });
 
-searchAlertRouter.get("/:userId", async function (req, res) {
+searchAlertRouter.get("/",authMiddleware, async function (req, res) {
   try {
-    const { userId } = req.params;
-    const data= await SearchAlert.find({ userId });
+    const data= await SearchAlert.find({ userId:req.userId });
     res.status(200).json(data);
   } catch (error) {
     res.status(500).json({ error: error.message });

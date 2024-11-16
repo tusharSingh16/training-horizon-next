@@ -16,6 +16,7 @@ interface TrainerData {
   experience: string;
   qualifications: string;
   phone: string;
+  avgRating: number;
   [key: string]: any; 
 }
 

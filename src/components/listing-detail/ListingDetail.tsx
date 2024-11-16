@@ -95,7 +95,7 @@ const ListingDetail: React.FC<ListingDetailPageProps> = ({id}) => {
         <MainDetailPage  listingId ={id} listingData= {getListing}  />
         <SideLayout minAgeLimit={Number(form.minAge)} maxAgeLimit={Number(form.maxAge)} listingId={id} trainerPhone={data?.phone ?? ''}/>
       </div>
-      <Reviews />
+      <Reviews listingId={id}/>
       {/* <GoogleMapComponent apiKey={googleMapsApiKey} /> */}
       {data && <InstructorsPage trainer={data} />}
     </>

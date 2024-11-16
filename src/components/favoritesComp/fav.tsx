@@ -24,6 +24,7 @@ interface Listing {
   description: string;
   trainerId: string;
   isfavorite: boolean;
+  avgRating: number;
 }
 
 const FavoriteListingIds = () => {
@@ -109,6 +110,7 @@ const FavoriteListingIds = () => {
                   minAge={listing.minAge}
                   maxAge={listing.maxAge}
                   description={""}
+                  avgRating={listing.avgRating}
                   isFavorite={true} // Indicate that this listing is a favorite
                 />
               ))

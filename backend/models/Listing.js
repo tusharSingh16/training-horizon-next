@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+const { type } = require("os");
+const { number } = require("zod");
 
 const listingSchema = new mongoose.Schema({
   trainerId: {
@@ -10,6 +12,10 @@ const listingSchema = new mongoose.Schema({
     type: String,
     required: true,
     trim: true,
+  },
+  subCategory: {
+    type: String,
+    required: true
   },
   title: {
     type: String,
@@ -76,11 +82,19 @@ const listingSchema = new mongoose.Schema({
     required: true,
     minlength: 100
   },
+  avgRating:{
+    type: Number,
+    default: 0,
+  },
+  
   isApproved: { type: Boolean, default: false },
+  reviews: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Review",
+    },
+    ],
 });
 
-const Listing = mongoose.model("Listings", listingSchema);
-
-module.exports = {
-  Listing,
-};
+// Export the model only if it hasn't already been compiled
+module.exports = mongoose.models.Listing || mongoose.model("Listing", listingSchema);

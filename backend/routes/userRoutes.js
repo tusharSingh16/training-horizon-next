@@ -112,9 +112,11 @@ userRouter.post("/signup", async function (req, res) {
 
     await sendEmail(
       user.email,
-      "Member Registeration",
-      `Hello ${user.FirstName}, \n\nYou have successfully registered ${inputFromUser.firstName} as a member into your training horizon account.`
+      "Member Registration",
+      `Hello ${user.FirstName}, \n\nYou have successfully registered ${inputFromUser.firstName} as a member into your training horizon account.`,
+      `<p>Hello ${user.FirstName},</p><p>You have successfully registered <b>${inputFromUser.firstName}</b> as a member into your training horizon account.</p>`
     );
+    
     // member email not available yet!!
     // await sendEmail(
     //   inputFromUser.email,
@@ -133,6 +135,7 @@ userRouter.post("/signup", async function (req, res) {
     });
   }
 });
+
 
 userRouter.post("/signin", async function (req, res) {
   const userInput = {

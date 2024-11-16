@@ -1,6 +1,6 @@
 const express = require("express");
 const Trainer = require("../models/Trainer");
-const {Listing} = require('../models/Listing')
+const Listing = require('../models/listing')
 // const { z } = require("zod");
 
 exports.getTrainers = async(req, res) => {

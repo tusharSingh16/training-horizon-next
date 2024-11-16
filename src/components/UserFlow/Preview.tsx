@@ -28,7 +28,7 @@ const PreviewPage = () => {
         const fetchedListing = response.data.listing;
         setListing(fetchedListing);
       } catch (error) {
-        console.error("Error fetching listing:", error);
+        console.log("Error fetching listing:", error);
         setError("Error fetching listing");
       }
     };
@@ -51,7 +51,7 @@ const PreviewPage = () => {
     try {
       const token = localStorage.getItem("token");
       if (!token) {
-        console.error("Token not found");
+        console.log("Token not found");
         return;
       }
 
@@ -66,7 +66,7 @@ const PreviewPage = () => {
       setPopUpMessage("Listing Deleted Successfully");
       setShowPopup(true);
     } catch (error) {
-      console.error("Error deleting listing:", error);
+      console.log("Error deleting listing:", error);
     }
   };
 
@@ -88,7 +88,7 @@ const PreviewPage = () => {
         <h1 className="text-2xl font-bold ">Your Listing</h1>
         <Pill
           text={`${!listing.isApproved ? `Pending for approval` : `Approved`}`}
-          color={`${!listing.isApproved ? `bg-yellow-200` : `bg-green-400`}`}
+          color={`${!listing.isApproved ? `bg-yellow-400` : `bg-green-400`}`}
         />
       </div>
       <div className="bg-white shadow-lg rounded-lg p-6">
@@ -99,6 +99,10 @@ const PreviewPage = () => {
             <p>
               <span className="font-semibold">Category:</span>{" "}
               {listing.category}
+            </p>
+            <p>
+              <span className="font-semibold">Sub Category:</span>{" "}
+              {listing.subCategory}
             </p>
             <p>
               <span className="font-semibold">Price:</span> ${listing.price}{" "}

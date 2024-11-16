@@ -64,6 +64,13 @@ function SideLayout({
   const closePopup = () => setIsOpen(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
+
+  const userId = window.localStorage.getItem('userId');
+  if (!userId) {
+    alert("Please log in to use this feature");
+    router.push("/userflow/login");
+    return;
+  }
     e.preventDefault();
     closePopup();
 
@@ -72,14 +79,17 @@ function SideLayout({
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ name, review, rating }),
+      body: JSON.stringify({ listingId,name, review, rating,date:new Date() }),
     });
+    
 
     if (response.ok) {
       alert("Review submitted!");
       setName("");
       setReview("");
       setRating(5);
+      //fresh the page
+      router.refresh();
     } else {
       alert("Error submitting review.");
     }
@@ -211,6 +221,7 @@ function SideLayout({
                   >
                     Send
                   </button>
+                  
                 </div>
               </div>
             </div>

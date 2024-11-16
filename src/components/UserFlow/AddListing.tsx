@@ -40,12 +40,21 @@ import {
 } from "../trainer-dashboard/ui/dialog";
 import { MultiSelect } from "./MultiSelect";
 import Popup from "../trainer-dashboard/PopUp";
+import SubCategory from "../listing/SubCategory";
 
 const libs: Library[] = ["places"];
+
+interface Listing {
+  _id: string;
+  category: string;
+  subCategory: string[];
+
+}
 
 export function AddListing() {
   const formSchema = z.object({
     category: z.string(),
+    subCategory: z.string(),
     title: z.string(),
     priceMode: z.string(),
     price: z.string(),
@@ -76,7 +85,7 @@ export function AddListing() {
     },
   });
 
-  const categories = ["Basketball", "Table Tennis", "Yoga", "Other"] as const;
+  // const categories = ["Basketball", "Table Tennis", "Yoga", "Other"] as const;
   const gender = ["Boys & Girls", "Boys Only", "Girls Only"] as const;
   const agegroup = [
     "3",
@@ -98,7 +107,7 @@ export function AddListing() {
     "55+Senior",
   ] as const;
   const mode = ["Offline", "Online"] as const;
-  const priceMode = ["Per day", "Per month", "Per Course"] as const;
+  const priceMode = ["Per month", "Per Course"] as const;
   const classSize = ["Group", "1 to 1"] as const;
   const dayOptions = [
     { value: "Mon", label: "Mon" },
@@ -116,6 +125,9 @@ export function AddListing() {
   const searchParams = useSearchParams();
       const id = searchParams.get("listingId");
 
+  const [categories, setCategories] = useState<Listing[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [subCategories, setSubCategories] = useState<string[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedMode, setSelectedMode] = useState("");
   const [selectedClassSize, setSelectedClassSize] = useState("");
@@ -156,7 +168,7 @@ export function AddListing() {
         // router.push('/dashboard/teacher/thankyou')
         return response.data;
       } catch (error) {
-        console.error("Error posting data:", error);
+        console.log("Error posting data:", error);
       }
     } else {
       try {
@@ -185,10 +197,12 @@ export function AddListing() {
         // router.push('/dashboard/teacher/thankyou')
         return response.data;
       } catch (error) {
-        console.error("Error posting data:", error);
+        console.log("Error posting data:", error);
       }
     }
   };
+
+  // end date is always greater than the start date
   const handleDateChange = useCallback(() => {
     const startDate = form.getValues("startDate");
     const endDate = form.getValues("endDate");
@@ -208,6 +222,7 @@ export function AddListing() {
     }
   }, [form]);
 
+  // max age is always greater than the min age
   const handleAgeChange = useCallback ( () => {
     const minAge = form.getValues("minAge");
     const maxAge = form.getValues("maxAge");
@@ -227,6 +242,7 @@ export function AddListing() {
     }
   }, [form]);
 
+  // handle date and age change
   useEffect(() => {
     const subscription = form.watch((_, { name }) => {
       if (name === "startDate" || name === "endDate") {
@@ -239,6 +255,20 @@ export function AddListing() {
     return () => subscription.unsubscribe();
   }, [form, handleAgeChange, handleDateChange]);
 
+  // Fetch categories
+  useEffect(()=>{
+    axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/admin/category`).then((res)=>{
+      console.log(res.data)
+      setCategories( res.data);
+    })
+},[])
+
+// handle category change
+const handleCategoryChange = (categoryName: string) => {
+  setSelectedCategory(categoryName);
+  const selectedCat = categories.find(cat => cat.category === categoryName);
+  setSubCategories(selectedCat ? selectedCat.subCategory : []);
+};
 
   useEffect(() => {
     // Fetch data if listingId exists
@@ -256,9 +286,11 @@ export function AddListing() {
           );
           
           const listingData = response.data.listing;
+          console.log(listingData)
           // Pre-fill form with fetched data
           form.reset({
             category: listingData.category || "",
+            subCategory: listingData.subCategory || "",
             title: listingData.title || "",
             priceMode: listingData.priceMode || "",
             price: listingData.price || "",
@@ -277,7 +309,7 @@ export function AddListing() {
             description: listingData.description || "",
           });
         } catch (error) {
-          console.error("Error fetching listing data:", error);
+          console.log("Error fetching listing data:", error);
         }
       };
       
@@ -335,7 +367,10 @@ export function AddListing() {
                 <FormLabel>CATEGORY</FormLabel>
                 <FormControl>
                   <Select
-                    onValueChange={field.onChange}
+                    onValueChange={(value) => {
+                      field.onChange(value);
+                      handleCategoryChange(value);
+                    }}
                     value={field.value ?? ""}
                   >
                     <SelectTrigger className="w-full">
@@ -344,9 +379,9 @@ export function AddListing() {
                     <SelectContent>
                       <SelectGroup>
                         <SelectLabel>Categories</SelectLabel>
-                        {categories.map((category) => (
-                          <SelectItem key={category} value={category}>
-                            {category}
+                        {categories.map((category, index) => (
+                          <SelectItem key={index} value={category.category}>
+                            {category.category}
                           </SelectItem>
                         ))}
                       </SelectGroup>
@@ -357,7 +392,39 @@ export function AddListing() {
               </FormItem>
             )}
           />
-          {/* Title Field */}
+          {/* Subcategory Selection */}
+      {
+        <FormField
+          name="subCategory"
+          control={form.control}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Subcategory</FormLabel>
+              <FormControl>
+                <Select
+                  onValueChange={field.onChange}
+                  value={field.value ?? ""}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select a sub category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectLabel>Subcategories</SelectLabel>
+                      {subCategories.map((sub, index) => (
+                        <SelectItem key={index} value={sub}>
+                          {sub}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      }{/* Title Field */}
           <FormField
             name="title"
             control={form.control}
@@ -774,6 +841,9 @@ export function AddListing() {
                 <div>
                   <div className="flex justify-between">
                     <strong>Category:</strong> {formValues.category}
+                  </div>
+                  <div className="flex justify-between">
+                    <strong>Sub Category:</strong> {formValues.subCategory}
                   </div>
                   <div className="flex justify-between">
                     <strong>Title:</strong> {formValues.title}

@@ -21,7 +21,7 @@ function SideLayout({
 }) {
   const [name, setName] = useState("user");
   const [members, setMembers] = useState([]);
-  const [selectedMember, setSelectedMember] = useState("");
+  const [selectedMembers, setSelectedMembers] = useState<string[]>([]); // Change to array
   const [review, setReview] = useState("");
   const [rating, setRating] = useState(5);
   const [activeTab, setActiveTab] = useState<string>("Overview");
@@ -30,12 +30,7 @@ function SideLayout({
 
   const form = useSelector((state: RootState) => state.form);
   const tabs = ["Overview", "Instructors", "Curriculum", "Reviews", "FAQs"];
-  // useEffect(()=>  {
-  //   // console.log(minAgeLimit, maxAgeLimit)
-  //   console.log(form.title),
-  //       console.log(form.ageGroup)
-  // })
-  // Fetch the username and members
+
   useEffect(() => {
     const fetchUserName = async () => {
       const res = await axios.get(
@@ -48,6 +43,7 @@ function SideLayout({
       );
       setName(res.data.user);
     };
+
     const fetchMembers = async () => {
       const res = await axios.get(
         `${process.env.NEXT_PUBLIC_BASE_URL}/user/allmembers`,
@@ -78,7 +74,6 @@ function SideLayout({
     e.preventDefault();
     closePopup();
 
-
     const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/review/reviews`, {
       method: "POST",
       headers: {
@@ -100,24 +95,43 @@ function SideLayout({
     }
   };
 
-  const handleRegister = async () => {
-    if (selectedMember) {
-      try {
-        const response = await axios.post(
-          `${process.env.NEXT_PUBLIC_BASE_URL}/user/enroll`,
-          {
-            listingId,
-            memberIds: [selectedMember], // Wrap selectedMember in an array
-          }
+  // Function to handle Add to Cart
+  const handleAddToCart = () => {
+    if (selectedMembers.length > 0) {
+      // Retrieve existing cart from local storage or initialize an empty array
+      const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+
+      // Loop through selected members and add them to cart if not already present
+      selectedMembers.forEach((memberId) => {
+        const newItem = { memberId, listingId };
+
+        // Check if the item is already in the cart
+        const isItemInCart = cart.some(
+          (item: { memberId: string, listingId: string }) => item.memberId === memberId && item.listingId === listingId
         );
-        if (response.status === 200 || response.status === 201) {
-          router.push(`/checkout/${listingId}?memberId=${selectedMember}`);
+
+        // If not already in the cart, add it
+        if (!isItemInCart) {
+          cart.push(newItem);
         }
-      } catch (e) {
-        console.error("Error during enrollment:", e);
-        // Optionally set an error message state here to show to the user
-      }
+      });
+
+      // Save the updated cart back to local storage
+      localStorage.setItem("cart", JSON.stringify(cart));
+      window.dispatchEvent(new Event("cart-updated"));
+
+      router.push(`/userflow/cart`);
     }
+  };
+
+  const handleCheckboxChange = (memberId: string) => {
+    setSelectedMembers((prevSelectedMembers) => {
+      if (prevSelectedMembers.includes(memberId)) {
+        return prevSelectedMembers.filter((id) => id !== memberId);
+      } else {
+        return [...prevSelectedMembers, memberId];
+      }
+    });
   };
 
   return (
@@ -126,40 +140,36 @@ function SideLayout({
       <div className="bg-blue-50 rounded-lg p-4 max-w-full">
         <div className="w-80 mx-auto p-4">
           <ReplyToListing />
-          {/* Dropdown for selecting registered members */}
+
+          {/* Checkbox list for selecting registered members */}
           <div className="mb-4">
-            <label className="block text-gray-700 mb-2">Select Member:</label>
-            <select
-              value={selectedMember}
-              onChange={(e) => setSelectedMember(e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded mb-2"
-            >
-              <option value="">N/A</option>
-              {members
-                .filter((member: any) => {
-                  if (member.age >= minAgeLimit && member.age <= maxAgeLimit) {
-                    return member;
-                  }
-                })
-                .map((member: any) => (
-                  <option key={member._id} value={member._id}>
+            <label className="block text-gray-700 mb-2">Select Members:</label>
+            {members.filter((member: any) => member.age >= minAgeLimit && member.age <= maxAgeLimit)
+              .map((member: any) => (
+                <div key={member._id} className="flex items-center mb-2">
+                  <input
+                    type="checkbox"
+                    id={`member-${member._id}`}
+                    value={member._id}
+                    checked={selectedMembers.includes(member._id)}
+                    onChange={() => handleCheckboxChange(member._id)}
+                    className="mr-2"
+                  />
+                  <label htmlFor={`member-${member._id}`} className="text-gray-700">
                     {member.name}
-                  </option>
-                ))}
-            </select>
+                  </label>
+                </div>
+              ))
+            }
           </div>
 
-          {/* Register Now Button */}
+          {/* Add to Cart Button */}
           <button
-            onClick={handleRegister}
-            disabled={!selectedMember} // Button is disabled if no member is selected
-            className={`w-full p-2 mb-5 text-white rounded ${
-              selectedMember
-                ? "bg-blue-500 hover:bg-blue-600"
-                : "bg-gray-300 cursor-not-allowed"
-            }`}
+            onClick={handleAddToCart}
+            disabled={selectedMembers.length === 0} // Button is disabled if no members are selected
+            className={`w-full p-2 mb-5 text-white rounded ${selectedMembers.length > 0 ? 'bg-blue-500 hover:bg-blue-600' : 'bg-gray-300 cursor-not-allowed'}`}
           >
-            Register Now
+            Add To Cart
           </button>
           {trainerPhone && (
             <div className="bg-white w-full p-2 mb-5 rounded flex justify-center items-center">

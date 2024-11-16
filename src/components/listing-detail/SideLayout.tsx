@@ -10,7 +10,7 @@ import Link from "next/link";
 
 function SideLayout({
   minAgeLimit,
-  maxAgeLimit,
+  maxAgeLimit, 
   listingId,
   trainerPhone,
 }: {
@@ -30,6 +30,14 @@ function SideLayout({
 
   const form = useSelector((state: RootState) => state.form);
   const tabs = ["Overview", "Instructors", "Curriculum", "Reviews", "FAQs"];
+  // useEffect(()=>  {
+  //   // console.log(minAgeLimit, maxAgeLimit)
+  //   console.log(form.title),
+  //       console.log(form.ageGroup)
+  // })
+  // Fetch the username and members
+  // console.log("trainer number is:" +trainerPhone);
+  
 
   useEffect(() => {
     const fetchUserName = async () => {
@@ -172,7 +180,7 @@ function SideLayout({
             Add To Cart
           </button>
           {trainerPhone && (
-            <div className="bg-white w-full p-2 mb-5 rounded flex justify-center items-center">
+            <div className="bg-white w-full p-2 mb-5 rounded flex justify-center items-center hover:bg-gray-200 hover:shadow-md shadow-sm">
               <div>
                 {/* whatsapp icon */}
                 <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="35" height="35" viewBox="0 0 48 48">

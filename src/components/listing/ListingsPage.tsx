@@ -20,7 +20,7 @@ interface Listing {
   endDate: string;
   days: string;
   gender: string;
-  startTime: string;
+  startTime: string; 
   endTime: string;
   minAge: string;
   maxAge: string;

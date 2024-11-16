@@ -13,6 +13,10 @@ const listingSchema = new mongoose.Schema({
     required: true,
     trim: true,
   },
+  subCategory: {
+    type: String,
+    required: true
+  },
   title: {
     type: String,
     required: true,

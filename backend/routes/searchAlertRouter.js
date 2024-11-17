@@ -1,7 +1,9 @@
 const express = require("express");
 const zod = require("zod");
 const { SearchAlert } = require("../models/SearchAlert");
+const {Listing} = require("../models/Listing")
 const { authMiddleware } = require("../middleware/authMiddleware");
+const {searchEmail} = require("../middleware/searchEmail");
 const searchAlertRouter = express.Router();
 
 const Schema = zod.object({
@@ -17,7 +19,7 @@ const Schema = zod.object({
   minAge: zod.string().optional(),
   maxAge: zod.string().optional(),
 });
-searchAlertRouter.post("/",authMiddleware, async function (req, res) {
+searchAlertRouter.post("/",authMiddleware,searchEmail, async function (req, res) {
   const inputData = req.body
   
   const result = Schema.safeParse(inputData);
@@ -37,7 +39,7 @@ searchAlertRouter.post("/",authMiddleware, async function (req, res) {
       });
     }
 
-    const result = await SearchAlert.create({...inputData, userId: req.userId });
+    const result = await SearchAlert.create({...inputData, userId: req.userId ,email: req.email });
     res.status(200).json({
       message: "searchAlert created successfully",
       searchAlert:result

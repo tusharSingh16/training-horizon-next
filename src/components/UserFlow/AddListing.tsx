@@ -41,6 +41,7 @@ import {
 import { MultiSelect } from "./MultiSelect";
 import Popup from "../trainer-dashboard/PopUp";
 import SubCategory from "../listing/SubCategory";
+import UploadImage from "./UploadImage";
 
 const libs: Library[] = ["places"];
 
@@ -821,6 +822,7 @@ const handleCategoryChange = (categoryName: string) => {
               </FormItem>
             )}
           />
+          {/* <UploadImage ></UploadImage> */}
           <div className="w-full flex justify-between">
             <Dialog
               open={isDialogOpen}

@@ -101,7 +101,7 @@ useEffect(() => {
           });
           // setUserName(response.data.user);
         } catch (error) {
-          console.error('Error fetching user name:', error);
+          console.log('Error fetching user name:', error);
         }
       };
   

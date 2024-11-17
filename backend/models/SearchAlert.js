@@ -6,6 +6,9 @@ const listingSchema = new mongoose.Schema({
     ref: "User",
     required: true,
   },
+  email:{
+    type: String,
+  },
   category: {
     type: String,
     // required: true,

@@ -76,8 +76,37 @@ useEffect(() => {
   };
 
   const [isAlertSet, setIsAlertSet] = useState<boolean>(false);
+  useEffect(() => {
+    
+  }, []);
 
   const handleToggle = (): void => {
+    console.log(!isAlertSet);
+    
+    if (!isAlertSet) {
+      const fetchUserName = async () => {
+        try {
+          const response = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/search-alert`, {
+        category: selectedCategory || "", 
+        // subCategory: selectedSubCategory, 
+        minPrice: RateRange[0].toString(), 
+        maxPrice: RateRange[1].toString(),
+        minAge: ageLimit[0].toString(),
+        maxAge: ageLimit[1].toString(),
+        gender: selectedGender || "", 
+          },{
+            headers: {
+              Authorization: "Bearer " + window.localStorage.getItem("token"),
+            },
+          });
+          // setUserName(response.data.user);
+        } catch (error) {
+          console.log('Error fetching user name:', error);
+        }
+      };
+  
+      fetchUserName();
+    }
     setIsAlertSet(!isAlertSet);
   };
   return (

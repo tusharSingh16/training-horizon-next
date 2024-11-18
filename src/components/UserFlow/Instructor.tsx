@@ -11,6 +11,7 @@ interface TrainerData {
   email: string;
   experience: string;
   qualifications: string;
+  avgRating: number;
 }
 
 interface InstructorsPageProps {
@@ -22,6 +23,7 @@ const instructors = [
     id: 1,
     name: "Kirill Menko",
     title: "Java Developer",
+    avgRating: 4.4,
     description: `
       As children, we absorb information and learn from experiences that mold us into who we are. Many individuals impact a child's life, but the most powerful and influential role lies in a devoted teacher; a teacher provides growth to students as a gardener would to a garden of flowers.
 
@@ -35,7 +37,7 @@ const instructors = [
       students: "2,345 Students",
       reviews: "2,345 Reviews",
       courses: "23 Courses",
-      rating: "4.4 Instructor Ratings",
+      
     },
     imagePath: "/img/instructor.png", // Leave blank for now
   },
@@ -48,9 +50,10 @@ const InstructorCard: React.FC<{
   experience: string;
   description: string;
   email: string;
-  stats: { students: string; reviews: string; courses: string; rating: string };
+  avgRating: number
+  stats: { students: string; reviews: string; courses: string;  };
   imagePath: string;
-}> = ({ id, name, experience, email, description, stats, imagePath }) => {
+}> = ({ id, name, experience, email,avgRating, description, stats, imagePath }) => {
   console.log(id);
   return (
     <div className="flex flex-col md:flex-row bg-white shadow-md rounded-lg p-6 mb-6">
@@ -78,7 +81,7 @@ const InstructorCard: React.FC<{
             <i className="fas fa-book"></i> {stats.courses}
           </div>
           <div>
-            <i className="fas fa-star"></i> {stats.rating}
+          <i className="fas fa-book"></i> {avgRating}⭐  Rating
           </div>
         </div>
         <p className="text-sm font-semibold text-gray-600 m-2">
@@ -115,6 +118,7 @@ const InstructorsPage: React.FC<InstructorsPageProps> = ({ trainer }) => {
             experience={trainer.experience}
             description={trainer.qualifications}
             email={trainer.email}
+            avgRating={trainer.avgRating}
             stats={instructors[0].stats}
             imagePath={"/img/instructor.png"}
           />

@@ -69,6 +69,8 @@ const Reviews = ({ listingId }: { listingId: string }) => {
                 <Image
                   src={`https://ui-avatars.com/api/?name=${review.name}&background=random`}
                   alt={review.name}
+                  height={20}
+                  width={20}
                   className="w-10 h-10 rounded-full mr-4"
                 />
                 <div>

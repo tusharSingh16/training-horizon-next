@@ -3,7 +3,7 @@ const zod = require("zod");
 const jwt = require("jsonwebtoken");
 const JWT_SECRET = require("../config/jwt");
 const { User } = require("../models/user");
-const { Enrollment } = require("../models/enrollment");
+const { Enrollment } = require("../models/Enrollment");
 const { authMiddleware } = require("../middleware/authMiddleware");
 const Member = require("../models/Member");
 const sendEmail = require("../utils/sendEmail");
@@ -116,7 +116,7 @@ userRouter.post("/signup", async function (req, res) {
       `Hello ${user.FirstName}, \n\nYou have successfully registered ${inputFromUser.firstName} as a member into your training horizon account.`,
       `<p>Hello ${user.FirstName},</p><p>You have successfully registered <b>${inputFromUser.firstName}</b> as a member into your training horizon account.</p>`
     );
-    
+
     // member email not available yet!!
     // await sendEmail(
     //   inputFromUser.email,
@@ -135,7 +135,6 @@ userRouter.post("/signup", async function (req, res) {
     });
   }
 });
-
 
 userRouter.post("/signin", async function (req, res) {
   const userInput = {

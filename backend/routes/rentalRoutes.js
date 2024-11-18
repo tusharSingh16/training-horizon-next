@@ -2,7 +2,7 @@ const express=  require('express');
 const router = express.Router();
 const rental = require("../controllers/rentalController");
 
-router.post('/rentals', rental.createRental);
+router.post('/create-rental', rental.createRental);
 router.get('/rentals', rental.getAllRentals);
 router.get('/rentals/:id', rental.getRentalById);
 router.put('/rentals/:id', rental.updateRental);

@@ -228,7 +228,7 @@ userRouter.get("/username", authMiddleware, async function (req, res) {
   });
 });
 
-userRouter.get("/getUserById/:id", authMiddleware, async (req, res) => {
+userRouter.get("/getUserById/:id", async (req, res) => {
   const userId = req.params.id;
 
   try {

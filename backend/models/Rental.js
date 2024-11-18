@@ -76,6 +76,6 @@ const rentalSchema = new mongoose.Schema(
 
 const Rental = mongoose.model('Rental', rentalSchema);
 
-module.exports = {
-  Rental,
-};
+module.exports = Rental;
+
+

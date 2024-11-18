@@ -15,7 +15,7 @@ const listingSchema = new mongoose.Schema({
   },
   subCategory: {
     type: String,
-    required: true
+    required: true,
   },
   title: {
     type: String,

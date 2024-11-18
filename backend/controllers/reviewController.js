@@ -1,6 +1,7 @@
 const express = require("express");
 const Review = require("../models/Review");
 const Listing = require("../models/Listing");
+const Trainer = require("../models/Trainer");
 
 const writeReview = async (req, res) => {
   try {
@@ -26,7 +27,7 @@ const writeReview = async (req, res) => {
     if (!listing) {
       return res.status(404).json({ error: "Listing not found" });
     }
-
+    const trainerId = listing.trainerId;  // Correct the field name here
     listing.reviews.push(newReview._id);
 
     // Get all valid ratings, including the new rating
@@ -46,6 +47,37 @@ const writeReview = async (req, res) => {
     // Save avgRating with one decimal place
     listing.avgRating = parseFloat(newAverageRating.toFixed(1));
     await listing.save();
+
+    // Find all listings for the trainer
+    const listings = await Listing.find({ trainerId }); // Corrected query
+    if (listings.length === 0) {
+      console.log('No listings found for this trainer');
+      return;
+    }
+
+    // Calculate the average of all the avgRatings from the trainer's listings
+    const validRatings1 = listings
+      .map((listing) => listing.avgRating) // Extract avgRating from each listing
+      .filter((rating) => typeof rating === 'number'); // Ensure ratings are numbers
+
+    if (validRatings1.length === 0) {
+      console.log('No valid ratings found for this trainer');
+      return;
+    }
+
+    // Calculate the new average rating for the trainer
+    const newAvgRating = validRatings1.reduce((acc, rating) => acc + rating, 0) / validRatings1.length; // Use validRatings1.length
+
+    // Find the trainer and update their avgRating
+    const trainer = await Trainer.findById(trainerId);
+    if (!trainer) {
+      console.log('Trainer not found');
+      return;
+    }
+
+    // Update the trainer's avgRating with the new calculated average (rounded to 1 decimal place)
+    trainer.avgRating = parseFloat(newAvgRating.toFixed(1)); // Update the correct field (avgRating)
+    await trainer.save();
 
     res.status(201).json({ message: "Review added successfully", review: newReview });
   } catch (error) {
@@ -77,5 +109,5 @@ const getReview = async (req, res) => {
 
 module.exports = {
   getReview,
-  writeReview
+  writeReview,
 };

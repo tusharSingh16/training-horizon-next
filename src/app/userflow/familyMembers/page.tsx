@@ -5,10 +5,39 @@ import axios from "axios";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 
+export interface familyMember {
+  _id: string;
+  name: string;
+  age: number;
+  dob: Date;
+  relationship: 'brother' | 'child' | 'father' | 'mother';
+  gender: 'male' | 'female' | 'other';
+  address: string;
+  city: string;
+  postalCode: string;
+  agreeToTerms: boolean;
+  doctorName: string;
+  doctorNumber: string;
+}
+export interface currentmember {
+  _id: string;
+  name: string;
+  age: number;
+  dob: Date;
+  relationship: 'brother' | 'child' | 'father' | 'mother';
+  gender: 'male' | 'female' | 'other';
+  address: string;
+  city: string;
+  postalCode: string;
+  agreeToTerms: boolean;
+  doctorName: string;
+  doctorNumber: string;
+}
+
 export default function FamilyMembers() {
-  const [familyMembers, setFamilyMembers] = useState([]);
+  const [familyMembers, setFamilyMembers] = useState<familyMember[]>([]);
   const [isEditing, setIsEditing] = useState(false);
-  const [currentMember, setCurrentMember] = useState(null);
+  const [currentMember, setCurrentMember] = useState<familyMember | null>(null);
   const [isLoading, setIsLoading] = useState(true); // Add loading state
   const [updatedInfo, setUpdatedInfo] = useState({
     name: "",
@@ -30,7 +59,7 @@ export default function FamilyMembers() {
       try {
         await new Promise((resolve) => setTimeout(resolve,1200)); // to test loader 
         const res = await axios.get(
-          "http://localhost:3005/api/v1/user/allmembers",
+          `${process.env.NEXT_PUBLIC_BASE_URL}/user/allmembers`,
           {
             headers: {
               Authorization: "Bearer " + window.localStorage.getItem("token"),
@@ -83,9 +112,14 @@ export default function FamilyMembers() {
   };
 
   const handleSaveChanges = async () => {
+    if (!currentMember) {
+      console.error("Current member is not selected");
+      return;
+    }
+  
     try {
       const response = await axios.put(
-        `http://localhost:3005/api/v1/user/members/${currentMember._id}`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}/user/members/${currentMember._id}`,
         updatedInfo,
         {
           headers: {

@@ -19,6 +19,7 @@ import Popup from "./PopUp";
 import { Card, CardContent} from './ui/card'
 import Image from 'next/image'
 import { Textarea } from "./ui/textarea";
+import Link from "next/link";
 
 export function TrainerForm() {
   const [popupVisible, setPopupVisible] = useState(false);
@@ -91,9 +92,8 @@ export function TrainerForm() {
         password: values.password,
         role: "trainer" // Hardcoding role as 'trainer'
       };
-      // const userResponse = await axios.post("http://localhost:3005/api/v1/user/signup", payload);
       const userResponse = await axios.post(
-        "http://localhost:3005/api/v1/user/signup",
+        `${process.env.NEXT_PUBLIC_BASE_URL}/user/signup`,
         payload,
         {
           headers: {
@@ -120,7 +120,7 @@ export function TrainerForm() {
         educationDetail: values.educationDetail
     };
       
-      const response = await axios.post("http://localhost:3005/api/v1/trainers/signup", trainerPayload);
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/trainers/signup`, trainerPayload);
 
       
       console.log(userResponse.data);
@@ -350,7 +350,7 @@ export function TrainerForm() {
 
           </div>
           <div className="flex justify-between py-4">
-            <a href="/"><Button variant={"outline"} type="button">Cancel</Button></a>
+            <Link href="/"><Button variant={"outline"} type="button">Cancel</Button></Link>
             <Button type="submit">Submit Details</Button>
           </div>
         </form>

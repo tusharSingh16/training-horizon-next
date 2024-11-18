@@ -3,6 +3,7 @@ import AdminListings from "../listing/AdminListings";
 import PendingDetails from "../pendings/PendingDetails";
 import Trainers from "../trainers/Trainers";
 import OrderStatus from "../OrderStatus";
+import Image from "next/image";
 
 interface ChildComponentProps {
   value: string;
@@ -13,7 +14,12 @@ const Dashboard: React.FC<ChildComponentProps> = ({ value, setValue }) => {
     <div className="min-h-screen bg-gray-100 p-6 w-full ">
       <div className=" mb-6 flex justify-between items-center">
         <div className="flex items-center space-x-4">
-          <img src="/img/dashboard/admin.svg" alt="admin" />
+          <Image
+            src="/img/dashboard/admin.svg"
+            width={50}
+            height={30}
+            alt="admin"
+          />
           <div>
             <h2 className="text-xl font-semibold">James Thompson</h2>
             <p className="text-sm text-gray-500">Founder @ Training Horizons</p>
@@ -27,7 +33,12 @@ const Dashboard: React.FC<ChildComponentProps> = ({ value, setValue }) => {
           />
           <div className="text-gray-500 flex flex-row space-x-2">
             <span className="mr-2">16 June, 2023</span>
-            <img src="/img/dashboard/notification.svg" alt="notificaiton" />
+            <Image
+              src="/img/dashboard/notification.svg"
+              alt="notificaiton"
+              width={20}
+              height={10}
+            />
             <span className="bg-yellow-300 text-white px-2 py-1 rounded-full">
               4
             </span>
@@ -38,7 +49,7 @@ const Dashboard: React.FC<ChildComponentProps> = ({ value, setValue }) => {
       {/* <div className="grid grid-cols-3 gap-4 mb-6">
         <div className="bg-white rounded-lg shadow p-4 ">
           <div className="flex flex-row gap-1">
-            <img src="/img/dashboard/user.svg" alt="user" />
+            <Image src="/img/dashboard/user.svg" alt="user" width={50} height={50} />
             <h3 className="text-sm text-gray-500 ">Users Engaged</h3>
           </div>
 
@@ -48,7 +59,7 @@ const Dashboard: React.FC<ChildComponentProps> = ({ value, setValue }) => {
         </div>
         <div className="bg-white rounded-lg shadow p-4">
           <h3 className="text-sm text-gray-500 flex flex-row gap-1">
-            <img src="/img/dashboard/transaction.svg" alt="transaction" />
+            <Image src="/img/dashboard/transaction.svg" alt="transaction" width={50} height={50} />
             Total Transactions
           </h3>
           <p className="text-2xl font-semibold">
@@ -57,7 +68,7 @@ const Dashboard: React.FC<ChildComponentProps> = ({ value, setValue }) => {
         </div>
         <div className="bg-white rounded-lg shadow p-4">
           <h3 className="text-sm text-gray-500 flex flex-row gap-1 ">
-            <img src="/img/dashboard/revenue.svg" alt="" />
+            <Image src="/img/dashboard/revenue.svg" alt="" width={50} height={50} />
             Revenue Generated
           </h3>
           <p className="text-2xl font-semibold ">
@@ -106,31 +117,9 @@ const Dashboard: React.FC<ChildComponentProps> = ({ value, setValue }) => {
             Generate
           </button>
         </div>
-      </div> */}
-
-      {/* <div className="bg-white rounded-lg shadow p-4">
-          <h3 className="text-lg font-semibold mb-4">Top Trainers</h3>
-          <ul>
-            <li className="flex items-center justify-between py-2">
-              <div className="flex items-center space-x-2">
-                <img
-                  src="/img/dashboard/image.svg"
-                  alt="image"
-                  height={40}
-                  width={40}
-                />
-                <span>Devon Laratte</span>
-              </div>
-              <div className="text-yellow-500">⭐ 4.7/5.0 (8,006)</div>
-            </li>
-
-          </ul>
-          <button className="mt-4 w-full bg-[#17A8FC] text-white py-2 rounded-lg hover:bg-blue-600">
-            View all
-          </button>
-        </div> */}
+      </div>
+    </div> */}
     </div>
-    // </div>
   );
 };
 

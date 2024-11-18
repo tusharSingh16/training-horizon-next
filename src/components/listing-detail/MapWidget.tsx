@@ -36,10 +36,10 @@ const placeName=form.location
           const { lat, lng } = geocodeData.results[0].geometry.location;
           setLocation({ lat, lng });
         } else {
-          console.error('No results found for the location.');
+          console.log('No results found for the location.');
         }
       } catch (error) {
-        console.error('Error fetching location coordinates:', error);
+        console.log('Error fetching location coordinates:', error);
       }
     };
 

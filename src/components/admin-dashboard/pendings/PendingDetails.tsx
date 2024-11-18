@@ -5,6 +5,7 @@ import { AgGridReact } from "ag-grid-react"; // React Data Grid Component
 import "ag-grid-community/styles/ag-grid.css"; // Mandatory CSS required by the Data Grid
 import "ag-grid-community/styles/ag-theme-quartz.css"; // Optional Theme applied to the Data Grid
 import { ColDef, ICellRendererParams } from "ag-grid-community";
+import Image from "next/image";
 
 function PendingDetails() {
   const [rowData, setRowData] = useState<
@@ -96,7 +97,7 @@ function PendingDetails() {
     trainerEmail: string
   ) => {
     const response = await axios.delete(
-      "http://localhost:3005/api/v1/admin/discard-trainer/" +
+      `${process.env.NEXT_PUBLIC_BASE_URL}/admin/discard-trainer/` +
         trainerID.toString()
     );
     //  console.log(response.data);
@@ -111,7 +112,7 @@ function PendingDetails() {
   ) => {
     // console.log(trainerID);
     const response = await axios.post(
-      "http://localhost:3005/api/v1/admin/approve-trainer/" +
+      `${process.env.NEXT_PUBLIC_BASE_URL}/admin/approve-trainer/` +
         trainerID.toString()
     );
     // console.log(response.data);
@@ -125,7 +126,7 @@ function PendingDetails() {
     listingTitle: string
   ) => {
     const response = await axios.delete(
-      "http://localhost:3005/api/v1/admin/discard-listing/" +
+      `${process.env.NEXT_PUBLIC_BASE_URL}/admin/discard-listing/` +
         listingId.toString()
     );
     //  console.log(response.data);
@@ -140,7 +141,7 @@ function PendingDetails() {
   ) => {
     // console.log(listingId);
     const response = await axios.post(
-      "http://localhost:3005/api/v1/admin/approve-listing/" +
+      `${process.env.NEXT_PUBLIC_BASE_URL}/admin/approve-listing/` +
         listingId.toString()
     );
     // console.log(response.data);
@@ -153,10 +154,10 @@ function PendingDetails() {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:3005/api/v1/admin/pending-trainers"
+          `${process.env.NEXT_PUBLIC_BASE_URL}/admin/pending-trainers`
         );
         const res = await axios.get(
-          "http://localhost:3005/api/v1/admin/pending-listings"
+          `${process.env.NEXT_PUBLIC_BASE_URL}/admin/pending-listings`
         );
         // console.log(response.data.pendingTrainers);
         // if(Array.isArray(response.data.data))
@@ -188,7 +189,7 @@ function PendingDetails() {
           <h3 className="text-lg font-semibold mb-4">Customer Reaction</h3>
           <div className="mb-4">
             <div className="flex items-center space-x-2">
-              <img
+              <Image
                 src="/img/dashboard/image.svg"
                 alt="image"
                 height={40}
@@ -204,7 +205,7 @@ function PendingDetails() {
           </div>
           <div className="mb-4">
             <div className="flex items-center space-x-2">
-              <img
+              <Image
                 src="/img/dashboard/image.svg"
                 alt="image"
                 height={40}

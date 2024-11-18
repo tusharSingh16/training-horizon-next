@@ -5,11 +5,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import axios from "axios";
-import { useState, useEffect } from "react";
+
+import { useState, useEffect, useCallback, Suspense } from "react";
 import { useJsApiLoader, StandaloneSearchBox } from "@react-google-maps/api";
 import { Library } from "@googlemaps/js-api-loader";
 import { useRef } from "react";
-
+import MemberEnrollmentTable from "@/components/listing-detail/MemberEnrollmentTable";
 import { Button } from "@/components/trainer-dashboard/ui/button";
 import {
   Form,
@@ -38,6 +39,7 @@ import {
   DialogTrigger,
 } from "../trainer-dashboard/ui/dialog";
 import { MultiSelect } from "./MultiSelect";
+import Popup from "../trainer-dashboard/PopUp";
 
 const libs: Library[] = ["places"];
 
@@ -110,6 +112,7 @@ export function AddListing() {
 
   const inputRef = useRef<google.maps.places.SearchBox | null>(null);
   const router = useRouter();
+
   const searchParams = useSearchParams();
   const id = searchParams.get("listingId");
 
@@ -121,6 +124,8 @@ export function AddListing() {
     form.getValues()
   );
   const [selectedDays, setSelectedDays] = useState<string[]>([]);
+  const [showPopup, setShowPopup] = useState(false);
+  const [popUpMessage, setPopUpMessage] = useState("");
 
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: process.env.NEXT_PUBLIC_MAPS_API_KEY!,
@@ -132,19 +137,22 @@ export function AddListing() {
       try {
         const token = localStorage.getItem("token");
         const response = await axios.post(
-          "http://localhost:3005/api/v1/listing/add-listing",
+          `${process.env.NEXT_PUBLIC_BASE_URL}/listing/add-listing`,
           values,
           {
             headers: {
               Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
+              // 'Content-Type': 'application/json',
             },
           }
         );
-
+        if (response) {
+          setPopUpMessage("Listing Added SuccessFully");
+          setShowPopup(true);
+        }
         const listingId = response.data.listingId;
         // console.log("Listing ID is" + listingId);
-        router.push(`/dashboard/teacher/preview?listingId=${listingId}`);
+        // router.push(`/dashboard/teacher/preview?listingId=${listingId}`);
         // router.push('/dashboard/teacher/thankyou')
         return response.data;
       } catch (error) {
@@ -155,19 +163,25 @@ export function AddListing() {
         const token = localStorage.getItem("token");
 
         const response = await axios.put(
-          `http://localhost:3005/api/v1/listing/add-listing/${id}`,
+          `${process.env.NEXT_PUBLIC_BASE_URL}/listing/add-listing/${id}`,
           values,
           {
             headers: {
               Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
+              // 'Content-Type': 'application/json',
             },
           }
         );
 
+        console.log(response);
+        if (response) {
+          setPopUpMessage("Listing Added SuccessFully");
+          setShowPopup(true);
+        }
+
         const listingId = response.data.listingId;
 
-        router.push(`/dashboard/teacher/preview?listingId=${listingId}`);
+        // router.push(`/dashboard/teacher/preview?listingId=${listingId}`);
         // router.push('/dashboard/teacher/thankyou')
         return response.data;
       } catch (error) {
@@ -175,7 +189,7 @@ export function AddListing() {
       }
     }
   };
-  const handleDateChange = () => {
+  const handleDateChange = useCallback(() => {
     const startDate = form.getValues("startDate");
     const endDate = form.getValues("endDate");
 
@@ -192,9 +206,9 @@ export function AddListing() {
         form.clearErrors("endDate");
       }
     }
-  };
+  }, [form]);
 
-  const handleAgeChange = () => {
+  const handleAgeChange = useCallback(() => {
     const minAge = form.getValues("minAge");
     const maxAge = form.getValues("maxAge");
 
@@ -211,7 +225,7 @@ export function AddListing() {
         form.clearErrors("maxAge");
       }
     }
-  };
+  }, [form]);
 
   useEffect(() => {
     const subscription = form.watch((_, { name }) => {
@@ -223,7 +237,7 @@ export function AddListing() {
       }
     });
     return () => subscription.unsubscribe();
-  }, [form.watch]);
+  }, [form, handleAgeChange, handleDateChange]);
 
   useEffect(() => {
     // Fetch data if listingId exists
@@ -232,7 +246,7 @@ export function AddListing() {
         try {
           const token = localStorage.getItem("token");
           const response = await axios.get(
-            `http://localhost:3005/api/v1/listing/listing/${id}`,
+            `${process.env.NEXT_PUBLIC_BASE_URL}/listing/listing/${id}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -268,7 +282,7 @@ export function AddListing() {
 
       fetchListing();
     }
-  }, [id]);
+  }, [id, form]);
 
   const handlePlaceSelect = () => {
     if (inputRef.current) {
@@ -793,7 +807,7 @@ export function AddListing() {
                     <strong>Pre-Requistes:</strong> {formValues.preRequistes}
                   </div>
                   <div className="flex justify-between">
-                    <strong>Description:</strong> {formValues.description}
+                    <strong>Description:</strong>{" "}
                   </div>
                 </div>
                 <div className="flex justify-between mt-4">
@@ -807,6 +821,12 @@ export function AddListing() {
               </DialogContent>
             </Dialog>
           </div>
+          <Popup
+            message={popUpMessage}
+            isOpen={showPopup}
+            onClose={() => setShowPopup(false)}
+            redirectTo="/"
+          />
         </form>
       </Form>
     </div>

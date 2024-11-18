@@ -21,8 +21,10 @@ interface TrainerData {
   qualifications: string;
   [key: string]: any; // Optional: for additional properties
 }
-interface ListingData {
-  trainerId: string;
+interface ListingDetailPageProps {
+  id: string;
+}
+interface ListingCard {
   category: string;
   title: string;
   priceMode: string;
@@ -33,42 +35,57 @@ interface ListingData {
   classSize: string;
   startDate: string;
   endDate: string;
-  days: string[];
+  days: string;
   gender: string;
   startTime: string;
   endTime: string;
   minAge: string;
   maxAge: string;
-  preRequistes: string;
   description: string;
+  trainerId: string;
+  listingId: string;
+  isFavorite: boolean;
 }
-
-const ListingDetail: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
+const ListingDetail: React.FC<ListingDetailPageProps> = ({ id }) => {
   const [activeTab, setActiveTab] = useState<string>("Overview");
   const [isOpen, setIsOpen] = useState(false);
   const [data, setData] = useState<TrainerData | null>(null);
-  const [listingData, setlistingData] = useState<ListingData | null>(null);
+  const [listingData, setlistingData] = useState<ListingCard | null>(null);
   const tabs = ["Overview", "Instructors", "Curriculum", "Reviews", "FAQs"];
-
+  const [getListing, setListing] = useState<ListingCard>({} as ListingCard);
   const form = useSelector((state: RootState) => state.form);
-
   useEffect(() => {
-    const fetchlistingData = async () => {
+    const fetchData = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:3005/api/v1/listing/listing/" + id.toString()
+          `${process.env.NEXT_PUBLIC_BASE_URL}/listing/listing/${id}`
         );
-        // console.log(response.data);
-        setlistingData(response.data.listing);
-        // console.log(data);
+        setListing(response.data.listing);
       } catch (error) {
-        console.log("error in fetching listing");
+        console.log("error");
       }
     };
 
-    fetchlistingData();
+    fetchData();
   }, [id]);
+
+  // useEffect(() => {
+  //   const fetchlistingData = async () => {
+  //     try {
+  //       const response = await axios.get(
+  //         `${process.env.NEXT_PUBLIC_BASE_URL}/trainers/` +
+  //           form.trainerId.toString()
+  //       );
+  //       // console.log(response.data);
+  //       setlistingData(response.data.listing);
+  //       // console.log(data);
+  //     } catch (error) {
+  //       console.log("error in fetching listing");
+  //     }
+  //   };
+
+  //   fetchlistingData();
+  // }, [id]);
 
   useEffect(() => {
     if (listingData) {
@@ -110,7 +127,7 @@ const ListingDetail: React.FC = () => {
   return (
     <>
       <div className="bg-white shadow-md rounded-lg p-6 flex items-center ">
-        <MainDetailPage listingId={id} />
+        <MainDetailPage listingId={id} listingData={getListing} />
         <SideLayout
           minAgeLimit={Number(form.minAge)}
           maxAgeLimit={Number(form.maxAge)}

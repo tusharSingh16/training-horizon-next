@@ -23,7 +23,8 @@ const LearnSection: React.FC = () => {
         <ul className={`space-y-2 ${showMore ? "block" : "hidden md:block"}`}>
           <li>✔️ Start Time : {form.startTime}</li>
           <li>✔️ End Time : {form.endTime}</li>
-          <li>✔️ Age Group : {form.ageGroup}</li>
+          <li> Min Age : {form.minAge}</li>
+          <li>✔️ Max Age : {form.maxAge}</li>
           <li>✔️ Course Duration : {form.days} Days</li>
         </ul>
       </div>

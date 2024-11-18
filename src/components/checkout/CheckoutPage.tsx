@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import axios from "axios";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   Form,
   FormItem,
@@ -100,7 +100,7 @@ function CheckoutPage() {
       const token = localStorage.getItem("token");
 
       const response = await axios.post(
-        "http://localhost:3005/api/v1/order/checkout",
+        `${process.env.NEXT_PUBLIC_BASE_URL}/order/checkout`,
         values,
         {
           headers: {
@@ -125,12 +125,18 @@ function CheckoutPage() {
     setIsDialogOpen(true);
   };
 
+  const fillDefaultValues = useCallback ((userData: any) => {
+    form.setValue("firstName", userData.firstName || "");
+    form.setValue("lastName", userData.lastName || "");
+    form.setValue("email", userData.email || "");
+}, [form]);
+
   // Fetch user data
   useEffect(() => {
     const fetchUserData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3005/api/v1/user/getUserById/${userId}`,
+          `${process.env.NEXT_PUBLIC_BASE_URL}/user/getUserById/${userId}`,
           {
             headers: {
               Authorization: "Bearer " + window.localStorage.getItem("token"),
@@ -147,20 +153,16 @@ function CheckoutPage() {
     if (userId) {
       fetchUserData();
     }
-  }, [userId]);
+  }, [userId, fillDefaultValues]);
 
-  function fillDefaultValues(userData: any) {
-      form.setValue("firstName", userData.firstName || "");
-      form.setValue("lastName", userData.lastName || "");
-      form.setValue("email", userData.email || "");
-  }
+
 
   // Fetch listing data
   useEffect(() => {
     const fetchListing = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3005/api/v1/listing/listing/${listingId}`
+          `${process.env.NEXT_PUBLIC_BASE_URL}/listing/listing/${listingId}`
         );
         setListingData(response.data.listing);
       } catch (error) {
@@ -178,7 +180,7 @@ function CheckoutPage() {
     const fetchMemberData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3005/api/v1/user/members/${memberId}`,
+          `${process.env.NEXT_PUBLIC_BASE_URL}/user/members/${memberId}`,
           {
             headers: {
               Authorization: "Bearer " + window.localStorage.getItem("token"),

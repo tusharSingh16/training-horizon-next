@@ -51,15 +51,17 @@ const RegisterMemberForm = () => {
   } = useForm({
     resolver: zodResolver(registerMemberSchema),
   });
+  // console.log(errors)
 
   const [showPopup, setShowPopup] = useState(false);
   const [popUpMessage, setpopUpMessage] = useState("");
   const [age, setAge] = useState<number | null>(null);
 
   const onSubmit = async (data: any) => {
+    console.log("Button clicked!!");
     try {
       const response = await axios.post(
-        "http://localhost:3005/api/v1/user/registerMember",
+        `${process.env.NEXT_PUBLIC_BASE_URL}/user/registerMember`,
         data,
         {
           headers: {
@@ -67,7 +69,7 @@ const RegisterMemberForm = () => {
           },
         }
       );
-      console.log(response.data);
+
       setpopUpMessage("Member registered successfully");
       setShowPopup(true);
       reset();

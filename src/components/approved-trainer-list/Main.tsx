@@ -1,7 +1,7 @@
 "use client";
 import SearchBar from '../listing/SearchBar';
 import TrainerCard from './TrainerCard';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 
 interface Trainer {
@@ -23,7 +23,7 @@ const Main = () => {
     // Fetch trainers from the API
     const fetchTrainers = async () => {
       try {
-        const response = await fetch('http://localhost:3005/api/v1/approved-trainers/'); // API route for fetching trainers
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/approved-trainers/`); // API route for fetching trainers
         const data = await response.json();
         setTrainers(data);
       } catch (error) {
@@ -44,18 +44,18 @@ const Main = () => {
     setFilteredTrainers(filtered);
   }, [keywords, trainers]);
 
-  const handleSearch = (searchKeywords: string) => {
+  const handleSearch = useCallback ((searchKeywords: string) => {
     // Filter trainers based on the provided search keywords
     const filtered = trainers.filter(trainer => {
       const fullName = `${trainer.fname} ${trainer.lname}`.toLowerCase();
       return fullName.includes(searchKeywords.toLowerCase());
     });
     setFilteredTrainers(filtered);
-  };
+  }, [trainers]);
 
   useEffect(() => {
     handleSearch(keywords);
-  }, [keywords, trainers]);
+  }, [keywords, trainers, handleSearch]);
 
 
   return (

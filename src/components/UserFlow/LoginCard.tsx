@@ -21,7 +21,7 @@ function LoginCard() {
 
   async function submitForm() {
     try {
-      const res = await axios.post("http://localhost:3005/api/v1/user/signin", {
+      const res = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/user/signin`, {
         email,
         password,
       });
@@ -87,7 +87,7 @@ function LoginCard() {
           <div className="flex justify-between w-[350px]">
             <div className="text-sm">
               Don't have an account?{" "}
-              <Link href="/login">
+              <Link href="/userflow/signup">
                 <span className="text-blue-600 cursor-pointer hover:underline">
                   Sign up!
                 </span>

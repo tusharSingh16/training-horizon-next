@@ -47,7 +47,6 @@ const postListingSchema = zod.object({
   maxAge: zod.string(),
   description: zod.string(),
 });
-
 listingRouter.get("/listing", async function (req, res) {
 
   const listings = await Listing.find();
@@ -58,6 +57,7 @@ listingRouter.get("/listing", async function (req, res) {
 listingRouter.get("/bulk", async function (req, res) {
   const filter = req.query.filter || "";
   const listings = await Listing.find({
+    isApproved: true,
     $or: [
       {
         category: {
@@ -75,6 +75,79 @@ listingRouter.get("/bulk", async function (req, res) {
   });
 
   res.status(200).json(listings);
+});
+
+listingRouter.get("/", async (req, res) => {
+  const { 
+    category,
+    priceMode,
+    title,
+    price,
+    mode,
+    location,
+    quantity,
+    classSize,
+    startDate,
+    endDate,
+    days,
+    gender,
+    startTime,
+    endTime,
+    minAge,
+    maxAge,
+    preRequistes,
+    description,
+    minPrice,
+    maxPrice,
+  } = req.query;
+
+  const query = {};
+
+  // Build query based on search and filter parameters
+  if (title) {
+    query.title = { $regex: title, $options: "i" };
+  }
+  if (category) {
+    query.category = category;
+  }
+  if (minPrice || maxPrice) {
+    query.price = {};
+    if (minPrice) query.price.$gte = parseInt(minPrice); // Greater than or equal to minPrice
+    if (maxPrice) query.price.$lte = parseInt(maxPrice); // Less than or equal to maxPrice
+  }
+  if (mode) {
+    query.mode = mode;
+  }
+  if (location) {
+    query.location = location;
+  }
+  if (gender) {
+    query.gender = gender;
+  }
+  
+    query.minAge = {};
+    query.maxAge = {};
+    if (minAge) query.minAge.$gte = parseInt(minAge);
+    if (maxAge) query.maxAge.$lte = parseInt(maxAge);
+
+  if (startTime) {
+    query.startTime = {};
+    if (startTime) query.startTime.$gte = startTime;
+  
+  }
+  if(endTime){
+    query.endTime = {};
+    query.endTime.$lte = endTime;
+  }
+
+
+  try {
+    const result = await Listing.find(query);
+    res.json(result);
+  } catch (error) {
+    console.error("Error fetching listing:", error);
+    res.status(500).json({ error: "Failed to fetch listing" });
+  }
 });
 
 
@@ -135,7 +208,43 @@ listingRouter.get("/listing/:listingId", async function (req, res) {
   }
 });
 
-listingRouter.post("/add-listing", trainerAuthMiddleware,async function (req, res) {
+listingRouter.get("/getListingsByTrainerId/:trainerId", async function (req, res){
+  const {trainerId} = req.params;
+  try{
+    const listings = await Listing.find({trainerId: trainerId});
+    if(!listings){
+      return res.status(404).json({
+        message: "Trainer not found",
+      })
+    }
+    
+    res.status(200).json({
+      message: "Listings retrieved successfully",
+      listings,
+    })
+  } catch(error){
+    res.status(500).json({
+      message: "Error fetching listings",
+      error: error,
+    })
+  }
+})
+
+listingRouter.delete("/deleteListingById/:listingId", trainerAuthMiddleware, async function (req, res) {
+  const {listingId} = req.params
+  try{
+    const listing = await Listing.findByIdAndDelete(listingId);
+    if(!listing)
+      return res.status(404).json({error: "No listing with this id found"})
+
+    res.status(200).json({message: "Listing Deleted successfully"})
+  } catch(error){
+    res.status(404).json({error: error.message})
+  }
+
+})
+
+listingRouter.post("/add-listing", trainerAuthMiddleware, async function (req, res) {
     const inputFromTrainer = {
       trainerId: req.trainerId,
       category: req.body.category,
@@ -145,7 +254,7 @@ listingRouter.post("/add-listing", trainerAuthMiddleware,async function (req, re
       mode: req.body.mode,
       location: req.body.location,
       quantity: req.body.quantity,
-      classSize: req.body.quantity,
+      classSize: req.body.classSize,
       startDate: req.body.startDate,
       endDate: req.body.endDate,
       days: req.body.days,
@@ -199,7 +308,7 @@ listingRouter.post("/add-listing", trainerAuthMiddleware,async function (req, re
 
 listingRouter.put("/add-listing/:id", trainerAuthMiddleware,async function (req, res) {
   const inputFromTrainer = {
-    trainerId: req.params.id,
+    trainerId: req.trainerId,
     category: req.body.category,
     priceMode: req.body.priceMode,
     title: req.body.title,

@@ -26,8 +26,8 @@ const Sidebar: React.FC<ChildComponentProps> = ({ value, setValue }) => {
         <Image
           src="/img/dashboard/logo.svg"
           alt="Logo"
-          width={180}
-          height={120}
+          width={150}
+          height={50}
         />
       </div>
 
@@ -42,11 +42,13 @@ const Sidebar: React.FC<ChildComponentProps> = ({ value, setValue }) => {
                 activeButton === "Profile"
                   ? "bg-[#17A8FC] text-white"
                   : " text-black"
-              }`}>
-              <img
+              }`}
+            >
+              <Image
                 className="mx-2"
                 src="/img/dashboard/profile.svg"
                 alt="dashboardlogo"
+                width={50} height={50}
               />
               Profile
             </button>
@@ -62,10 +64,12 @@ const Sidebar: React.FC<ChildComponentProps> = ({ value, setValue }) => {
                   ? "bg-[#17A8FC] text-white"
                   : " text-black"
               }`}>
-              <img
+              <Image
                 className="mx-2"
                 src="/img/dashboard/setting.svg"
                 alt="dashboardlogo"
+                width={30}
+                height={50}
               />
               Dashboard
             </button>
@@ -81,10 +85,12 @@ const Sidebar: React.FC<ChildComponentProps> = ({ value, setValue }) => {
                     ? "bg-[#17A8FC] text-white"
                     : " text-black"
                 }`}>
-                <img
+                <Image
                   className="mx-2"
                   src="/img/dashboard/setting.svg"
                   alt="dashboardlogo"
+                  width={30}
+                  height={50}
                 />
                 Listings
               </button>
@@ -118,10 +124,12 @@ const Sidebar: React.FC<ChildComponentProps> = ({ value, setValue }) => {
                   ? "bg-[#17A8FC] text-white"
                   : " text-black"
               }`}>
-              <img
+              <Image
                 className="mx-2"
                 src="/img/dashboard/setting.svg"
                 alt="dashboardlogo"
+                width={30}
+                height={50}
               />
               Account Setting
             </button>
@@ -137,10 +145,12 @@ const Sidebar: React.FC<ChildComponentProps> = ({ value, setValue }) => {
                   ? "bg-[#17A8FC] text-white"
                   : " text-black"
               }`}>
-              <img
+              <Image
                 className="mx-2"
                 src="/img/dashboard/setting.svg"
                 alt="dashboardlogo"
+                width={30}
+                height={50}
               />
               Order Status
             </button>
@@ -169,10 +179,12 @@ const Sidebar: React.FC<ChildComponentProps> = ({ value, setValue }) => {
                   ? "bg-[#17A8FC] text-white"
                   : " text-black"
               }`}>
-              <img
+              <Image
                 className="mx-2"
                 src="/img/dashboard/logout.svg"
                 alt="dashboardlogo"
+                width={30}
+                height={50}
               />
               Log Out
             </button>

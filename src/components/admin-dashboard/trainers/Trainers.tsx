@@ -62,7 +62,7 @@ function Trainers() {
 
   const handleRemove = async (trainerID: string, trainerEmail: string) => {
     const response = await axios.delete(
-      "http://localhost:3005/api/v1/admin/discard-trainer/" +
+      `${process.env.NEXT_PUBLIC_BASE_URL}/admin/discard-trainer/` +
         trainerID.toString()
     );
     //  console.log(response.data);
@@ -81,7 +81,7 @@ function Trainers() {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:3005/api/v1/admin/trainers"
+          `${process.env.NEXT_PUBLIC_BASE_URL}/admin/trainers`
         );
 
         // console.log(response);

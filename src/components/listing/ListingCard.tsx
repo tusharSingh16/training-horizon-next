@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { setForm } from "@/lib/store/formSlice";
+import Image from "next/image";
 
 interface ListingCardProps {
   category: string;
@@ -27,6 +28,8 @@ interface ListingCardProps {
   trainerId: string;
   listingId: string;
   isFavorite: boolean;
+  categoryName:string;
+  subCategoryName:string;
 }
 
 const ListingCard: React.FC<ListingCardProps> = ({
@@ -50,6 +53,8 @@ const ListingCard: React.FC<ListingCardProps> = ({
   trainerId,
   listingId,
   isFavorite,
+  categoryName,
+  subCategoryName
 }) => {
   const [isSelected, setIsSelected] = useState<boolean>(isFavorite);
   const [favorites, setFavorites] = useState<string[]>([]);
@@ -91,7 +96,7 @@ const ListingCard: React.FC<ListingCardProps> = ({
       }
 
       try {
-        const response = await fetch(`http://localhost:3005/api/v1/favorites/${userId}`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/favorites/${userId}`, {
           method: 'GET',
           headers: {
             Authorization: `Bearer ${ window.localStorage.getItem('token') }`,
@@ -129,7 +134,7 @@ const handleOnClick = async (event: React.MouseEvent<HTMLImageElement>) => {
   }
 
   try {
-    const response = await fetch('http://localhost:3005/api/v1/favorites', {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/favorites`, {
       method: newIsSelected ? 'POST' : 'DELETE',
       headers: {
         'Content-Type': 'application/json',
@@ -161,13 +166,15 @@ return (
   <div className="flex-col max-sm:w-10/12 rounded-sm overflow-hidden hover:ring-sky-500 hover:scale-105 ring-1 ring-gray-200 shadow-3xl bg-white w-[18rem] h-[24rem]">
     <div className="h-5/6 cursor-pointer" onClick={() => {
       sendData();
-      router.push(`/courses/${listingId}`);
+      router.push(`/${categoryName}/${subCategoryName}/${listingId}`);
     }}>
       <div className="h-1/2 w-full">
-        <img
+        <Image
           src={"/img/tempListingImg.jpg"}
           alt={title}
           className="w-full object-cover h-full"
+          width={500}   
+          height={300}
         />
       </div>
       <div className="h-1/2">
@@ -186,10 +193,12 @@ return (
         <div className="text-xl">$ {price}.00 <span className="text-gray-400 text-xs">{priceMode === "Per day" ? "/day" : priceMode === "Per month" ? "/month" : "/course"}</span></div>
       </div>
       <div className="h-full flex items-center justify-center w-1/6">
-        <img
+        <Image
           src={`${isSelected ? `/icons/filled_fav.png` : `/icons/fav.png`}`}
           alt="fav"
           className="cursor-pointer"
+          width={25} 
+          height={25}   
           onClick={handleOnClick}
         />
       </div>

@@ -3,29 +3,30 @@ const zod = require("zod");
 const jwt = require("jsonwebtoken");
 const JWT_SECRET = require("../config/jwt");
 const { User } = require("../models/user");
+const { Enrollment } = require("../models/enrollment");
 const { authMiddleware } = require("../middleware/authMiddleware");
 const Member = require("../models/Member");
-const { Enrollment } = require("../models/Enrollment");
+const sendEmail = require("../utils/sendEmail");
 
 const userRouter = express.Router();
 
 // input validation
-const userSignupSchema =zod.object({
-        email:zod.string().email(),
-        firstName:zod.string(),
-        lastName:zod.string(),
-        password:zod.string(),
-        role: zod.string(),
-})
-const userSigninSchema =zod.object({
-    email:zod.string().email(),
-    password:zod.string(),
-})
-const userUpdateSchema =zod.object({
-        firstName:zod.string().optional(),
-        lastName:zod.string().optional(),
-        password:zod.string().optional(),
-})
+const userSignupSchema = zod.object({
+  email: zod.string().email(),
+  firstName: zod.string(),
+  lastName: zod.string(),
+  password: zod.string(),
+  role: zod.string(),
+});
+const userSigninSchema = zod.object({
+  email: zod.string().email(),
+  password: zod.string(),
+});
+const userUpdateSchema = zod.object({
+  firstName: zod.string().optional(),
+  lastName: zod.string().optional(),
+  password: zod.string().optional(),
+});
 
 userRouter.post("/google-auth", async function (req, res) {
   const inputFromUser = {
@@ -75,65 +76,6 @@ userRouter.post("/google-auth", async function (req, res) {
   }
 });
 
-userRouter.post('/signup',async function (req,res) {
-    const inputFromUser={
-        email:req.body.email,
-        firstName:req.body.firstName,
-        lastName:req.body.lastName,
-        password:req.body.password,
-        role: req.body.role || 'user',
-    } 
-    const result =userSignupSchema.safeParse(inputFromUser);
-    
-    if (!result.success ) {
-       return res.status(411).json({
-            message:"Email already taken  1 / Incorrect inputs"
-        })
-    }
-    try {
-        const isValid= await User.findOne({
-            email:inputFromUser.email,
-        })
-        if (isValid) {
-            return res.status(411).json({
-                message: "Email already taken 2 /Incorrect inputs"
-            })
-        }
-
-        const user =  await User.create(inputFromUser);
-     const token = jwt.sign({
-        userId : user._id,
-        role : user.role
-    },JWT_SECRET);
-        res.status(200).json({
-            message:"user created successfully",
-            token:token,
-            _id: user._id,
-        })
-    } catch (error) {
-        res.status(411).json({
-            message:error
-        })
-    }
-})
-
-// const userSignupSchema = zod.object({
-//   email: zod.string().email(),
-//   firstName: zod.string(),
-//   lastName: zod.string(),
-//   password: zod.string(),
-//   role: zod.string(),
-// });
-// const userSigninSchema = zod.object({
-//   email: zod.string().email(),
-//   password: zod.string(),
-// });
-// const userUpdateSchema = zod.object({
-//   firstName: zod.string().optional(),
-//   lastName: zod.string().optional(),
-//   password: zod.string().optional(),
-// });
-
 userRouter.post("/signup", async function (req, res) {
   const inputFromUser = {
     email: req.body.email,
@@ -167,8 +109,21 @@ userRouter.post("/signup", async function (req, res) {
       },
       JWT_SECRET
     );
+
+    await sendEmail(
+      user.email,
+      "Member Registeration",
+      `Hello ${user.FirstName}, \n\nYou have successfully registered ${inputFromUser.firstName} as a member into your training horizon account.`
+    );
+    // member email not available yet!!
+    // await sendEmail(
+    //   inputFromUser.email,
+    //   'Member Registeration',
+    //   `Hello ${inputFromUser.firstName}, \n\nYou have successfully been registered by ${user.FirstName} as a member into their training horizon account.`
+    // );
+
     res.status(200).json({
-      message: "user created successfully",
+      message: "User created successfully",
       token: token,
       _id: user._id,
     });
@@ -195,7 +150,6 @@ userRouter.post("/signin", async function (req, res) {
       email: userInput.email,
       password: userInput.password,
     });
-
     if (user) {
       //admin role
       // const userRole = user.role;
@@ -207,6 +161,13 @@ userRouter.post("/signin", async function (req, res) {
           userId: user._id,
         },
         JWT_SECRET
+      );
+
+      // sending email;
+      await sendEmail(
+        user.email,
+        "Login Notification",
+        `Hello ${user.firstName}, \n\nYou have successfully logged into your account.`
       );
 
       res.status(200).json({
@@ -230,12 +191,14 @@ userRouter.put("/", authMiddleware, async function (req, res) {
   const isValid = userUpdateSchema.safeParse(userInput);
   if (!isValid.success) {
     return res.status(411).json({
-      essage: "Error while updating information",
+      message: "Error while updating information",
     });
   }
   try {
     // console.log(" is it correct ?"+res.userId);
-    await User.updateOne({ _id: res.userId }, { $set: userInput });
+    await User.updateOne({ _id: req.userId }, { $set: userInput });
+    // console.log(req.userId);
+
     res.status(200).json({
       message: "Updated successfully",
     });
@@ -256,8 +219,28 @@ userRouter.get("/username", authMiddleware, async function (req, res) {
   res.status(200).json({
     _id: user._id,
     user: user.firstName,
+    userLastName: user.lastName,
     role: user.role,
+    email: user.email,
   });
+});
+
+userRouter.get("/getUserById/:id", authMiddleware, async (req, res) => {
+  const userId = req.params.id;
+
+  try {
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json({ message: "User retrieved successfully", user });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Error fetching user", error: error.message });
+  }
 });
 
 userRouter.post("/registerMember", authMiddleware, async (req, res) => {
@@ -276,7 +259,7 @@ userRouter.post("/registerMember", authMiddleware, async (req, res) => {
       agreeToTerms,
     } = req.body;
     const userId = req.userId;
-    console.log("The user Id is " + userId);
+
     const newMember = new Member({
       name,
       age,
@@ -290,90 +273,19 @@ userRouter.post("/registerMember", authMiddleware, async (req, res) => {
       postalCode,
       agreeToTerms,
     });
-    userRouter.get("/username", authMiddleware, async function (req, res) {
-      const user = await User.findOne({
-        _id: req.userId,
-      });
-      res.status(200).json({
-        _id: user._id,
-        user: user.firstName,
-        role: user.role,
-      });
-    });
 
-    userRouter.get("/getUserById/:id", authMiddleware, async (req, res) => {
-      const userId = req.params.id;
-
-      try {
-        const user = await User.findById(userId);
-
-        if (!user) {
-          return res.status(404).json({ message: "User not found" });
-        }
-
-        res.status(200).json({ message: "User retrieved successfully", user });
-      } catch (error) {
-        res
-          .status(500)
-          .json({ message: "Error fetching user", error: error.message });
-      }
-    });
-
-    userRouter.post("/registerMember", authMiddleware, async (req, res) => {
-      try {
-        const {
-          name,
-          age,
-          dob,
-          relationship,
-          doctorName,
-          doctorNumber,
-          gender,
-          city,
-          address,
-          postalCode,
-          agreeToTerms,
-        } = req.body;
-        const userId = req.userId;
-        // console.log("The user Id is " + userId);
-        const newMember = new Member({
-          name,
-          age,
-          dob,
-          relationship,
-          doctorName,
-          doctorNumber,
-          gender,
-          city,
-          address,
-          postalCode,
-          agreeToTerms,
-        });
-
-        const savedMember = await newMember.save();
-
-        // Add the member to the user's familyMembers array
-        const user = await User.findById(userId);
-        user.familyMembers.push(savedMember._id);
-        await user.save();
-
-        res.status(201).json({
-          message: "Family member registered successfully",
-          member: savedMember,
-        });
-      } catch (error) {
-        res.status(500).json({
-          message: "Error registering family member",
-          error: error.message,
-        });
-      }
-    });
     const savedMember = await newMember.save();
 
     // Add the member to the user's familyMembers array
     const user = await User.findById(userId);
     user.familyMembers.push(savedMember._id);
     await user.save();
+
+    await sendEmail(
+      user.email,
+      "Training Horizon Signup",
+      `Hello ${user.FirstName}, \n\nYou have successfully created your training horizon account.`
+    );
 
     res.status(201).json({
       message: "Family member registered successfully",
@@ -551,143 +463,50 @@ userRouter.get("/enrolled/:listingId", async (req, res) => {
     res.status(500).json({ error: "Failed to count members" });
   }
 });
-// userRouter.post("/enroll", async (req, res) => {
-//   const { listingId, memberId } = req.body;
 
-//   if (!listingId || !memberId) {
-//     return res
-//       .status(400)
-//       .json({ error: "Listing ID and Member ID are required" });
-//   }
+// Updated endpoint to get enrollment details with member details
+userRouter.get("/enrollment-details/:listingId", async (req, res) => {
+  const { listingId } = req.params;
 
-//   try {
-//     let enrollment = await Enrollment.findOne({ listingId });
+  if (!listingId) {
+    return res.status(400).json({ error: "Listing ID is required" });
+  }
 
-//     if (!enrollment) {
-//       // Create a new enrollment if it doesn't exist
-//       enrollment = new Enrollment({
-//         listingId,
-//         members: [memberId],
-//       });
-//       await enrollment.save();
-//       return res
-//         .status(200)
-//         .json({ message: "Enrollment created and member added", enrollment });
-//     }
+  try {
+    // Find the enrollment by listingId and populate member details
+    const enrollment = await Enrollment.findOne({ listingId }).populate({
+      path: "memberIds",
+      model: Member,
+      select:
+        "name age dob relationship gender address city postalCode doctorName doctorNumber",
+    });
 
-//     // Check if memberId already exists in members array
-//     if (enrollment.members.includes(memberId)) {
-//       return res
-//         .status(400)
-//         .json({ error: "Member already enrolled in this listing" });
-//     }
+    if (!enrollment) {
+      return res
+        .status(404)
+        .json({ error: "No enrollment found for this listing" });
+    }
 
-//     // Add the new member to the array and save
-//     enrollment.members.push(memberId);
-//     await enrollment.save();
+    // Prepare the response data for AG Grid
+    const memberDetails = enrollment.memberIds.map((member) => ({
+      memberId: member._id,
+      name: member.name,
+      age: member.age,
+      dob: member.dob,
+      relationship: member.relationship,
+      gender: member.gender,
+      address: member.address,
+      city: member.city,
+      postalCode: member.postalCode,
+      doctorName: member.doctorName,
+      doctorNumber: member.doctorNumber,
+    }));
 
-//     res
-//       .status(200)
-//       .json({ message: "Member added to the enrollment", enrollment });
-//   } catch (error) {
-//     console.error("Error enrolling member:", error);
-//     res.status(500).json({ error: "Failed to enroll member" });
-//   }
-// });
+    res.status(200).json({ members: memberDetails });
+  } catch (error) {
+    console.log("Error fetching enrollment details:", error);
+    res.status(500).json({ error: "Failed to retrieve enrollment details" });
+  }
+});
 
-// userRouter.post("/enroll", async (req, res) => {
-//   const { listingId, userId, memberId } = req.body;
-
-//   if (!listingId || !userId || !memberId) {
-//     return res
-//       .status(400)
-//       .json({ error: "Listing ID, User ID, and Member ID are required" });
-//   }
-
-//   try {
-//     const existingEnrollment = await Enrollment.findOne({
-//       listingId,
-//       userId,
-//       memberId,
-//     });
-
-//     if (existingEnrollment) {
-//       return res
-//         .status(400)
-//         .json({ error: "User/Member already enrolled in this course" });
-//     }
-
-//     const enrollment = new Enrollment({ listingId, userId, memberId });
-//     await enrollment.save();
-
-//     res
-//       .status(200)
-//       .json({ message: "User/Member enrolled successfully", enrollment });
-//   } catch (error) {
-//     console.error("Error enrolling user:", error);
-//     res.status(500).json({ error: "Failed to enroll user/member" });
-//   }
-// });
-// userRouter.post("/enroll", async (req, res) => {
-//   const { listingId, userId, memberId } = req.body;
-
-//   if (!listingId || !userId || !memberId) {
-//     return res
-//       .status(400)
-//       .json({ error: "Listing ID, User ID, and Member ID are required" });
-//   }
-
-//   try {
-//     const enrollment = await Enrollment.findOne({ listingId, userId });
-
-//     if (!enrollment) {
-//       // Create a new enrollment if it doesn't exist
-//       const newEnrollment = new Enrollment({
-//         listingId,
-//         userId,
-//         members: [memberId],
-//       });
-//       await newEnrollment.save();
-//       return res.status(200).json({
-//         message: "Enrollment created and member added",
-//         enrollment: newEnrollment,
-//       });
-//     }
-
-//     // Check if memberId already exists in members array
-//     if (enrollment.members.includes(memberId)) {
-//       return res
-//         .status(400)
-//         .json({ error: "Member already enrolled in this course" });
-//     }
-
-//     // Add the new member to the array and save
-//     enrollment.members.push(memberId);
-//     await enrollment.save();
-
-//     res
-//       .status(200)
-//       .json({ message: "Member added to the enrollment", enrollment });
-//   } catch (error) {
-//     console.error("Error enrolling member:", error);
-//     res.status(500).json({ error: "Failed to enroll member" });
-//   }
-// });
-
-// Get enrollment count for a course
-// userRouter.get("/enrollment/:listingId", async (req, res) => {
-//   const { listingId } = req.params;
-
-//   if (!listingId) {
-//     return res.status(400).json({ error: "Course ID is required" });
-//   }
-
-//   try {
-//     const count = await Enrollment.countDocuments({ listingId });
-//     res.status(200).json({ listingId, enrollmentCount: count });
-//   } catch (error) {
-//     console.error("Error fetching enrollment count:", error);
-//     res.status(500).json({ error: "Failed to fetch enrollment count" });
-//   }
-// });
 module.exports = userRouter;

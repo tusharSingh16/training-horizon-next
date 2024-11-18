@@ -19,6 +19,11 @@ function LoginCard() {
   const [password, setPassword] = useState("");
   const router = useRouter();
 
+  const fetchUserRole = async (userID : any) => {
+    const response = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/user/getUserById/${userID}`)
+    // const role = JSON.stringify(response).data.role
+    localStorage.setItem("role", response.data.user.role);
+  }
   async function submitForm() {
     try {
       const res = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/user/signin`, {
@@ -26,17 +31,11 @@ function LoginCard() {
         password,
       });
 
-      // Log user information
-      console.log(res.data._id); // Check what the response contains
-
-      // Store user ID and token in localStorage
+      console.log("This is userID: " + res.data._id);
+      fetchUserRole(res.data._id);
       window.localStorage.setItem("userId", res.data._id); 
-      console.log(res.data._id);
-      console.log("id saved");// Assuming the user ID is returned in the response
       window.localStorage.setItem("token", res.data.token);
-      console.log("token saved"); // Store token
 
-      // Redirect after successful login
       router.push('/');
     } catch (error) {
       console.log('Login failed:', error); // Handle login failure

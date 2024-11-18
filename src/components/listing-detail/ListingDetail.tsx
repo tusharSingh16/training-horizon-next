@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useEffect, useState } from "react";
 import SideLayout from "./SideLayout";
 import MainDetailPage from "./MainDetailPage";
@@ -8,10 +6,8 @@ import Reviews from "./Reviews";
 import { useSelector } from "react-redux";
 import { RootState } from "@/lib/store/store";
 import axios from "axios";
-import GoogleMapComponent from "./GoogleMapComponent";
-import MapWidget from "./MapWidget";
 import { useParams } from "next/navigation";
-
+import { useId } from "react";
 interface TrainerData {
   _id: string;
   fname: string;
@@ -19,11 +15,15 @@ interface TrainerData {
   email: string;
   experience: string;
   qualifications: string;
-  [key: string]: any; // Optional: for additional properties
+  phone: string;
+  avgRating: number;
+  [key: string]: any;
 }
+
 interface ListingDetailPageProps {
   id: string;
 }
+
 interface ListingCard {
   category: string;
   title: string;
@@ -48,81 +48,45 @@ interface ListingCard {
 }
 const ListingDetail: React.FC<ListingDetailPageProps> = ({ id }) => {
   const [activeTab, setActiveTab] = useState<string>("Overview");
-  const [isOpen, setIsOpen] = useState(false);
   const [data, setData] = useState<TrainerData | null>(null);
-  const [listingData, setlistingData] = useState<ListingCard | null>(null);
-  const tabs = ["Overview", "Instructors", "Curriculum", "Reviews", "FAQs"];
   const [getListing, setListing] = useState<ListingCard>({} as ListingCard);
   const form = useSelector((state: RootState) => state.form);
+  // Fetch listing details
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchListingData = async () => {
       try {
         const response = await axios.get(
           `${process.env.NEXT_PUBLIC_BASE_URL}/listing/listing/${id}`
         );
         setListing(response.data.listing);
       } catch (error) {
-        console.log("error");
+        console.log("Error fetching listing data:", error);
       }
     };
 
-    fetchData();
+    fetchListingData();
   }, [id]);
 
-  // useEffect(() => {
-  //   const fetchlistingData = async () => {
-  //     try {
-  //       const response = await axios.get(
-  //         `${process.env.NEXT_PUBLIC_BASE_URL}/trainers/` +
-  //           form.trainerId.toString()
-  //       );
-  //       // console.log(response.data);
-  //       setlistingData(response.data.listing);
-  //       // console.log(data);
-  //     } catch (error) {
-  //       console.log("error in fetching listing");
-  //     }
-  //   };
-
-  //   fetchlistingData();
-  // }, [id]);
-
+  // console.log(check)
+  // Fetch trainer details if trainerId is available
   useEffect(() => {
-    if (listingData) {
-      const trainerId = listingData.trainerId;
-      const fetchData = async () => {
+    if (form.trainerId) {
+      const fetchTrainerData = async () => {
         try {
+          console.log("use effect called");
+
           const response = await axios.get(
-            "http://localhost:3005/api/v1/trainers/" + trainerId.toString()
+            `${process.env.NEXT_PUBLIC_BASE_URL}/trainers/${form.trainerId}`
           );
-          // console.log(response.data.trainer);
           setData(response.data.trainer);
-          // console.log(data);
         } catch (error) {
-          console.log("error in fetching trainer");
+          console.log("Error fetching trainer data:", error);
         }
       };
-      fetchData();
+
+      fetchTrainerData();
     }
-  }, [listingData]);
-
-  // useEffect(() => {
-  //   const fetchData = async () => {
-
-  //       try {
-  //         const response = await axios.get(
-  //           "http://localhost:3005/api/v1/trainers/" + trainerId.toString()
-  //         );
-  //         // console.log(response.data.trainer);
-  //         setData(response.data.trainer);
-  //         // console.log(data);
-  //       } catch (error) {
-  //         console.log("error");
-  //       }
-  //   };
-
-  //   fetchData();
-  // }, [form.trainerId]);
+  }, [form.trainerId]);
 
   return (
     <>
@@ -132,9 +96,10 @@ const ListingDetail: React.FC<ListingDetailPageProps> = ({ id }) => {
           minAgeLimit={Number(form.minAge)}
           maxAgeLimit={Number(form.maxAge)}
           listingId={id}
+          trainerPhone={data?.phone ?? ""}
         />
       </div>
-      <Reviews />
+      <Reviews listingId={id} />
       {/* <GoogleMapComponent apiKey={googleMapsApiKey} /> */}
       {data && <InstructorsPage trainer={data} />}
     </>

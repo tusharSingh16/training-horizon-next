@@ -8,15 +8,23 @@ import RoleBasedNav from "./RoleBasedNav";
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
-  const [isTrainer, setIsTrainer] = useState(false);
+  const [isTrainer, setIsTrainer] = useState(true);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    console.log("inside the useEffect");
     const token = localStorage.getItem("token");
     const role = localStorage.getItem("role");
-
+    if (role == "trainer") {
+      setIsTrainer(true);
+    } else {
+      setIsTrainer(false);
+    }
     setLoggedIn(!!token);
-    setIsTrainer(role === "trainer");
+    setLoading(false);
   }, []);
+
+
 
   const navLinks = [
     { href: "/", label: "Home" },
@@ -39,6 +47,7 @@ const Navbar = () => {
       </Link>
     ));
 
+
   return (
     <nav className="bg-white border-b border-gray-300 sticky top-0 z-50">
       <div className="container mx-auto p-5">
@@ -48,19 +57,23 @@ const Navbar = () => {
           <div className="flex items-center space-x-4">
             {loggedIn ? (
               <>
-                {isTrainer ? <RoleBasedNav /> : null}
-                <Link
-                  href="/dashboard/teacher/join_as_teacher"
-                  className="bg-yellow-500 text-black px-3 py-2 rounded-md text-sm font-medium hover:bg-yellow-200"
-                >
-                  Join as Trainer
-                </Link>
-                <Link
+                {(isTrainer && !loading) ? <RoleBasedNav /> : null}
+                {!isTrainer && (
+                  <Link
+                    href="/dashboard/teacher/join_as_teacher"
+                    className="bg-yellow-500 text-black px-3 py-2 rounded-md text-sm font-medium hover:bg-yellow-200"
+                  >
+                    Join as Trainer
+                  </Link>
+                )}
+
+                {!isTrainer && <Link
                   href="/userflow/registerMember"
                   className="text-gray-700 hover:text-black px-3 py-2 rounded-md text-sm font-medium"
                 >
                   Register Member
-                </Link>
+                </Link>}
+
                 <UserDashboard />
               </>
             ) : (

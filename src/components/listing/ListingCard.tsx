@@ -30,6 +30,7 @@ interface ListingCardProps {
   isFavorite: boolean;
   categoryName:string;
   subCategoryName:string;
+  avgRating:number;
 }
 
 const ListingCard: React.FC<ListingCardProps> = ({
@@ -54,7 +55,8 @@ const ListingCard: React.FC<ListingCardProps> = ({
   listingId,
   isFavorite,
   categoryName,
-  subCategoryName
+  subCategoryName,
+  avgRating,
 }) => {
   const [isSelected, setIsSelected] = useState<boolean>(isFavorite);
   const [favorites, setFavorites] = useState<string[]>([]);
@@ -184,6 +186,7 @@ return (
           <p className="text-xs text-gray-500">{gender}</p>
           <p className="text-xs text-gray-500">{days}</p>
           <p className="text-xs text-gray-500">Age: {minAge}-{maxAge}</p>
+          <p className="text-xs text-gray-500">Rating:{avgRating} ★</p>
         </div>
       </div>
     </div>

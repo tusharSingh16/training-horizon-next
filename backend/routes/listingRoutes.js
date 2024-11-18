@@ -1,8 +1,8 @@
 const express = require("express");
 const jwt=require("jsonwebtoken");
 const zod = require("zod");
-const JWT_SECRET=require("../config/jwt")
-const {Listing} = require('../models/Listing')
+const JWT_SECRET=require("../config/jwt");
+const Listing = require("../models/Listing");
 const {trainerAuthMiddleware } = require("../middleware/authMiddleware");
 // const { default: mongoose } = require("mongoose");
 
@@ -11,6 +11,7 @@ const listingRouter = express.Router();
 const getListingSchema = zod.object({
   trainerId: zod.string(),
   category: zod.string(),
+  subCategory: zod.string(),
   title: zod.string(),
   priceMode: zod.string(),
   price: zod.string(),
@@ -248,6 +249,7 @@ listingRouter.post("/add-listing", trainerAuthMiddleware, async function (req, r
     const inputFromTrainer = {
       trainerId: req.trainerId,
       category: req.body.category,
+      subCategory: req.body.subCategory,
       priceMode: req.body.priceMode,
       title: req.body.title,
       price: req.body.price,
@@ -310,6 +312,7 @@ listingRouter.put("/add-listing/:id", trainerAuthMiddleware,async function (req,
   const inputFromTrainer = {
     trainerId: req.trainerId,
     category: req.body.category,
+    subCategory: req.body.subCategory,
     priceMode: req.body.priceMode,
     title: req.body.title,
     price: req.body.price,

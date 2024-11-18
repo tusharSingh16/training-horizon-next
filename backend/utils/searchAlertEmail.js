@@ -1,6 +1,5 @@
 const mailgun = require("mailgun-js");
 const dotenv = require('dotenv');
-const { log } = require("console");
 dotenv.config();
 
 const mg = mailgun({
@@ -8,7 +7,7 @@ const mg = mailgun({
   domain: process.env.MAILGUN_DOMAIN,
 });
 
-const sendEmail = async (to, subject, text) => {
+const searchAlertEmail = async (to, subject, text) => {
   console.log("Entered send mail fxn");
   
   const data = {
@@ -27,4 +26,4 @@ const sendEmail = async (to, subject, text) => {
   }
 };
 
-module.exports = sendEmail;
+module.exports = searchAlertEmail;

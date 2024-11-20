@@ -6,6 +6,7 @@ import Pill from "@/components/listing/Pill";
 import { Button } from "../trainer-dashboard/ui/button";
 import { headers } from "next/headers";
 import Popup from "../trainer-dashboard/PopUp";
+import MemberEnrollmentTable from "@/components/listing-detail/MemberEnrollmentTable";
 
 const PreviewPage = () => {
   const searchParams = useSearchParams();
@@ -165,12 +166,13 @@ const PreviewPage = () => {
             </p>
           </div>
           <p>
-            <span className="font-semibold">Class Size</span> {listing.classSize}
+            <span className="font-semibold">Class Size</span>{" "}
+            {listing.classSize}
           </p>
           <p>
-              <span className="font-semibold">Pre-Requistes</span>{" "}
-              {listing.preRequistes}
-            </p>
+            <span className="font-semibold">Pre-Requistes</span>{" "}
+            {listing.preRequistes}
+          </p>
           <div></div>
         </div>
 
@@ -179,6 +181,14 @@ const PreviewPage = () => {
             <span className="font-semibold">Description:</span>
           </p>
           <p className="whitespace-pre-line">{listing.description}</p>
+        </div>
+        <div className="my-4">
+          <p>
+            <span className="font-semibold ">Enrollments:</span>
+          </p>
+          <div className="m-4 w-3/4">
+            <MemberEnrollmentTable listingId={listingId} />
+          </div>
         </div>
       </div>
       <div className="flex justify-between pt-3">

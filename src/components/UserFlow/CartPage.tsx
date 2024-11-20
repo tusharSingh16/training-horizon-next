@@ -96,7 +96,7 @@ const CartPage = () => {
     listingId: string
   ): Promise<ListingDetails> => {
     const response = await axios.get(
-      `http://localhost:3005/api/v1/listing/listing/${listingId}`
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/listing/listing/${listingId}`
     );
     return { listingId, ...response.data.listing };
   };
@@ -105,7 +105,7 @@ const CartPage = () => {
     memberId: string
   ): Promise<MemberDetails> => {
     const response = await axios.get(
-      `http://localhost:3005/api/v1/user/members/${memberId}`,
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/user/members/${memberId}`,
       {
         headers: {
           Authorization: "Bearer " + window.localStorage.getItem("token"),

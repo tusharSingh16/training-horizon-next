@@ -18,7 +18,7 @@ const SubCategory: React.FC<{ categoryName: string }> = ({ categoryName }) => {
   //   const [filteredListings, setFilteredListings] = useState<Listing[]>(listings);
   useEffect(() => {
     axios
-      .get(`http://localhost:3005/api/v1/admin/category/${categoryName}`)
+      .get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/admin/category/${categoryName}`)
       .then((res) => {
         setCategory(res.data);
         

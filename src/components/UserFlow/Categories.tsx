@@ -28,7 +28,7 @@ const Categories = () => {
   const [getCategories ,setCategories] = useState<Listing[]>([]);
   const router = useRouter();
   useEffect(()=>{
-    axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/admin/category`).then((res)=>{
+    axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/admin/category`).then((res)=>{
       setCategories( res.data);
     })
 },[])

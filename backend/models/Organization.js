@@ -13,10 +13,12 @@ const organizationSchema = new mongoose.Schema({
     },
     availability: { type: [String], default: [], required: false },
     phone: { type: String, required: true }, 
+    role: { type: String, default: "organization" },
     address: { type: String, required: true },
     password: { type: String, required: true },
     confirmPassword: { type: String, required: true },
-    isApproved: { type: Boolean, default: false } 
+    isApproved: { type: Boolean, default: false }
+    
   }, {
     timestamps: true 
   });

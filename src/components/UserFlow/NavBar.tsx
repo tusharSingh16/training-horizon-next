@@ -8,8 +8,9 @@ import RoleBasedNav from "./RoleBasedNav";
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
-  const [isTrainer, setIsTrainer] = useState(true);
-  const [loading, setLoading] = useState(true);
+  const [isTrainer, setIsTrainer] = useState(false);
+  const [isOrg, setIsOrg] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     console.log("inside the useEffect");
@@ -20,11 +21,20 @@ const Navbar = () => {
     } else {
       setIsTrainer(false);
     }
+    if(role == "organization")  {
+      setIsOrg(true)
+    } else {
+      setIsOrg(false)
+    }
     setLoggedIn(!!token);
     setLoading(false);
   }, []);
 
-
+  if(isOrg) 
+  {
+    console.log("Logged in as a org");
+  }
+  
 
   const navLinks = [
     { href: "/", label: "Home" },
@@ -66,6 +76,7 @@ const Navbar = () => {
                     Join as Trainer
                   </Link>
                 )}
+                
 
                 {!isTrainer && <Link
                   href="/userflow/registerMember"
@@ -78,11 +89,17 @@ const Navbar = () => {
               </>
             ) : (
               <>
+              <Link
+                    href="/dashboard/teacher/join_as_teacher"
+                    className="bg-yellow-500 text-black px-3 py-2 rounded-md text-sm font-medium hover:bg-yellow-200"
+                  >
+                    Join as Trainer
+                  </Link>
                 <Link
                   href="/userflow/login"
                   className="text-gray-700 hover:text-black px-3 py-2 rounded-md text-sm font-medium"
                 >
-                  Log in
+                  Log inn
                 </Link>
                 <Link
                   href="/userflow/signup"
@@ -166,7 +183,7 @@ const Navbar = () => {
                   href="/userflow/login"
                   className="text-gray-700 hover:text-black block px-3 py-2 rounded-md text-base font-medium"
                 >
-                  Log in
+                  Log inn
                 </Link>
                 <Link
                   href="/userflow/signup"

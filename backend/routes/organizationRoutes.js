@@ -4,7 +4,6 @@ const oc = require("../controllers/organizationController");
 const oac = require("../controllers/organizationAuthController"); // oac = organizationAuthController
 
 // Organization routes
-router.post("/organizations", oc.createOrganization);
 router.get("/organizations", oc.getOrganizations);
 router.get("/organizations/:id", oc.getOrganizationById);
 router.put("/organizations/:id", oc.updateOrganization);

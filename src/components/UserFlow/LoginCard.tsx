@@ -24,18 +24,19 @@ function LoginCard() {
     // const role = JSON.stringify(response).data.role
     localStorage.setItem("role", response.data.user.role);
   }
-  async function submitForm() {
+  async function submitForm(endpoint : any) {
+    console.log("endpoint is: " + endpoint);
+    
     try {
-      const res = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/user/signin`, {
+      const res = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}${endpoint}`, {
         email,
         password,
       });
-
+      console.log("response is:" + JSON.stringify(res));
       console.log("This is userID: " + res.data._id);
       fetchUserRole(res.data._id);
       window.localStorage.setItem("userId", res.data._id); 
       window.localStorage.setItem("token", res.data.token);
-
       router.push('/');
     } catch (error) {
       console.log('Login failed:', error); // Handle login failure
@@ -74,12 +75,19 @@ function LoginCard() {
             </div>
           </div>
         </CardContent>
+
         <div className="flex justify-center">
           <Button
-            className="mt-1 w-[500px] bg-[#FDCE29] text-black hover:bg-yellow-500"
-            onClick={submitForm}
+            className="mt-1 mx-3 w-full bg-[#FDCE29] text-black hover:bg-yellow-500"
+            onClick={()=>submitForm("/user/signin")}
           >
             Login
+          </Button>
+          <Button
+            className="mt-1 mx-3 w-full bg-[#fd2934] text-black hover:bg-red-800"
+            onClick={() =>submitForm("/organizations/login")}
+          >
+            Login as Organization
           </Button>
         </div>
         <CardFooter className="text-center mt-4">

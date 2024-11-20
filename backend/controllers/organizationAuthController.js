@@ -45,11 +45,13 @@ exports.signUpOrganization = async (req, res) => {
     await organization.save();
 
     // Generate JWT
-    const token = jwt.sign({ id: organization._id }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ id: organization._id, role: organization.role }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
 
-    res.status(201).json({ token });
+    res.status(201).json({ token, 
+        orgDetails: organization
+     });
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
@@ -73,7 +75,7 @@ exports.loginOrganization = async (req, res) => {
     // }
 
     // Generate JWT
-    const token = jwt.sign({ id: organization._id }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ id: organization._id, role:organization.role }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
 

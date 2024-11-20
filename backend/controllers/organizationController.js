@@ -18,20 +18,6 @@ const orgSchema = z.object({
   path: ["confirmPassword"], // path of error
 });
 
-// controller to create an organization
-exports.createOrganization = async (req, res) => {
-  try {
-    orgSchema.parse(req.body); // Parse and validate the request body
-    const organization = new Organization(req.body);
-    await organization.save();
-    res.status(201).json(organization);
-  } catch (e) {
-    res.status(500).json({
-      error: e.message,
-    });
-  }
-};
-
 // controller to update an organization
 exports.updateOrganization = async (req, res) => {
   try {

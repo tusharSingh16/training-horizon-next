@@ -129,7 +129,7 @@ export function TrainerForm() {
       setPopupVisible(true);
     } catch (e) {
       if (axios.isAxiosError(e) && e.response?.status === 409) {
-        setPopupMessage("User already exists!");
+        setPopupMessage("Trainer already exists!");
       } else {
         setPopupMessage("An error occurred. Please try again.");
       }

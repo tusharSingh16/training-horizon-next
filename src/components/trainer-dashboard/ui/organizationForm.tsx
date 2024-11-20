@@ -68,7 +68,7 @@ export function OrganizationForm() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       const response = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/organizations/signup`, values);
-      console.log("Organization added" + response.data);
+      console.log("Organization added" + JSON.stringify(response.data));
       setPopupMessage("Organization added successfully!");
       setPopupVisible(true);
     } catch (e) {

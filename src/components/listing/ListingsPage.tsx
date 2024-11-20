@@ -160,7 +160,7 @@ const ListingsPage: React.FC<{categoryName:string ,subCategoryName:string}> = ({
                 location={listing.location} avgRating={listing.avgRating} trainerId={listing.trainerId} quantity={listing.quantity} classSize={listing.classSize} startDate={listing.startDate} endDate={listing.endDate} days={listing.days} gender={listing.gender} startTime={listing.startTime} endTime={listing.endTime} minAge={listing.minAge} maxAge={listing.maxAge} description={listing.description} isFavorite={false}/>
               ))
             ) : (
-              <p>No listings fossund.</p>
+              <p>No listings found.</p>
             )}
           </main>
         </div>

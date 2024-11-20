@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { useEffect, useState } from "react";
+import Image from "next/image";
 
 type CartItem = {
   memberId: string;
@@ -96,7 +97,7 @@ const CartPage = () => {
     listingId: string
   ): Promise<ListingDetails> => {
     const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/listing/listing/${listingId}`
+      `${process.env.NEXT_PUBLIC_BASE_URL}/listing/listing/${listingId}`
     );
     return { listingId, ...response.data.listing };
   };
@@ -105,7 +106,7 @@ const CartPage = () => {
     memberId: string
   ): Promise<MemberDetails> => {
     const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/user/members/${memberId}`,
+      `${process.env.NEXT_PUBLIC_BASE_URL}/user/members/${memberId}`,
       {
         headers: {
           Authorization: "Bearer " + window.localStorage.getItem("token"),
@@ -148,54 +149,68 @@ const CartPage = () => {
   }
 
   return (
-    <div className="flex flex-col lg:flex-row justify-center items-start gap-6 mx-auto p-4 max-w-5xl">
-      {/* Cart Details Section */}
-      <div className="w-full lg:w-2/3 max-w-lg border rounded-lg shadow-md p-6">
-        <h2 className="text-xl font-semibold mb-4">Cart Details</h2>
-        <div className="space-y-4">
-          {cartItems.map((item, index) => {
-            const listing = listingDetails[item.listingId];
-            const member = memberDetails[item.memberId];
+    <div className="flex flex-col lg:flex-row justify-center items-start gap-6 mx-auto p-6 max-w-6xl">
+      {/* Product Details Section */}
+      <div className="w-full lg:w-2/3 border rounded-lg shadow-lg bg-white">
+        <h2 className="text-2xl font-bold p-4 border-b">My Cart</h2>
+        {cartItems.map((item, index) => {
+          const listing = listingDetails[item.listingId];
+          const member = memberDetails[item.memberId];
 
-            return (
-              <div key={index} className="border-b pb-4">
-                {listing && member ? (
-                  <>
-                    <p className="text-gray-600">Category: {listing.category}</p>
-                    <p className="text-gray-600">Price Mode: {listing.priceMode}</p>
-                    <p className="text-gray-600">Mode: {listing.mode}</p>
-                    <p className="text-gray-600">Location: {listing.location}</p>
-                    <p className="text-gray-600">Class Size: {listing.classSize}</p>
-                    <p className="text-gray-600">Start Date: {listing.startDate}</p>
-                    <p className="text-gray-600">End Date: {listing.endDate}</p>
-                    <p className="text-gray-600">Days: {listing.days.join(", ")}</p>
-                    <p className="text-gray-600">Gender: {listing.gender}</p>
-                    <p className="text-gray-600">Time: {listing.startTime} - {listing.endTime}</p>
-                    <p className="text-gray-600">Age Range: {listing.minAge} - {listing.maxAge}</p>
-                    <p className="text-gray-600">Pre-Requisites: {listing.preRequistes}</p>
-                    <p className="text-gray-600">Member Age: {member.age}</p>
-                    <p className="text-gray-600">Member Relationship: {member.relationship}</p>
-                  </>
-                ) : (
-                  <p>Loading details...</p>
-                )}
-                <button
-                  onClick={() => handleDeleteItem(item)}
-                  className="mt-2 text-red-600 hover:text-red-800"
-                >
-                  Delete Item
-                </button>
+          return listing && member ? (
+            <div
+              key={index}
+              className="flex items-start gap-4 p-6 border-b last:border-none"
+            >
+              <Image
+                src={'/img/p1.svg'} // Placeholder for now
+                alt={listing.title}
+                height={32}
+                width={32}
+                className="w-32 h-32 p-2 object-cover border rounded-md"
+              />
+              <div className="flex-1 ">
+                <h3 className="text-lg font-semibold">{listing.title}</h3>
+                <p className="text-gray-600">Size: {listing.classSize}</p>
+                <p className="hidden lg:block text-gray-600">Item No: {listing.listingId}</p>
+                <p className="text-sm font-semibold text-orange-700 mt-2">
+                  NOW ${listing.price}{" "}
+                  <span className="line-through  text-gray-400">
+                    WAS ${listing.price}
+                  </span>
+                </p>
+                
+                <div className="flex gap-4 mt-4">
+                  
+                  <button
+                    className="px-4 py-2 text-sm border rounded-md text-red-500 hover:bg-red-50"
+                    onClick={() => handleDeleteItem(item)}
+                  >
+                    Remove
+                  </button>
+                </div>
               </div>
-            );
-          })}
-        </div>
+              {/* <div className="flex flex-col items-center">
+                <div className="flex items-center border rounded-md">
+                  <button className="px-3 py-1">−</button>
+                  <span className="px-3 py-1 border-l border-r">{listing.quantity}</span>
+                  <button className="px-3 py-1">+</button>
+                </div>
+                <p className="text-gray-600 mt-2">${listing.price}</p>
+              </div> */}
+            </div>
+          ) : (
+            <p key={index}>Loading...</p>
+          );
+        })}
       </div>
 
       {/* Price Details Section */}
-      <div className="w-full lg:w-1/3 max-w-lg border rounded-lg shadow-md p-6">
-        <h2 className="text-xl font-bold mb-3">Price Details</h2>
-        <div className="border-t border-gray-200">
-          {cartItems.map((item, index) => {
+      <div className="w-full lg:w-1/3 border rounded-lg shadow-lg bg-white">
+        <h2 className="text-2xl font-bold p-4 border-b">Price Details</h2>
+        
+        <div className="p-4 space-y-4">
+        {cartItems.map((item, index) => {
             const listing = listingDetails[item.listingId];
             const member = memberDetails[item.memberId];
 
@@ -212,26 +227,24 @@ const CartPage = () => {
               )
             );
           })}
-          <div className="border-t border-gray-200 my-2"></div>
-          <div className="flex justify-between py-2">
+          <div className="flex justify-between">
             <span>Subtotal</span>
             <span>${subtotal.toFixed(2)}</span>
           </div>
-          <div className="flex justify-between py-2">
+          <div className="flex justify-between">
             <span>Tax (18%)</span>
             <span>${tax.toFixed(2)}</span>
           </div>
-          <div className="flex justify-between py-2">
-            <span>Service Cost</span>
+          <div className="flex justify-between">
+            <span>Shipping</span>
             <span>${cost.toFixed(2)}</span>
           </div>
-          <div className="border-t border-gray-200 my-2"></div>
-          <div className="flex justify-between py-2 font-bold">
+          <div className="border-t pt-4 flex justify-between font-bold">
             <span>Total</span>
             <span>${total.toFixed(2)}</span>
           </div>
-          <button className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md w-full">
-            Checkout
+          <button className="mt-4 w-full bg-yellow-500 hover:bg-yellow-600 text-white py-2 rounded-md">
+            Proceed to Checkout
           </button>
         </div>
       </div>

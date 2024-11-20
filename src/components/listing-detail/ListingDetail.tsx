@@ -90,15 +90,15 @@ const ListingDetail: React.FC<ListingDetailPageProps> = ({ id }) => {
 
   return (
     <>
-      <div className="bg-white shadow-md rounded-lg p-6 flex items-center ">
-        <MainDetailPage listingId={id} listingData={getListing} />
-        <SideLayout
-          minAgeLimit={Number(form.minAge)}
-          maxAgeLimit={Number(form.maxAge)}
-          listingId={id}
-          trainerPhone={data?.phone ?? ""}
-        />
-      </div>
+      <div className="bg-white shadow-md rounded-lg p-6 flex flex-col lg:flex-row items-start gap-4">
+  <MainDetailPage listingId={id} listingData={getListing} />
+  <SideLayout
+    minAgeLimit={Number(form.minAge)}
+    maxAgeLimit={Number(form.maxAge)}
+    listingId={id}
+    trainerPhone={data?.phone ?? ""}
+  />
+</div>
       <Reviews listingId={id} />
       {/* <GoogleMapComponent apiKey={googleMapsApiKey} /> */}
       {data && <InstructorsPage trainer={data} />}

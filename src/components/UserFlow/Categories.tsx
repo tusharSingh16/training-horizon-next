@@ -4,20 +4,20 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-const categories = [
-  { name: "Education", image: "/img/p1.svg" },
-  { name: "Sports", image: "/img/p2.svg" },
-  { name: "Boxing", image: "/img/p3.svg" },
-  { name: "Gymnastics", image: "/img/p4.svg" },
-  { name: "Swimming", image: "/img/p5.svg" },
-  { name: "Dance", image: "/img/p6.svg" },
-  { name: "Music", image: "/img/p7.svg" },
-  { name: "Cycling", image: "/img/p8.svg" },
-  { name: "Athletics", image: "/img/p9.svg" },
-  { name: "Martial Arts", image: "/img/p10.svg" },
+// const categories = [
+//   { name: "Education", image: "/img/p1.svg" },
+//   { name: "Sports", image: "/img/p2.svg" },
+//   { name: "Boxing", image: "/img/p3.svg" },
+//   { name: "Gymnastics", image: "/img/p4.svg" },
+//   { name: "Swimming", image: "/img/p5.svg" },
+//   { name: "Dance", image: "/img/p6.svg" },
+//   { name: "Music", image: "/img/p7.svg" },
+//   { name: "Cycling", image: "/img/p8.svg" },
+//   { name: "Athletics", image: "/img/p9.svg" },
+//   { name: "Martial Arts", image: "/img/p10.svg" },
 
-  // Add the rest of the categories here...
-];
+//   // Add the rest of the categories here...
+// ];
 interface Listing {
   _id: string;
   category: string;

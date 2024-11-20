@@ -34,7 +34,7 @@ const UserProfilePage = () => {
     const fetchUser = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:3005/api/v1/user/username",
+          `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/user/username`,
           {
             headers: {
               Authorization: "Bearer " + window.localStorage.getItem("token"),
@@ -361,7 +361,7 @@ const FamilyMembersContent = () => {
     const fetchFamilyMembers = async () => {
       try {
         const res = await axios.get(
-          "http://localhost:3005/api/v1/user/allmembers",
+          `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/user/allmembers`,
           {
             headers: {
               Authorization: "Bearer " + window.localStorage.getItem("token"),
@@ -474,7 +474,7 @@ const SubscriptionsContent = () => {
     const fetchOrders = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3005/api/v1/order/getOrdersDetailsByUserId/${id}`
+          `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/order/getOrdersDetailsByUserId/${id}`
         );
         // Filter orders to only show completed ones
         const completedOrders = response.data.orders.filter(

@@ -84,14 +84,14 @@ const CartPage = () => {
 
   // Function to fetch listing details by listingId using Axios
   const fetchListingDetails = async (listingId: string): Promise<ListingDetails> => {
-    const response = await axios.get(`http://localhost:3005/api/v1/listing/listing/${listingId}`);
+    const response = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/listing/listing/${listingId}`);
     return { listingId, ...response.data.listing };
   };
 
   // Function to fetch member details by memberId using Axios
   const fetchMemberDetails = async (memberId: string): Promise<MemberDetails> => {
     const response = await axios.get(
-      `http://localhost:3005/api/v1/user/members/${memberId}`,
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/user/members/${memberId}`,
       {
         headers: {
           Authorization: "Bearer " + window.localStorage.getItem("token"),

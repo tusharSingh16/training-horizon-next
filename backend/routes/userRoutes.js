@@ -3,7 +3,7 @@ const zod = require("zod");
 const jwt = require("jsonwebtoken");
 const JWT_SECRET = require("../config/jwt");
 const { User } = require("../models/user");
-const { Enrollment} = require("../models/enrollment")
+const { Enrollment } = require("../models/Enrollment");
 const { authMiddleware } = require("../middleware/authMiddleware");
 const Member = require("../models/Member");
 const sendEmail = require("../utils/sendEmail");
@@ -116,7 +116,7 @@ userRouter.post("/signup", async function (req, res) {
       `Hello ${user.FirstName}, \n\nYou have successfully registered ${inputFromUser.firstName} as a member into your training horizon account.`,
       `<p>Hello ${user.FirstName},</p><p>You have successfully registered <b>${inputFromUser.firstName}</b> as a member into your training horizon account.</p>`
     );
-    
+
     // member email not available yet!!
     // await sendEmail(
     //   inputFromUser.email,
@@ -135,7 +135,6 @@ userRouter.post("/signup", async function (req, res) {
     });
   }
 });
-
 
 userRouter.post("/signin", async function (req, res) {
   const userInput = {
@@ -201,7 +200,7 @@ userRouter.put("/", authMiddleware, async function (req, res) {
     // console.log(" is it correct ?"+res.userId);
     await User.updateOne({ _id: req.userId }, { $set: userInput });
     // console.log(req.userId);
-    
+
     res.status(200).json({
       message: "Updated successfully",
     });
@@ -222,7 +221,7 @@ userRouter.get("/username", authMiddleware, async function (req, res) {
   res.status(200).json({
     _id: user._id,
     user: user.firstName,
-    userLastName: user.lastName, 
+    userLastName: user.lastName,
     role: user.role,
     email: user.email,
   });
@@ -464,6 +463,51 @@ userRouter.get("/enrolled/:listingId", async (req, res) => {
   } catch (error) {
     console.error("Error counting members:", error);
     res.status(500).json({ error: "Failed to count members" });
+  }
+});
+
+// Updated endpoint to get enrollment details with member details
+userRouter.get("/enrollment-details/:listingId", async (req, res) => {
+  const { listingId } = req.params;
+
+  if (!listingId) {
+    return res.status(400).json({ error: "Listing ID is required" });
+  }
+
+  try {
+    // Find the enrollment by listingId and populate member details
+    const enrollment = await Enrollment.findOne({ listingId }).populate({
+      path: "memberIds",
+      model: Member,
+      select:
+        "name age dob relationship gender address city postalCode doctorName doctorNumber",
+    });
+
+    if (!enrollment) {
+      return res
+        .status(404)
+        .json({ error: "No enrollment found for this listing" });
+    }
+
+    // Prepare the response data for AG Grid
+    const memberDetails = enrollment.memberIds.map((member) => ({
+      memberId: member._id,
+      name: member.name,
+      age: member.age,
+      dob: member.dob,
+      relationship: member.relationship,
+      gender: member.gender,
+      address: member.address,
+      city: member.city,
+      postalCode: member.postalCode,
+      doctorName: member.doctorName,
+      doctorNumber: member.doctorNumber,
+    }));
+
+    res.status(200).json({ members: memberDetails });
+  } catch (error) {
+    console.log("Error fetching enrollment details:", error);
+    res.status(500).json({ error: "Failed to retrieve enrollment details" });
   }
 });
 

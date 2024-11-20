@@ -1,20 +1,25 @@
 import { Divide } from "lucide-react";
 import AdminListings from "../listing/AdminListings";
 import PendingDetails from "../pendings/PendingDetails";
-import Trainers from "../trainers/Trainers"
+import Trainers from "../trainers/Trainers";
 import OrderStatus from "../OrderStatus";
 import Image from "next/image";
 
-interface ChildComponentProps{
+interface ChildComponentProps {
   value: string;
   setValue: React.Dispatch<React.SetStateAction<string>>;
 }
-const Dashboard:React.FC<ChildComponentProps> = ( {value ,setValue})=> {
+const Dashboard: React.FC<ChildComponentProps> = ({ value, setValue }) => {
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
+    <div className="min-h-screen bg-gray-100 p-6 w-full ">
       <div className=" mb-6 flex justify-between items-center">
         <div className="flex items-center space-x-4">
-          <Image src="/img/dashboard/admin.svg"  width={500} height={300}  alt="admin" />    
+          <Image
+            src="/img/dashboard/admin.svg"
+            width={50}
+            height={30}
+            alt="admin"
+          />
           <div>
             <h2 className="text-xl font-semibold">James Thompson</h2>
             <p className="text-sm text-gray-500">Founder @ Training Horizons</p>
@@ -28,7 +33,12 @@ const Dashboard:React.FC<ChildComponentProps> = ( {value ,setValue})=> {
           />
           <div className="text-gray-500 flex flex-row space-x-2">
             <span className="mr-2">16 June, 2023</span>
-            <Image src="/img/dashboard/notification.svg" alt="notificaiton"   width={500} height={300} />
+            <Image
+              src="/img/dashboard/notification.svg"
+              alt="notificaiton"
+              width={20}
+              height={10}
+            />
             <span className="bg-yellow-300 text-white px-2 py-1 rounded-full">
               4
             </span>
@@ -36,7 +46,7 @@ const Dashboard:React.FC<ChildComponentProps> = ( {value ,setValue})=> {
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-4 mb-6">
+      {/* <div className="grid grid-cols-3 gap-4 mb-6">
         <div className="bg-white rounded-lg shadow p-4 ">
           <div className="flex flex-row gap-1">
             <Image src="/img/dashboard/user.svg" alt="user" width={50} height={50} />
@@ -68,12 +78,14 @@ const Dashboard:React.FC<ChildComponentProps> = ( {value ,setValue})=> {
 
     
       </div>
-
-         {value=='trainers'?<Trainers/>:<></> }
-         {value=='listings'? <AdminListings/>:<></>}
-         {value=='dashboard'? <PendingDetails />: <></>}
-         {value == 'orderStatus'? <OrderStatus /> :<></>}
-      <div className="grid grid-cols-2 gap-4">
+      */}
+      <div className="w-full">
+        {value == "trainers" ? <Trainers /> : <></>}
+        {value == "listings" ? <AdminListings /> : <></>}
+        {value == "dashboard" ? <PendingDetails /> : <></>}
+        {value == "orderStatus" ? <OrderStatus /> : <></>}
+      </div>
+      {/*<div className="grid grid-cols-2 gap-4">
         <div className="bg-white rounded-lg shadow p-4">
           <h3 className="text-lg font-semibold mb-4">Top Courses</h3>
           <ul>
@@ -81,32 +93,32 @@ const Dashboard:React.FC<ChildComponentProps> = ( {value ,setValue})=> {
               <span>Implementing SAFe</span>
               <span className="text-gray-600">$30.00</span>
             </li>
-            {/* Repeat more items as needed */}
+             Repeat more items as needed
           </ul>
           <button className="mt-4 w-full bg-[#17A8FC] text-white py-2 rounded-lg hover:bg-blue-600">
             + Add New Courses
           </button>
-        </div>
+        </div> */}
 
-        <div className="bg-white rounded-lg shadow p-4">
-          <h3 className="text-lg font-semibold mb-4">Generate Coupon</h3>
-          <div className="space-y-2">
-            <input
-              type="text"
-              placeholder="Enter coupon name"
-              className="px-4 py-2 w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <input
-              type="text"
-              placeholder="Offer Value"
-              className="px-4 py-2 w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <button className="w-full bg-[#17A8FC] text-white py-2 rounded-lg hover:bg-blue-600">
-              Generate
-            </button>
-          </div>
+      {/* <div className="bg-white rounded-lg shadow p-4">
+        <h3 className="text-lg font-semibold mb-4">Generate Coupon</h3>
+        <div className="space-y-2">
+          <input
+            type="text"
+            placeholder="Enter coupon name"
+            className="px-4 py-2 w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <input
+            type="text"
+            placeholder="Offer Value"
+            className="px-4 py-2 w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <button className="w-full bg-[#17A8FC] text-white py-2 rounded-lg hover:bg-blue-600">
+            Generate
+          </button>
         </div>
       </div>
+    </div> */}
     </div>
   );
 };

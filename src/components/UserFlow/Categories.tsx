@@ -36,7 +36,7 @@ const Categories = () => {
     <section className="py-2">
       <div className="flex justify-between items-center px-4 pb-8">
         <h2 className="  text-2xl font-bold ">Our Top Categories</h2>
-        <Link href="/courses">
+        <Link href="/all/courses">
           <button className="text-blue-400 text-xl hover:underline">
             View all
           </button>

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import Image from 'next/image';
 
 const UploadImage = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -54,7 +55,7 @@ const UploadImage = () => {
       {imageUrl && (
         <div className="mt-4">
           <p className="text-green-500">Image uploaded successfully:</p>
-          <img src={imageUrl} alt="Uploaded" className="mt-2 max-w-xs" />
+          <Image src={imageUrl} alt="Uploaded" height={10} width={10} className="mt-2 max-w-xs" />
         </div>
       )}
     </div>

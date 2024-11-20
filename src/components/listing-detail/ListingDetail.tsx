@@ -17,11 +17,11 @@ interface TrainerData {
   qualifications: string;
   phone: string;
   avgRating: number;
-  [key: string]: any; 
+  [key: string]: any;
 }
 
 interface ListingDetailPageProps {
-  id: string; 
+  id: string;
 }
 
 interface ListingCard {
@@ -46,11 +46,10 @@ interface ListingCard {
   listingId: string;
   isFavorite: boolean;
 }
-
 const ListingDetail: React.FC<ListingDetailPageProps> = ({ id }) => {
   const [activeTab, setActiveTab] = useState<string>("Overview");
   const [data, setData] = useState<TrainerData | null>(null);
-  const [getListing, setListing] = useState<ListingCard>({} as ListingCard); 
+  const [getListing, setListing] = useState<ListingCard>({} as ListingCard);
   const form = useSelector((state: RootState) => state.form);
   // Fetch listing details
   useEffect(() => {
@@ -64,18 +63,18 @@ const ListingDetail: React.FC<ListingDetailPageProps> = ({ id }) => {
         console.log("Error fetching listing data:", error);
       }
     };
-  
+
     fetchListingData();
   }, [id]);
 
-    // console.log(check)
+  // console.log(check)
   // Fetch trainer details if trainerId is available
   useEffect(() => {
     if (form.trainerId) {
       const fetchTrainerData = async () => {
         try {
           console.log("use effect called");
-          
+
           const response = await axios.get(
             `${process.env.NEXT_PUBLIC_BASE_URL}/trainers/${form.trainerId}`
           );
@@ -87,20 +86,20 @@ const ListingDetail: React.FC<ListingDetailPageProps> = ({ id }) => {
 
       fetchTrainerData();
     }
-  }, [form.trainerId])
+  }, [form.trainerId]);
 
   return (
     <>
       <div className="bg-white shadow-md rounded-lg p-6 flex items-center ">
         <MainDetailPage listingId={id} listingData={getListing} />
-        <SideLayout 
-          minAgeLimit={Number(form.minAge)} 
-          maxAgeLimit={Number(form.maxAge)} 
-          listingId={id} 
-          trainerPhone={data?.phone ?? ''}
+        <SideLayout
+          minAgeLimit={Number(form.minAge)}
+          maxAgeLimit={Number(form.maxAge)}
+          listingId={id}
+          trainerPhone={data?.phone ?? ""}
         />
       </div>
-      <Reviews listingId={id}/>
+      <Reviews listingId={id} />
       {/* <GoogleMapComponent apiKey={googleMapsApiKey} /> */}
       {data && <InstructorsPage trainer={data} />}
     </>

@@ -9,7 +9,7 @@ const SubmitReview = ({  }) => { // Assuming listingId is passed as a prop
     e.preventDefault();
 
     // Make sure listingId is included
-    const response = await fetch('http://localhost:3005/api/v1/review/reviews', {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/review/reviews`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

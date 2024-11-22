@@ -33,7 +33,7 @@ const Contact: React.FC = () => {
   return (
     <>
     <Navbar/>
-    <div className="flex justify-center items-center h-screen bg-gray-100">
+    <div className="flex justify-center items-center h-screen">
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
         <h1 className="text-2xl font-bold mb-6 text-center">Contact Us</h1>
         <form onSubmit={handleSubmit} className="space-y-4">

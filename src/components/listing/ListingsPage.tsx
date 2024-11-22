@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import SearchBar from "./SearchBar";
 import FilterSidebar from "./FilterSideBar";
 import ListingCard from "./ListingCard";
-import axios from 'axios';
+import axios from "axios";
 
 interface Listing {
   _id: string;
@@ -20,7 +20,7 @@ interface Listing {
   endDate: string;
   days: string;
   gender: string;
-  startTime: string; 
+  startTime: string;
   endTime: string;
   minAge: string;
   maxAge: string;
@@ -29,105 +29,82 @@ interface Listing {
   listingId: string;
   isFavorite: boolean;
   avgRating: number;
-  
 }
 
-const ListingsPage: React.FC<{categoryName:string ,subCategoryName:string}> = ({categoryName,subCategoryName}) => {
+const ListingsPage: React.FC<{ categoryName: string; subCategoryName: string }> = ({
+  categoryName,
+  subCategoryName,
+}) => {
   const [listings, setListings] = useState<Listing[]>([]);
   const [keywords, setKeywords] = useState<string>("");
-  const [location, setLocation] = useState<string>("");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [filteredListings, setFilteredListings] = useState<Listing[]>(listings);
-
-  const [isFilterOpen, setFilterOpen] = useState(true);
+  const [isFilterOpen, setFilterOpen] = useState(false); // Sidebar toggle for mobile
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [selectedSubCategory, setSelectedSubCategory] = useState<string | null>(
-    null
-  );
+  const [selectedSubCategory, setSelectedSubCategory] = useState<string | null>(null);
   const [RateRange, setRateRange] = useState<[number, number]>([10, 9980]);
   const [ageLimit, setAgeLimit] = useState<[number, number]>([2, 90]);
   const [selectedGender, setSelectedGender] = useState<string | null>(null);
   const [get, set] = useState<boolean>(false);
 
   const handleSearch = () => {
-    const filtered = listings.filter((listing) => {
-      const matchesKeywords =
-        keywords === "" ||
-        listing.title.toLowerCase().includes(keywords.toLowerCase());
-      // const matchesLocation = location === '' || listing.location.toLowerCase().includes(location.toLowerCase());
-      // return matchesKeywords && matchesLocation;
-      return matchesKeywords;
-    });
-
+    const filtered = listings.filter((listing) =>
+      keywords === "" || listing.title.toLowerCase().includes(keywords.toLowerCase())
+    );
     setFilteredListings(filtered);
   };
-  // console.log("Listings are: "= );
-  
+
   useEffect(() => {
     const fetchCourses = async () => {
       const query = new URLSearchParams({
-        title: keywords || '', 
-        category: selectedCategory || '', 
-        selectedSubCategory: selectedSubCategory || '', 
-        minPrice: RateRange[0].toString(), 
+        title: keywords || "",
+        category: selectedCategory || "",
+        selectedSubCategory: selectedSubCategory || "",
+        minPrice: RateRange[0].toString(),
         maxPrice: RateRange[1].toString(),
         minAge: ageLimit[0].toString(),
         maxAge: ageLimit[1].toString(),
-        gender: selectedGender || '', 
+        gender: selectedGender || "",
       }).toString();
-      
-      console.log("Fetching courses with query:", query);
-      
+
       try {
         const { data } = await axios.get(
           `${process.env.NEXT_PUBLIC_BASE_URL}/listing/?${query}`
         );
-        console.log("Fetched data:", data);
         setListings(data);
         setFilteredListings(data);
       } catch (error) {
         console.error("Failed to fetch listings:", error);
       }
     };
-  
+
     fetchCourses();
   }, [get, keywords, selectedCategory, selectedSubCategory, RateRange, ageLimit, selectedGender]);
-  
-
-  const handleFilter = () => {
-    const filtered = listings.filter((listing) => {
-      const matchesCategory =
-        selectedCategories.length === 0 ||
-        selectedCategories.includes(listing.category);
-      return matchesCategory;
-    });
-
-    setFilteredListings(filtered);
-  };
-  // console.log(listings[0].trainerId);
 
   return (
     <>
-      <div>{/* <h1>{listings[0].trainerId}</h1> */}</div>
       <div className="min-h-screen flex flex-col">
         <header className="bg-white shadow">
-          <div className="container mx-auto">
+          <div className="container mx-auto px-4 py-4">
             <SearchBar
               keywords={keywords}
               setKeywords={setKeywords}
-              // location={location}
-              // setLocation={setLocation}
               onSearch={handleSearch}
             />
           </div>
         </header>
 
-        <div className="container mx-auto flex flex-1">
-          <aside className="w-1/4">
+        <div className="container mx-auto flex flex-1 px-4">
+          {/* Sidebar Toggle for Mobile */}
+          <aside
+            className={`fixed top-0 left-0 z-10 h-full bg-white shadow-md transform ${
+              isFilterOpen ? "translate-x-0" : "-translate-x-full"
+            } transition-transform sm:relative sm:translate-x-0 sm:flex sm:w-1/4`}
+          >
             <FilterSidebar
               selectedCategories={selectedCategories}
               setSelectedCategories={setSelectedCategories}
-              onFilter={handleFilter}
+              onFilter={handleSearch}
               selectedCategory={selectedCategory}
               setSelectedCategory={setSelectedCategory}
               selectedSubCategory={selectedSubCategory}
@@ -138,29 +115,49 @@ const ListingsPage: React.FC<{categoryName:string ,subCategoryName:string}> = ({
               setAgeLimit={setAgeLimit}
               selectedGender={selectedGender}
               setSelectedGender={setSelectedGender}
-              get ={get}
-              set ={set}
+              get={get}
+              set={set}
             />
+            <button
+              className="absolute top-4 right-4 sm:hidden"
+              onClick={() => setFilterOpen(false)}
+            >
+              Close
+            </button>
           </aside>
 
-          <main className="flex-1 p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {listings.length > 0 ? (
-              listings.map((listing, idx) => (
-                // <ListingCard key={idx} {...listing} />
+          <main className="flex-1 p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredListings.length > 0 ? (
+              filteredListings.map((listing, idx) => (
                 <ListingCard
-                subCategoryName={subCategoryName}
-                categoryName={categoryName}
-                key={idx}
-                listingId={listing._id} // Make sure listing._id is passed here
-                category={listing.category}
-                title={listing.title}
-                priceMode={listing.priceMode}
-                price={listing.price}
-                mode={listing.mode}
-                location={listing.location} avgRating={listing.avgRating} trainerId={listing.trainerId} quantity={listing.quantity} classSize={listing.classSize} startDate={listing.startDate} endDate={listing.endDate} days={listing.days} gender={listing.gender} startTime={listing.startTime} endTime={listing.endTime} minAge={listing.minAge} maxAge={listing.maxAge} description={listing.description} isFavorite={false}/>
+                  subCategoryName={subCategoryName}
+                  categoryName={categoryName}
+                  key={idx}
+                  listingId={listing._id}
+                  category={listing.category}
+                  title={listing.title}
+                  priceMode={listing.priceMode}
+                  price={listing.price}
+                  mode={listing.mode}
+                  location={listing.location}
+                  avgRating={listing.avgRating}
+                  trainerId={listing.trainerId}
+                  quantity={listing.quantity}
+                  classSize={listing.classSize}
+                  startDate={listing.startDate}
+                  endDate={listing.endDate}
+                  days={listing.days}
+                  gender={listing.gender}
+                  startTime={listing.startTime}
+                  endTime={listing.endTime}
+                  minAge={listing.minAge}
+                  maxAge={listing.maxAge}
+                  description={listing.description}
+                  isFavorite={listing.isFavorite}
+                />
               ))
             ) : (
-              <p>No listings fossund.</p>
+              <p className="text-center text-gray-500">No listings found.</p>
             )}
           </main>
         </div>

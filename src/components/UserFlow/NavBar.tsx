@@ -45,7 +45,7 @@ const Navbar = () => {
   ];
 
   return (
-    <div className="flex justify-center">
+    <div className="flex justify-center mt-navbar">
     <nav className="bg-opacity-50 backdrop-blur-md fixed top-3 w-full max-w-screen-xl rounded-xl z-50 shadow-md">
 
       <div className="container mx-auto p-5">

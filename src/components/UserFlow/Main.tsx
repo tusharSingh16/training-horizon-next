@@ -4,7 +4,7 @@ import Link from 'next/link';
 
 const Main = () => {
   return (
-    <div className=" bg-[#56C1FF] text-white sm:py-48 text-center p-10 w-full"
+    <div className="bg-[#2b748c] text-white sm:py-48 text-center p-10 w-full"
     >
       <h1 className="text-5xl sm:text-7xl font-bold mb-4 custom-shadow text-center">
         Get your skills <br /> upgraded with us
@@ -25,4 +25,4 @@ const Main = () => {
 export default Main;
 
 
-
+// 2b748c

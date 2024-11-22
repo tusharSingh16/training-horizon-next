@@ -3,15 +3,16 @@ import Main from "@/components/UserFlow/Main";
 import TopNavigationBar from "@/components/UserFlow/TopNavigationBar";
 import Testimonials from "@/components/UserFlow/Testimonials";
 import Footer from "@/components/UserFlow/Footer";
-import VacationCourses from "@/components/UserFlow/VacationCourses";
+import Navbar from "./NavBar";
+// import VacationCourses from "@/components/UserFlow/VacationCourses";
 
 export default function UserFlow() {
   return (
-    <div className='bg-[#f7f7f7]'>
-      <TopNavigationBar />
+    <div className='bg-[rgb(247,247,247)]'>
+      <Navbar/>
       <Main/>
       <Categories /> 
-      <VacationCourses />
+      {/* <VacationCourses /> */}
       <Testimonials />
       <Footer />
     </div>

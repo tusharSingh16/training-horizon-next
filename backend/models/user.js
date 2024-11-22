@@ -36,7 +36,7 @@ const userSchema=new mongoose.Schema({
     familyMembers: [
         {
           type: mongoose.Schema.Types.ObjectId,
-          ref: 'RegisteredMember',
+          ref: 'RegisteredMember'
         },
       ],
       favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Listing' }],

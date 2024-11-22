@@ -11,7 +11,7 @@ import { Input } from "@/components/Shared/ui/input";
 import { Label } from "@/components/Shared/ui/label";
 import Link from "next/link";
 import axios from "axios";
-import {useRouter} from "next/navigation";
+import { useRouter } from "next/navigation";
 import GoogleAuth from "./GoogleAuth";
 
 function SignUpcard() {
@@ -19,30 +19,34 @@ function SignUpcard() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [password, setPassword] = useState("");
- const router = useRouter();
+  const router = useRouter();
+
   async function submitForm() {
     try {
-      const res = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/user/signup`, {
-        email,
-        firstName,
-        lastName,
-        password,
-      });
+      const res = await axios.post(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/user/signup`,
+        {
+          email,
+          firstName,
+          lastName,
+          password,
+        }
+      );
 
       console.log(res.data.token);
 
       window.localStorage.setItem("token", res.data.token);
-      router.push('/')
+      router.push("/");
     } catch (error) {
       console.log(error);
     }
   }
 
   return (
-    <main className="bg-[#56C1FF] h-screen flex items-center justify-center p-10 w-full">
-      <Card className="w-[600px] h-[700px] mx-auto p-6 shadow-lg border-2 border-blue-400">
+    <main className=" h-screen flex items-center justify-center p-4 md:p-10 w-full">
+      <Card className="w-full max-w-[600px] h-auto p-6 shadow-lg  ">
         <CardHeader>
-          <h2 className="text-2xl font-bold">Create your account</h2>
+          <h2 className="text-2xl font-bold text-center">Create your account</h2>
         </CardHeader>
         <CardContent>
           <div className="space-y-5">
@@ -61,13 +65,23 @@ function SignUpcard() {
               <Label htmlFor="First Name" className="text-lg">
                 First Name
               </Label>
-              <Input type="text" id="First Name" placeholder="ex. Narendra" onChange={(e) => setFirstName(e.target.value)} />
+              <Input
+                type="text"
+                id="First Name"
+                placeholder="ex. Narendra"
+                onChange={(e) => setFirstName(e.target.value)}
+              />
             </div>
             <div className="space-y-2">
               <Label htmlFor="Last Name" className="text-lg">
                 Last Name
               </Label>
-              <Input type="text" id="Last Name" placeholder="ex. Modi" onChange={(e) => setLastName(e.target.value)} />
+              <Input
+                type="text"
+                id="Last Name"
+                placeholder="ex. Modi"
+                onChange={(e) => setLastName(e.target.value)}
+              />
             </div>
             <div className="space-y-2">
               <Label htmlFor="password" className="text-lg">
@@ -84,7 +98,7 @@ function SignUpcard() {
         </CardContent>
         <div className="flex justify-center">
           <Button
-            className="mt-1 w-[500px] bg-[#FDCE29] text-black hover:bg-yellow-500"
+            className="mt-4 w-full max-w-[500px] bg-[#FDCE29] text-black hover:bg-yellow-500"
             onClick={submitForm}
           >
             Create Account

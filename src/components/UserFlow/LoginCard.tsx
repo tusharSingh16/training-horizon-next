@@ -41,9 +41,12 @@ function LoginCard() {
           password,
         }
       );
+
       fetchUserRole(res.data._id);
+      // console.log("The found data is: " + JSON.stringify(res.data.role));
       window.localStorage.setItem("userId", res.data._id);
       window.localStorage.setItem("token", res.data.token);
+      window.localStorage.setItem("role", res.data.role);
       router.push("/");
     } catch (err: any) {
       setIsLoading(false); // Set loading to false if there is an error
@@ -57,7 +60,7 @@ function LoginCard() {
   }
 
   return (
-    <main className="h-screen flex items-center justify-center p-5 sm:p-10 w-full">
+    <main className="h-screen flex items-center fixed justify-center p-5 sm:p-10 w-full overflow-hidden">
       <Card className="w-full sm:w-[600px] h-auto mx-auto p-6 shadow-lg ">
         <CardHeader>
           <h2 className="text-2xl font-bold">Login</h2>

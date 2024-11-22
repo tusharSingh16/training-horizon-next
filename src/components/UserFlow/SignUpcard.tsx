@@ -95,7 +95,7 @@ function SignUpCard() {
   };
 
   return (
-    <main className="h-screen flex items-center justify-center p-4 md:p-10 w-full">
+    <main className="h-screen flex items-center fixed justify-center p-4 md:p-10 w-full">
       {/* {isLoading ? (<div>Loading.... </div>) : ( */}
       <Card className="w-full max-w-[600px] h-auto p-6 shadow-lg">
         <CardHeader>

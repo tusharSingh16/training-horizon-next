@@ -22,6 +22,10 @@ const listingSchema = new mongoose.Schema({
     required: true,
     // maxLength:30,
   },
+  imageUrl: {
+    type: String,
+    required: true,
+  },
   priceMode:{
     type: String
   },

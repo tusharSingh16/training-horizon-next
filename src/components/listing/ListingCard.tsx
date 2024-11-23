@@ -9,6 +9,7 @@ import Image from "next/image";
 interface ListingCardProps {
   category: string;
   title: string;
+  imageUrl:string;
   priceMode: string;
   price: string;
   mode: string;
@@ -35,6 +36,7 @@ interface ListingCardProps {
 const ListingCard: React.FC<ListingCardProps> = ({
   category,
   title,
+  imageUrl,
   priceMode,
   price,
   mode,
@@ -87,11 +89,21 @@ const ListingCard: React.FC<ListingCardProps> = ({
       })
     );
   };
+  const [ getImageUrl ,setImageUrl]= useState<string>("/img/tempListingImg.jpg");
 
   useEffect(() => {
     const fetchFavorites = async () => {
       const userId = window.localStorage.getItem("userId");
       if (!userId) return;
+      try {
+        const response2 = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/upload?imageUrl=${imageUrl}`);
+      if (!response2.ok) throw new Error('Failed to fetch signed URL');
+
+      const data = await response2.json();
+      setImageUrl(data.signedUrl);
+      } catch (error) {
+        
+      }
 
       try {
         const response = await fetch(
@@ -171,7 +183,7 @@ const ListingCard: React.FC<ListingCardProps> = ({
         }}
       >
         <Image
-          src="/img/tempListingImg.jpg"
+          src= {getImageUrl}
           alt={title}
           className="rounded-t-lg object-cover w-full h-48 sm:h-60"
           width={500}

@@ -7,6 +7,7 @@ interface Listing {
   _id: string;
   category: string;
   title: string;
+  imageUrl:string;
   priceMode: string;
   price: string;
   mode: string;
@@ -94,6 +95,7 @@ const FavoriteListingIds = () => {
                   listingId={listing._id}
                   category={listing.category}
                   title={listing.title}
+                  imageUrl={listing.imageUrl}
                   priceMode={listing.priceMode}
                   price={listing.price}
                   mode={listing.mode}

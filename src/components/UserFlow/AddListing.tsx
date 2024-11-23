@@ -56,6 +56,7 @@ export function AddListing() {
     category: z.string(),
     subCategory: z.string(),
     title: z.string(),
+    imageUrl:z.string(),
     priceMode: z.string(),
     price: z.string(),
     mode: z.string(),
@@ -75,6 +76,9 @@ export function AddListing() {
       message: "Enter atleast 100 characters",
     }),
   });
+
+  //use this imageUrl 
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -814,7 +818,7 @@ export function AddListing() {
               </FormItem>
             )}
           />
-          {/* <UploadImage ></UploadImage> */}
+          <UploadImage imageUrl={imageUrl} setImageUrl={setImageUrl} ></UploadImage>
           <div className="w-full flex justify-between">
             <Dialog
               open={isDialogOpen}

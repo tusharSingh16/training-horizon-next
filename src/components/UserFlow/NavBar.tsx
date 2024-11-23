@@ -18,13 +18,16 @@ const Navbar = () => {
   const [loggedIn, setLoggedIn] = useState(false);
   const [isTrainer, setIsTrainer] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isOrg, setIsOrg] = useState(false);
   const router = useRouter();
   useEffect(() => {
     const token = localStorage.getItem("token");
     const role = localStorage.getItem("role");
+    setIsOrg(role == "organization");
     setIsTrainer(role === "trainer");
     setLoggedIn(!!token);
     setLoading(false);
+    
   }, []);
 
   const handleSignOut = () => {
@@ -34,7 +37,7 @@ const Navbar = () => {
     window.location.reload();
     router.push("/");
   };
-
+  
 
   const navLinks = [
     { href: "/", label: "Home" },
@@ -65,8 +68,12 @@ const Navbar = () => {
           <div className="flex items-center space-x-4">
             {loggedIn ? (
               <>
+              <div>
+
+              {isOrg ? <Link className="bg-yellow-600 p-2 rounded-sm text-white" href={""}>Create a Gym</Link> : null}
+              </div>
                 {isTrainer && !loading && <RoleBasedNav />}
-                {!isTrainer && (
+                {!isTrainer && !isOrg && (
                   <Link
                     href="/dashboard/teacher/join_as_teacher"
                     className="bg-yellow-300 text-black px-3 py-2 rounded-sm text-sm font-medium hover:bg-yellow-200"
@@ -74,7 +81,7 @@ const Navbar = () => {
                     Join as Trainer
                   </Link>
                 )}
-                {!isTrainer && (
+                {!isTrainer && !isOrg && (
                   <Link
                     href="/userflow/registerMember"
                     className="text-gray-700 hover:text-black px-3 py-2 rounded-sm text-sm font-medium"
@@ -86,12 +93,12 @@ const Navbar = () => {
               </>
             ) : (
               <>
-                <Link
+                { <Link
                   href="/dashboard/teacher/join_as_teacher"
                   className="bg-yellow-500 text-black px-3 py-2 rounded-sm text-sm font-medium hover:bg-yellow-200"
                 >
                   Join as Trainer
-                </Link>
+                </Link>}
                 <Link
                   href="/userflow/login"
                   className="text-gray-700 hover:text-black px-3 py-2 rounded-sm text-sm font-medium"

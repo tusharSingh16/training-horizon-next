@@ -129,7 +129,7 @@ const ListingCard: React.FC<ListingCardProps> = ({
     };
 
     fetchFavorites();
-  }, [listingId]);
+  }, [listingId,imageUrl]);
 
   const handleOnClick = async (event: React.MouseEvent<HTMLImageElement>) => {
     event.preventDefault();

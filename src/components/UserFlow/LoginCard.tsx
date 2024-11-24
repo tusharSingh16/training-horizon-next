@@ -20,7 +20,7 @@ function LoginCard() {
   const [password, setPassword] = useState("");
   const [popupMessage, setPopupMessage] = useState("");
   const [isPopUpOpen, setIsPopUpOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false); // Loading state
+  const [isLoading, setIsLoading] = useState(false); 
 
   const router = useRouter();
 
@@ -32,7 +32,7 @@ function LoginCard() {
   };
 
   async function submitForm(endpoint: any) {
-    setIsLoading(true); // Set loading to true when form is submitting
+    setIsLoading(true); 
     try {
       const res = await axios.post(
         `${process.env.NEXT_PUBLIC_BASE_URL}${endpoint}`,
@@ -49,8 +49,8 @@ function LoginCard() {
       window.localStorage.setItem("role", res.data.role);
       router.push("/");
     } catch (err: any) {
-      setIsLoading(false); // Set loading to false if there is an error
-      if (err.response && err.response.status === 401) {
+      setIsLoading(false); 
+      if (err.response && err.response.status === 401 || err.response.status === 400) {
         setIsPopUpOpen(true);
         setPopupMessage("Invalid Credentials");
       } else {
@@ -109,7 +109,7 @@ function LoginCard() {
           <Button
             className="w-full sm:w-auto bg-[#fd2934] text-black hover:bg-red-800"
             onClick={() => submitForm("/organizations/login")}
-            disabled={isLoading} // Disable the button when loading
+            disabled={isLoading} 
           >
             {isLoading ? "Logging in..." : "Login as Organization"}
           </Button>

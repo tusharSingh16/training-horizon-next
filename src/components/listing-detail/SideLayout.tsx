@@ -61,13 +61,15 @@ function SideLayout({
           },
         }
       );
+      // console.log('fetched members are: ' + JSON.stringify(res.data.familyMembers))
       setMembers(res.data.familyMembers);
     };
 
     fetchUserName();
     fetchMembers();
   }, []);
-
+  // console.log('members age is: ' + members[0]);
+  
   const openPopup = () => setIsOpen(true);
   const closePopup = () => setIsOpen(false);
 
@@ -141,6 +143,8 @@ function SideLayout({
       }
     });
   };
+  console.log(JSON.stringify(members[0]));
+  
 
   return (
     <>

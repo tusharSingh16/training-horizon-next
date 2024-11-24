@@ -38,7 +38,6 @@ const initialState: FormState = {
       gender: 'Any',
       startTime: '10:00 AM',
       endTime: '12:00 PM',
-      // ageGroup: '',
       minAge: '',
       maxAge: '',
       trainerId: '',

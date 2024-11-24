@@ -61,11 +61,16 @@ exports.signUpOrganization = async (req, res) => {
 exports.loginOrganization = async (req, res) => {
   try {
     const validatedData = loginSchema.parse(req.body);
-
+    const password = req.body.password;
     // Find organization by email
     const organization = await Organization.findOne({ email: validatedData.email });
     if (!organization) {
       return res.status(400).json({ message: "Invalid credentials" });
+    }
+    if(password!= organization.password)  {
+      return res.status(400).json({
+        msg: "Incorrect password!!"
+      })
     }
 
     // Check password

@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router(); 
 const oc = require("../controllers/organizationController");
-const oac = require("../controllers/organizationAuthController"); // oac = organizationAuthController
+const oac = require("../controllers/organizationAuthController");
 
 // Organization routes
 router.get("/organizations", oc.getOrganizations);

@@ -6,6 +6,9 @@ import Reviews from "./Reviews";
 import { useSelector } from "react-redux";
 import { RootState } from "@/lib/store/store";
 import axios from "axios";
+import { useDispatch } from "react-redux";
+import { setForm } from "@/lib/store/formSlice";
+
 
 interface TrainerData {
   _id: string;
@@ -50,7 +53,7 @@ const ListingDetail: React.FC<ListingDetailPageProps> = ({ id }) => {
   const [data, setData] = useState<TrainerData | null>(null);
   const [getListing, setListing] = useState<ListingCard>({} as ListingCard);
   const form = useSelector((state: RootState) => state.form);
-
+  const dispatch = useDispatch();
   // Fetch listing details
   useEffect(() => {
     const fetchListingData = async () => {
@@ -58,7 +61,9 @@ const ListingDetail: React.FC<ListingDetailPageProps> = ({ id }) => {
         const response = await axios.get(
           `${process.env.NEXT_PUBLIC_BASE_URL}/listing/listing/${id}`
         );
-        setListing(response.data.listing);
+        const listing = response.data.listing;
+        setListing(listing);
+        dispatch(setForm(listing))
       } catch (error) {
         console.log("Error fetching listing data:", error);
       }
@@ -66,6 +71,7 @@ const ListingDetail: React.FC<ListingDetailPageProps> = ({ id }) => {
 
     fetchListingData();
   }, [id]);
+  console.log('form is:'+ JSON.stringify(form));
 
   // Fetch trainer details if trainerId is available
   useEffect(() => {
@@ -96,6 +102,7 @@ const ListingDetail: React.FC<ListingDetailPageProps> = ({ id }) => {
 
         {/* Sidebar */}
         <div className="w-full md:w-1/3">
+        
           <SideLayout
             minAgeLimit={Number(form.minAge)}
             maxAgeLimit={Number(form.maxAge)}

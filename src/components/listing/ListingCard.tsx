@@ -1,8 +1,7 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { setForm } from "@/lib/store/formSlice";
 import Image from "next/image";
@@ -10,6 +9,7 @@ import Image from "next/image";
 interface ListingCardProps {
   category: string;
   title: string;
+  imageUrl:string;
   priceMode: string;
   price: string;
   mode: string;
@@ -28,14 +28,15 @@ interface ListingCardProps {
   trainerId: string;
   listingId: string;
   isFavorite: boolean;
-  categoryName:string;
-  subCategoryName:string;
-  avgRating:number;
+  categoryName: string;
+  subCategoryName: string;
+  avgRating: number;
 }
 
 const ListingCard: React.FC<ListingCardProps> = ({
   category,
   title,
+  imageUrl,
   priceMode,
   price,
   mode,
@@ -61,7 +62,6 @@ const ListingCard: React.FC<ListingCardProps> = ({
   const [isSelected, setIsSelected] = useState<boolean>(isFavorite);
   const [favorites, setFavorites] = useState<string[]>([]);
   const dispatch = useDispatch();
- 
   const router = useRouter();
 
   const sendData = () => {
@@ -89,126 +89,145 @@ const ListingCard: React.FC<ListingCardProps> = ({
       })
     );
   };
+  const [ getImageUrl ,setImageUrl]= useState<string>("/img/tempListingImg.jpg");
 
   useEffect(() => {
     const fetchFavorites = async () => {
-      const userId = window.localStorage.getItem('userId');
-      if (!userId) {
-        return;
+      const userId = window.localStorage.getItem("userId");
+      if (!userId) return;
+      try {
+        const response2 = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/upload?imageUrl=${imageUrl}`);
+      if (!response2.ok) throw new Error('Failed to fetch signed URL');
+
+      const data = await response2.json();
+      setImageUrl(data.signedUrl);
+      } catch (error) {
+        
       }
 
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/favorites/${userId}`, {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${ window.localStorage.getItem('token') }`,
-                },
-    });
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_BASE_URL}/favorites/${userId}`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${window.localStorage.getItem("token")}`,
+            },
+          }
+        );
 
-  if (response.ok) {
-    const { favorites } = await response.json();
-    setFavorites(favorites);
-    setIsSelected(favorites.includes(listingId)); // Check if this listing is a favorite
-  } else {
-    console.error('Error fetching user favorites');
-  }
-} catch (error) {
-  console.error('Error fetching favorites:', error);
-}
+        if (response.ok) {
+          const { favorites } = await response.json();
+          setFavorites(favorites);
+          setIsSelected(favorites.includes(listingId));
+        } else {
+          console.error("Error fetching user favorites");
+        }
+      } catch (error) {
+        console.error("Error fetching favorites:", error);
+      }
     };
 
-fetchFavorites();
-}, [listingId]);
+    fetchFavorites();
+  }, [listingId,imageUrl]);
 
-// Handle favorite button click
-const handleOnClick = async (event: React.MouseEvent<HTMLImageElement>) => {
-  event.preventDefault();
-  event.stopPropagation();
+  const handleOnClick = async (event: React.MouseEvent<HTMLImageElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
 
-  const newIsSelected = !isSelected;
-  setIsSelected(newIsSelected);
+    const newIsSelected = !isSelected;
+    setIsSelected(newIsSelected);
 
-  const userId = window.localStorage.getItem('userId');
-  if (!userId) {
-    alert("Please log in to use this feature");
-    router.push("/userflow/login");
-    return;
-  }
+    const userId = window.localStorage.getItem("userId");
+    if (!userId) {
+      alert("Please log in to use this feature");
+      router.push("/userflow/login");
+      return;
+    }
 
-  try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/favorites`, {
-      method: newIsSelected ? 'POST' : 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${ window.localStorage.getItem('token') }`,
-            },
-  body: JSON.stringify({ userId, listingId }),
-        });
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/favorites`, {
+        method: newIsSelected ? "POST" : "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${window.localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({ userId, listingId }),
+      });
 
-if (response.ok) {
-  if (newIsSelected) {
-    setFavorites((prevFavorites) => [...prevFavorites, listingId]);
-    console.log('Favorite added successfully');
-  } else {
-    setFavorites((prevFavorites) => prevFavorites.filter((id) => id !== listingId));
-    console.log('Favorite removed successfully');
-  }
-} else {
-  const errorData = await response.json();
-  console.error(newIsSelected ? 'Error adding favorite:' : 'Error removing favorite:', errorData.message);
-  setIsSelected(!newIsSelected); // Revert state if API call fails
-}
+      if (response.ok) {
+        if (newIsSelected) {
+          setFavorites((prevFavorites) => [...prevFavorites, listingId]);
+        } else {
+          setFavorites((prevFavorites) =>
+            prevFavorites.filter((id) => id !== listingId)
+          );
+        }
+      } else {
+        setIsSelected(!newIsSelected);
+        console.error("Error processing favorite");
+      }
     } catch (error) {
-  console.error('Error processing favorite:', error);
-  setIsSelected(!newIsSelected); // Revert state if API call fails
-}
-};
+      setIsSelected(!newIsSelected);
+      console.error("Error processing favorite:", error);
+    }
+  };
 
-return (
-  <div className="flex-col max-sm:w-10/12 rounded-sm overflow-hidden hover:ring-sky-500 hover:scale-105 ring-1 ring-gray-200 shadow-3xl bg-white w-[18rem] h-[24rem]">
-    <div className="h-5/6 cursor-pointer" onClick={() => {
-      sendData();
-      router.push(`/${categoryName}/${subCategoryName}/${listingId}`);
-    }}>
-      <div className="h-1/2 w-full">
+  return (
+    <div className="flex flex-col p-4 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 ease-in-out w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-sm xl:max-w-md mx-auto">
+      <div
+        className="relative cursor-pointer"
+        onClick={() => {
+          sendData();
+          router.push(`/${categoryName}/${subCategoryName}/${listingId}`);
+        }}
+      >
         <Image
-          src={"/img/tempListingImg.jpg"}
+          src= {getImageUrl}
           alt={title}
-          className="w-full object-cover h-full"
-          width={500}   
+          className="rounded-t-lg object-cover w-full h-48 sm:h-60"
+          width={500}
           height={300}
         />
+        <div className="absolute top-2 right-2 bg-white p-1 rounded-full shadow-md">
+          <Image
+            src={`${isSelected ? "/icons/filled_fav.png" : "/icons/fav.png"}`}
+            alt="fav"
+            width={25}
+            height={25}
+            onClick={handleOnClick}
+            className="cursor-pointer"
+          />
+        </div>
       </div>
-      <div className="h-1/2">
-        <div className="bg-white h-4/5 p-3 w-full ">
-          <h3 className="text-xl font-semibold truncate overflow-hidden whitespace-nowrap">{title}</h3>
-          <p className="text-sm text-gray-500">Starting: {startDate}</p>
-          <p className="text-xs text-gray-500">{gender}</p>
-          <p className="text-xs text-gray-500">{days}</p>
-          <p className="text-xs text-gray-500">Age: {minAge}-{maxAge}</p>
-          <p className="text-xs text-gray-500">Rating:{avgRating} ★</p>
+      <div className="flex flex-col p-4">
+        <h3 className="text-lg font-bold truncate">{title}</h3>
+        <p className="text-sm text-gray-500 mt-1 truncate">
+          Starting: {startDate}
+        </p>
+        <p className="text-sm text-gray-500 truncate">Gender: {gender}</p>
+        <p className="text-sm text-gray-500 truncate">{days}</p>
+        <p className="text-sm text-gray-500 truncate">
+          Age: {minAge}-{maxAge}
+        </p>
+        <p className="text-sm text-yellow-500 font-semibold">
+          Rating: {avgRating} ★
+        </p>
+      </div>
+      <div className="flex justify-between items-center mt-2 border-t pt-3">
+        <div className="text-lg font-bold">
+          $ {price}
+          <span className="text-sm font-normal text-gray-400">
+            {priceMode === "Per day"
+              ? "/day"
+              : priceMode === "Per month"
+              ? "/month"
+              : "/course"}
+          </span>
         </div>
       </div>
     </div>
-
-    <div className="w-full bg-white h-1/6 ring-1 ring-gray-200 flex flex-row justify-between p-3">
-      <div className="w-5/6 flex items-center justify-start">
-        <div className="text-xl">$ {price}.00 <span className="text-gray-400 text-xs">{priceMode === "Per day" ? "/day" : priceMode === "Per month" ? "/month" : "/course"}</span></div>
-      </div>
-      <div className="h-full flex items-center justify-center w-1/6">
-        <Image
-          src={`${isSelected ? `/icons/filled_fav.png` : `/icons/fav.png`}`}
-          alt="fav"
-          className="cursor-pointer"
-          width={25} 
-          height={25}   
-          onClick={handleOnClick}
-        />
-      </div>
-    </div>
-
-  </div>
-);
+  );
 };
 
 export default ListingCard;

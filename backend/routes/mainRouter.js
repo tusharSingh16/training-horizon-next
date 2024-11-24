@@ -11,6 +11,7 @@ const orderRouter = require("./orderRouter")
 const searchAlertRouter=require("./searchAlertRouter")
 const rentalRouter = require("./rentalRoutes");
 const amentiyRouter = require("./amenityRoutes");
+const imageRouter = require("./imageRoutes")
 
 router.use("/user", userRouter);
 router.use("/", trainerRouter);
@@ -23,5 +24,6 @@ router.use("/order", orderRouter);
 router.use("/search-alert",searchAlertRouter);
 router.use("/", rentalRouter);
 router.use("/", amentiyRouter);
+router.use("/",imageRouter);
 
 module.exports = router;

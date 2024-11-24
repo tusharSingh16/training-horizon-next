@@ -2,10 +2,14 @@ import axios from 'axios';
 import Image from 'next/image';
 import React, { useState } from 'react';
 
-const UploadImage = () => {
+interface Prop{
+  imageUrl: string | null;
+  setImageUrl:(url: string) => void;
+}
+const UploadImage : React.FC<Prop> = ({imageUrl , setImageUrl})=>{
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [signedUrl, setSignedUrl] = useState<string | null>(null);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
@@ -24,40 +28,59 @@ const UploadImage = () => {
 
     try {
       setLoading(true);
-      const response = await axios.post('http://localhost:5000/upload', formData, {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/upload`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
+
       setImageUrl(response.data.imageUrl);
+
+      const response2 = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/upload-temp?imageUrl=${response.data.imageUrl}`);
+      if (!response2.ok) throw new Error('Failed to fetch signed URL');
+
+      const data = await response2.json();
+      setSignedUrl(data.signedUrl);
     } catch (error) {
       console.error('Error uploading file:', error);
-      alert('Failed to upload file');
+      alert('Failed to upload file: ' + error);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4">
-      <h1 className="text-2xl font-bold mb-4">Upload Image</h1>
-      <input
-        type="file"
-        accept="image/*"
-        onChange={handleFileChange}
-        className="mb-4 p-2 border border-gray-300 rounded"
-      />
-      <button
-        onClick={handleUpload}
-        className="bg-blue-500 text-white px-4 py-2 rounded"
-        disabled={loading}
-      >
-        {loading ? 'Uploading...' : 'Upload'}
-      </button>
-      {imageUrl && (
-        <div className="mt-4">
-          <p className="text-green-500">Image uploaded successfully:</p>
-          <Image src={imageUrl} height={32} width={32} alt="Uploaded" className="mt-2 max-w-xs" />
-        </div>
-      )}
+    <div className="bg-slate-100 flex flex-col items-center justify-center p-4 rounded-md">
+      <h1 className="text-2xl font-bold text-gray-800 mb-4">Upload An Image</h1>
+      <div className="w-full max-w-sm bg-gray-50 p-4 rounded-lg shadow-md">
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleFileChange}
+          className="mb-3 w-full p-2 border border-gray-400 rounded-lg shadow-sm transition duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+        <button
+          onClick={handleUpload}
+          className={`bg-blue-600 text-white w-full px-4 py-2 rounded-lg shadow-lg transition duration-200 ease-in-out hover:bg-blue-700 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+          disabled={loading}
+        >
+          {loading ? (
+            <div className="flex items-center justify-center">
+              <svg className="animate-spin h-5 w-5 mr-2 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-.5 8H4z"></path>
+              </svg>
+              Uploading...
+            </div>
+          ) : (
+            'Upload'
+          )}
+        </button>
+        {signedUrl && (
+          <div className="mt-4 p-2 bg-white rounded-lg shadow-md">
+            <p className="text-green-600 font-semibold">Image uploaded successfully:</p>
+            <Image src={signedUrl} alt="Uploaded" height={150} width={225} className="mt-2 rounded-lg shadow-md" />
+          </div>
+        )}
+      </div>
     </div>
   );
 };

@@ -6,8 +6,7 @@ import Reviews from "./Reviews";
 import { useSelector } from "react-redux";
 import { RootState } from "@/lib/store/store";
 import axios from "axios";
-import { useParams } from "next/navigation";
-import { useId } from "react";
+
 interface TrainerData {
   _id: string;
   fname: string;
@@ -46,11 +45,12 @@ interface ListingCard {
   listingId: string;
   isFavorite: boolean;
 }
+
 const ListingDetail: React.FC<ListingDetailPageProps> = ({ id }) => {
-  const [activeTab, setActiveTab] = useState<string>("Overview");
   const [data, setData] = useState<TrainerData | null>(null);
   const [getListing, setListing] = useState<ListingCard>({} as ListingCard);
   const form = useSelector((state: RootState) => state.form);
+
   // Fetch listing details
   useEffect(() => {
     const fetchListingData = async () => {
@@ -67,14 +67,11 @@ const ListingDetail: React.FC<ListingDetailPageProps> = ({ id }) => {
     fetchListingData();
   }, [id]);
 
-  // console.log(check)
   // Fetch trainer details if trainerId is available
   useEffect(() => {
     if (form.trainerId) {
       const fetchTrainerData = async () => {
         try {
-          console.log("use effect called");
-
           const response = await axios.get(
             `${process.env.NEXT_PUBLIC_BASE_URL}/trainers/${form.trainerId}`
           );
@@ -89,20 +86,39 @@ const ListingDetail: React.FC<ListingDetailPageProps> = ({ id }) => {
   }, [form.trainerId]);
 
   return (
-    <>
-      <div className="bg-white shadow-md rounded-lg p-6 flex flex-col lg:flex-row items-start gap-4">
-  <MainDetailPage listingId={id} listingData={getListing} />
-  <SideLayout
-    minAgeLimit={Number(form.minAge)}
-    maxAgeLimit={Number(form.maxAge)}
-    listingId={id}
-    trainerPhone={data?.phone ?? ""}
-  />
-</div>
-      <Reviews listingId={id} />
-      {/* <GoogleMapComponent apiKey={googleMapsApiKey} /> */}
-      {data && <InstructorsPage trainer={data} />}
-    </>
+    <div className="space-y-8 p-4 md:p-6 lg:p-8 bg-gray-50">
+      {/* Main Content and Sidebar Section */}
+      <div className="bg-white shadow-lg rounded-xl p-6 md:p-8 flex flex-col md:flex-row gap-6 md:gap-8 items-start">
+        {/* Main Content */}
+        <div className="w-full md:w-2/3">
+          <MainDetailPage listingId={id} listingData={getListing} />
+        </div>
+
+        {/* Sidebar */}
+        <div className="w-full md:w-1/3">
+          <SideLayout
+            minAgeLimit={Number(form.minAge)}
+            maxAgeLimit={Number(form.maxAge)}
+            listingId={id}
+            trainerPhone={data?.phone ?? ""}
+          />
+        </div>
+      </div>
+
+      {/* Reviews Section */}
+      <div className="bg-white shadow-lg rounded-xl p-6 md:p-8">
+        <h2 className="text-2xl font-bold mb-4 text-gray-800">Reviews</h2>
+        <Reviews listingId={id} />
+      </div>
+
+      {/* Instructor Section */}
+      {data && (
+        <div className="bg-white shadow-lg rounded-xl p-6 md:p-8">
+          <h2 className="text-2xl font-bold mb-4 text-gray-800">Instructor</h2>
+          <InstructorsPage trainer={data} />
+        </div>
+      )}
+    </div>
   );
 };
 

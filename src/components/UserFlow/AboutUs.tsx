@@ -7,7 +7,7 @@ const AboutUs = () => {
       <div className="flex flex-col min-h-screen">
         <Navbar />
 
-        <div className="flex-grow flex flex-col justify-center items-center bg-gray-100">
+        <div className="flex-grow flex flex-col justify-center items-center">
           <div className="max-w-4xl mx-auto p-8 bg-white rounded-lg shadow-md">
             <h1 className="text-4xl font-bold mb-6 text-center text-gray-800">
               About Us

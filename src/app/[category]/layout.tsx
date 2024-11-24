@@ -1,5 +1,5 @@
 import Footer from "@/components/UserFlow/Footer";
-import TopNavigationBar from "@/components/UserFlow/TopNavigationBar";
+import Navbar from "@/components/UserFlow/NavBar";
 
 export default function RootLayout({
   children,
@@ -8,7 +8,7 @@ export default function RootLayout({
 }>) {
   return (
     <>
-    <TopNavigationBar/>
+    <Navbar/>
     {children}
     <Footer/>
     </>

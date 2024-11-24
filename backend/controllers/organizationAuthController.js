@@ -16,7 +16,7 @@ const signUpSchema = z.object({
     .min(6, "Confirm Password must be at least 6 characters long"),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords must match",
-  path: ["confirmPassword"], // Field to apply error to
+  path: ["confirmPassword"], 
 });
 
 // Zod validation schema for Organization Login
@@ -79,7 +79,10 @@ exports.loginOrganization = async (req, res) => {
       expiresIn: "1h",
     });
 
-    res.status(200).json({ token });
+    res.status(200).json({ token,
+       role: organization.role,
+        _id: organization._id
+      });
   } catch (e) {
     res.status(500).json({ error: e.message });
   }

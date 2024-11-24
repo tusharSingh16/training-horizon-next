@@ -12,10 +12,16 @@ const userRouter = express.Router();
 
 // input validation
 const userSignupSchema = zod.object({
-  email: zod.string().email(),
-  firstName: zod.string(),
-  lastName: zod.string(),
-  password: zod.string(),
+  email: zod.string().email("Invalid email address"),
+  firstName: zod.string().min(1, "First name is required"),
+  lastName: zod.string().min(1, "Last name is required"),
+  password: zod
+    .string()
+    .min(8, "Password must be at least 8 characters long")
+    .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+    .regex(/[a-z]/, "Password must contain at least one lowercase letter")
+    .regex(/[0-9]/, "Password must contain at least one number")
+    .regex(/[\W_]/, "Password must contain at least one special character"),
   role: zod.string(),
 });
 const userSigninSchema = zod.object({
@@ -112,9 +118,9 @@ userRouter.post("/signup", async function (req, res) {
 
     await sendEmail(
       user.email,
-      "Member Registration",
-      `Hello ${user.FirstName}, \n\nYou have successfully registered ${inputFromUser.firstName} as a member into your training horizon account.`,
-      `<p>Hello ${user.FirstName},</p><p>You have successfully registered <b>${inputFromUser.firstName}</b> as a member into your training horizon account.</p>`
+      "Account Registration",
+      `Hello ${user.FirstName}, \n\nYou have successfully registered ${inputFromUser.firstName} into your training horizon.`,
+      `<p>Hello ${user.FirstName},</p><p>You have successfully registered <b>${inputFromUser.firstName}</b>into your training horizon account.</p>`
     );
 
     // member email not available yet!!
@@ -141,49 +147,46 @@ userRouter.post("/signin", async function (req, res) {
     email: req.body.email,
     password: req.body.password,
   };
+
   const result = userSigninSchema.safeParse(userInput);
   if (!result.success) {
-    return res.status(411).json({
-      message: "Error while logging in",
+    return res.status(400).json({
+      message: "Invalid email or password format.",
     });
   }
+
   try {
     const user = await User.findOne({
       email: userInput.email,
       password: userInput.password,
     });
-    if (user) {
-      //admin role
-      // const userRole = user.role;
-      // if (userRole=="admin") {
-      // }
-
-      const token = jwt.sign(
-        {
-          userId: user._id,
-        },
-        JWT_SECRET
-      );
-
-      // sending email;
-      await sendEmail(
-        user.email,
-        "Login Notification",
-        `Hello ${user.firstName}, \n\nYou have successfully logged into your account.`
-      );
-
-      res.status(200).json({
-        msg: "User logged in successfully",
-        token: token,
-        _id: user._id,
-      });
-    } else {
-      res.status(411).json({
-        message: "Error while logging in",
-      });
+    if (!user) {
+      return res.status(401).send({ msg: "Invalid credentials" });
     }
+
+    // Generate JWT token
+    const token = jwt.sign(
+      { userId: user._id },
+      process.env.JWT_SECRET, // Ensure JWT_SECRET is stored in environment variables
+      { expiresIn: "1h" }
+    );
+
+    // Send login notification email
+    await sendEmail(
+      user.email,
+      "Login Notification",
+      `Hello ${user.firstName}, \n\nYou have successfully logged into your account.`
+    );
+
+    // Send success response
+    return res.status(200).json({
+      msg: "User logged in successfully",
+      token: token,
+      _id: user._id,
+    });
   } catch (error) {
-    console.log("error in signin page" + error);
+    console.error("Error in signin route:", error);
+    return res.status(500).json({ message: "Internal server error" });
   }
 });
 

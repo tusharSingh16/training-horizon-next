@@ -34,7 +34,7 @@ const UserProfilePage = () => {
     const fetchUser = async () => {
       try {
         const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/user/username`,
+          `${process.env.NEXT_PUBLIC_BASE_URL}/user/username`,
           {
             headers: {
               Authorization: "Bearer " + window.localStorage.getItem("token"),
@@ -206,6 +206,10 @@ const EditProfileContent = () => {
   const [getFirstName ,setFirstName] = useState("firstName");
   const [getLastName ,setLastName] = useState("lastName");
   const [getPassword ,setPassword] = useState("password");
+  // const [currentPassword, setCurrentPassword] = useState("");
+  // const [newPassword, setNewPassword] = useState("");
+  // const [passwordError, setPasswordError] = useState(""); // To display password error
+  // const [saveError, setSaveError] = useState(""); // To display save operation error
   // const router = useRouter();
 
   useEffect(() => {
@@ -318,9 +322,9 @@ const EditProfileContent = () => {
             <input
               type="password"
               placeholder="Password"
-              onChange={(e) =>
-                setPassword( e.target.value )
-              }
+              onChange={(e)=>{
+                setPassword(e.target.value);
+              }}
               className="border border-gray-300 rounded p-2 mb-2 w-full"
             />
 
@@ -361,7 +365,7 @@ const FamilyMembersContent = () => {
     const fetchFamilyMembers = async () => {
       try {
         const res = await axios.get(
-          `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/user/allmembers`,
+          `${process.env.NEXT_PUBLIC_BASE_URL}/user/allmembers`,
           {
             headers: {
               Authorization: "Bearer " + window.localStorage.getItem("token"),
@@ -474,7 +478,7 @@ const SubscriptionsContent = () => {
     const fetchOrders = async () => {
       try {
         const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/order/getOrdersDetailsByUserId/${id}`
+          `${process.env.NEXT_PUBLIC_BASE_URL}/order/getOrdersDetailsByUserId/${id}`
         );
         // Filter orders to only show completed ones
         const completedOrders = response.data.orders.filter(

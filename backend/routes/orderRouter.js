@@ -103,6 +103,7 @@ router.get("/getOrdersDetailsByUserId/:userId", async function (req, res) {
         try {
           const listingResponse = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/listing/listing/${order.listingId}`);
           const { price } = listingResponse.data.listing;
+          // const price = listingResponse?.data?.listing?.price || null;
           return { ...order, price };
         } catch (error) {
           console.error(`Error fetching price for listingId ${order.listingId}:`, error.message);

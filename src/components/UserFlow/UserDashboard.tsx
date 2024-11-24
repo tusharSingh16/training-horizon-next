@@ -1,10 +1,10 @@
 "use client";
 
+import CartIcon from "@/app/icons/CartIcon";
 import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import CartIcon from "@/app/icons/CartIcon";
 
 const UserDashboard = () => {
   const [userName, setUserName] = useState<string | null>(null);
@@ -144,6 +144,11 @@ const UserDashboard = () => {
               <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
                 Settings
               </li>
+              <Link href={`/userflow/yourProfile`}>
+                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                  Your Profile
+                </li>
+              </Link>
               <Link href={`/userflow/orders/${userId}`}>
                 <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
                   Orders

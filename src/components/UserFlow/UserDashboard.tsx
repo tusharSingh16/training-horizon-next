@@ -144,6 +144,11 @@ const UserDashboard = () => {
               <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
                 Settings
               </li>
+              <Link href={`/userflow/yourProfile`}>
+                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                  Your Profile
+                </li>
+              </Link>
               <Link href={`/userflow/orders/${userId}`}>
                 <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
                   Orders

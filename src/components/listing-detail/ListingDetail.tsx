@@ -70,7 +70,7 @@ const ListingDetail: React.FC<ListingDetailPageProps> = ({ id }) => {
     };
 
     fetchListingData();
-  }, [id]);
+  }, [id, dispatch]);
   console.log('form is:'+ JSON.stringify(form));
 
   // Fetch trainer details if trainerId is available

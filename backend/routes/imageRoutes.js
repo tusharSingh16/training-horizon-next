@@ -31,25 +31,25 @@ imageRouter.post("/upload", upload.single("image"), async (req, res) => {
   const key = `uploads/${timestamp}_${file.originalname}`;
 
   const params = {
-    Bucket: process.env.S3_BUCKET_NAME,
-    Key: key, 
-    Body: file.buffer,
-    ContentType: file.mimetype,
+      Bucket: process.env.S3_BUCKET_NAME,
+      Key: key, 
+      Body: file.buffer,
+      ContentType: file.mimetype,
   };
 
   try {
-    const command = new PutObjectCommand(params);
-    await s3Client.send(command);
+      const command = new PutObjectCommand(params);
+      await s3Client.send(command);
 
-    const imageUrl = key;
+      const imageUrl = key;
 
-    const image = new Image({ imageUrl });
-    await image.save();
+      const image = new Image({ imageUrl });
+      await image.save();
 
-    res.status(200).json({ message: "Image uploaded successfully", imageUrl });
+      res.status(200).json({ message: "Image uploaded successfully", imageUrl });
   } catch (err) {
-    console.error("Error uploading to S3:", err);
-    res.status(500).send("Error uploading file");
+      console.error("Error uploading to S3:", err);
+      res.status(500).send("Error uploading file");
   }
 });
 

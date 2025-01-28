@@ -58,10 +58,11 @@ const Navbar = () => {
     { href: "/", label: "Home" },
     { href: "/all/courses", label: "Courses" },
     { href: "/about", label: "About Us" },
+    { href: "/trainer",label: "Our Trainers"}
   ];
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ${
+    <nav className={`sticky top-0 left-0 right-0 z-50 transition-colors duration-300 ${
       isScrolled
         ? "bg-white backdrop-blur-sm"
         : "bg-[url('/img/new/displayBackground.svg')] bg-cover bg-center"

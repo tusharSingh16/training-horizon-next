@@ -1,15 +1,19 @@
-"use client";
+"use client"
+
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
 import { setForm } from "@/lib/store/formSlice";
 import Image from "next/image";
+import { Calendar, MapPin, Sun, Users } from "lucide-react";
+import { Button } from "../ui/button";
+import { Card, CardContent } from "../ui/card";
 
 interface ListingCardProps {
   category: string;
   title: string;
-  imageUrl:string;
+  imageUrl: string;
   priceMode: string;
   price: string;
   mode: string;
@@ -61,8 +65,8 @@ const ListingCard: React.FC<ListingCardProps> = ({
 }) => {
   const [isSelected, setIsSelected] = useState<boolean>(isFavorite);
   const [favorites, setFavorites] = useState<string[]>([]);
-  const dispatch = useDispatch();
   const router = useRouter();
+  const dispatch = useDispatch();
 
   const sendData = () => {
     dispatch(
@@ -89,21 +93,21 @@ const ListingCard: React.FC<ListingCardProps> = ({
       })
     );
   };
-  const [ getImageUrl ,setImageUrl]= useState<string>("/img/tempListingImg.jpg");
+  const [getImageUrl, setImageUrl] = useState<string>("/img/tempListingImg.jpg");
 
   useEffect(() => {
     const fetchFavorites = async () => {
       const userId = window.localStorage.getItem("userId");
       if (!userId) return;
       try {
-        const response2 = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/upload?imageUrl=${imageUrl}`);
-      if (!response2.ok) throw new Error('Failed to fetch signed URL');
+        const response2 = await fetch(
+          `${process.env.NEXT_PUBLIC_BASE_URL}/upload?imageUrl=${imageUrl}`
+        );
+        if (!response2.ok) throw new Error("Failed to fetch signed URL");
 
-      const data = await response2.json();
-      setImageUrl(data.signedUrl);
-      } catch (error) {
-        
-      }
+        const data = await response2.json();
+        setImageUrl(data.signedUrl);
+      } catch (error) {}
 
       try {
         const response = await fetch(
@@ -129,7 +133,7 @@ const ListingCard: React.FC<ListingCardProps> = ({
     };
 
     fetchFavorites();
-  }, [listingId,imageUrl]);
+  }, [listingId, imageUrl]);
 
   const handleOnClick = async (event: React.MouseEvent<HTMLImageElement>) => {
     event.preventDefault();
@@ -146,14 +150,17 @@ const ListingCard: React.FC<ListingCardProps> = ({
     }
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/favorites`, {
-        method: newIsSelected ? "POST" : "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${window.localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify({ userId, listingId }),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/favorites`,
+        {
+          method: newIsSelected ? "POST" : "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${window.localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify({ userId, listingId }),
+        }
+      );
 
       if (response.ok) {
         if (newIsSelected) {
@@ -174,56 +181,79 @@ const ListingCard: React.FC<ListingCardProps> = ({
   };
 
   return (
-    <div className="flex flex-col p-4 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 ease-in-out w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-sm xl:max-w-md mx-auto">
-      <div
-        className="relative cursor-pointer"
-        onClick={() => {
-          sendData();
-          router.push(`/${categoryName}/${subCategoryName}/${listingId}`);
-        }}
-      >
-        <Image
-          src= {getImageUrl}
-          alt={title}
-          className="rounded-t-lg object-cover w-full h-48 sm:h-60"
-          width={500}
-          height={300}
-        />
-        <div className="absolute top-2 right-2 bg-white p-1 rounded-full shadow-md">
-          <Image
-            src={`${isSelected ? "/icons/filled_fav.png" : "/icons/fav.png"}`}
-            alt="fav"
-            width={25}
-            height={25}
-            onClick={handleOnClick}
-            className="cursor-pointer"
-          />
-        </div>
-      </div>
-      <div className="flex flex-col p-4">
-        <h3 className="text-lg font-bold truncate">{title}</h3>
-        <p className="text-sm text-gray-500 mt-1 truncate">
-          Starting: {startDate}
-        </p>
-        <p className="text-sm text-gray-500 truncate">Gender: {gender}</p>
-        <p className="text-sm text-gray-500 truncate">{days}</p>
-        <p className="text-sm text-gray-500 truncate">
-          Age: {minAge}-{maxAge}
-        </p>
-        <p className="text-sm text-yellow-500 font-semibold">
-          Rating: {avgRating} ★
-        </p>
-      </div>
-      <div className="flex justify-between items-center mt-2 border-t pt-3">
-        <div className="text-lg font-bold">
-          $ {price}
-          <span className="text-sm font-normal text-gray-400">
-            {priceMode === "Per day"
-              ? "/day"
-              : priceMode === "Per month"
-              ? "/month"
-              : "/course"}
-          </span>
+    <div className="flex flex-col items-center bg-background">
+      <div className="w-full h-auto px-4 py-6 space-y-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-6">
+          <Card className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-2xl transition-transform duration-300 transform hover:scale-105 hover:-translate-y-2">
+            <div className="relative">
+              <img
+                src={getImageUrl || "/img/new/cricket.svg"}
+                alt={title}
+                className="w-full h-[250px] object-cover rounded-t-lg"
+               
+              />
+              <Image
+                src={`${isSelected ? "/icons/filled_fav.png" : "/icons/fav.png"}`}
+                alt="fav"
+                width={25}
+                height={25}
+                onClick={handleOnClick}
+                className="absolute top-4 right-4 bg-gray-100 p-1 rounded-full shadow-md cursor-pointer"
+              />
+            </div>
+
+            <CardContent className="p-6 space-y-6">
+              <div className="space-y-3">
+                <div className="flex flex-wrap gap-4 text-gray-500">
+                  <div className="flex items-center gap-2">
+                    <MapPin className="w-6 h-6 opacity-30" />
+                    <span className="text-sm sm:text-base">{mode}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {/* <Users className="w-6 h-6 opacity-30" />
+                    <span className="text-sm sm:text-base">{classSize}</span> */}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {/* <Sun className="w-6 h-6 opacity-30" /> */}
+                    <Users className="w-6 h-6 opacity-30" />  
+                    <span className="text-sm sm:text-base">{gender}</span>
+                    {/* <span className="text-sm sm:text-base">{maxAge}</span> */}
+                  </div>
+                </div>
+                <h3 className="text-lg sm:text-xl font-semibold text-gray-800">{title}</h3>
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <Calendar className="w-4 h-4" />
+                  <span>{startTime}</span>
+                  <span>-</span>
+                  <span>{endTime}</span>
+                  <span>•</span>
+                  <span>{category}</span>
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-lg sm:text-xl font-semibold text-[#3D7A81]">
+                  ${price}
+                  <span className="text-sm font-normal text-gray-400">
+                    {priceMode === "Per day"
+                      ? "/day"
+                      : priceMode === "Per month"
+                      ? "/month"
+                      : "/course"}
+                  </span>
+                </span>
+                <Button
+                  variant="outline"
+                  className="border-[#1D2735] text-[#1D2735] text-sm sm:text-base"
+                  onClick={() => {
+                    sendData();
+                    router.push(`/${categoryName}/${subCategoryName}/${listingId}`);
+                  }}
+                >
+                  Enroll Now
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>

@@ -6,7 +6,7 @@ interface CartIconProps {
 }
 
 const CartIcon: React.FC<CartIconProps> = ({ count }) => (
-  <div className="relative">
+  <div className="relative hidden sm:block">
     {/* Cart Icon */}
     <svg width="40" height="40" viewBox="0 0 92 92" fill="none" xmlns="http://www.w3.org/2000/svg">
       <rect x="10" y="10" width="72" height="72" fill="transparent"/>

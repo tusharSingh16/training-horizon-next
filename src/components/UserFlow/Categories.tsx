@@ -1,4 +1,5 @@
 "use client";
+
 import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
@@ -15,6 +16,39 @@ const Categories = () => {
   const [getCategories, setCategories] = useState<Listing[]>([]);
   const router = useRouter();
 
+  const [currentPage, setCurrentPage] = useState(0);
+  const [itemsPerPage, setItemsPerPage] = useState(4);
+
+  useEffect(() => {
+    const updateItemsPerPage = () => {
+      if (window.innerWidth >= 1024) setItemsPerPage(4); // Large screens
+      else if (window.innerWidth >= 768) setItemsPerPage(2); // Medium screens
+      else setItemsPerPage(1); // Small screens
+    };
+
+    updateItemsPerPage();
+    window.addEventListener("resize", updateItemsPerPage);
+    return () => window.removeEventListener("resize", updateItemsPerPage);
+  }, []);
+
+  const pageCount = Math.ceil(getCategories.length / itemsPerPage);
+  const displayedCategories = getCategories.slice(
+    currentPage * itemsPerPage,
+    (currentPage + 1) * itemsPerPage
+  );
+
+  const handleNext = () => {
+    if (currentPage < pageCount - 1) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePrev = () => {
+    if (currentPage > 0) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
   useEffect(() => {
     axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/admin/category`).then((res) => {
       setCategories(res.data);
@@ -22,40 +56,59 @@ const Categories = () => {
   }, []);
 
   return (
-    <section className="py-6 sm:py-8 bg-gray-50">
-      <div className="flex justify-between items-center px-4 sm:px-8 pb-8">
-        <h2 className="text-2xl sm:text-3xl font-semibold text-gray-800">Our Top Categories</h2>
-        <Link href="/all/courses">
-          <button className="text-blue-500 text-xl sm:text-2xl hover:underline">
-            View all
-          </button>
-        </Link>
-      </div>
+    <section className=" bg-white/30 container mx-auto py-12">
+      <h2 className="text-5xl font-bold text-center mb-2">Browse</h2>
+      <h3 className="text-4xl font-bold text-center text-blue-500 mb-12">Category</h3>
 
-      {/* Container for Horizontal Scroll on Mobile, Full Width on Desktop */}
-      <div className="px-4 sm:px-8 overflow-x-auto md:overflow-visible">
-        {/* Flex container for categories */}
-        <div className="flex flex-nowrap space-x-6 md:space-x-8 justify-start md:justify-between">
-          {getCategories.map((category, index) => (
+      <div className="relative max-w-6xl mx-auto">
+        {/* Left Arrow */}
+        {currentPage > 0 && (
+          <button
+            onClick={handlePrev}
+            className="absolute -left-5 top-1/2 transform z-10 -translate-y-1/2 bg-gray-100 hover:bg-gray-300 px-2 py-1 rounded-full shadow-md"
+            aria-label="Previous"
+          >
+            ←
+          </button>
+        )}
+
+        {/* Categories Grid */}
+        <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6`}>
+          {displayedCategories.map((category, i) => (
             <div
-              onClick={() => {
+              onClick={()=>{
                 router.push(`/${category.category}`);
               }}
-              key={index}
-              className="text-center p-6 border border-gray-200 rounded-sm shadow-md transition-transform duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl hover:bg-blue-50 cursor-pointer min-w-[200px]"
+              key={i}
+              className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-2xl transition-transform duration-300 transform hover:scale-105 hover:-translate-y-2"
             >
-              {/* Category Image */}
-              <Image
-                src="/img/p1.svg" // This should be dynamic depending on category, if images vary
-                alt={category.category}
-                width={80}
-                height={80}
-                className="mx-auto mb-4"
-              />
-              <h3 className="font-medium text-lg sm:text-xl text-gray-700">{category.category}</h3>
+              <div className="aspect-square relative">
+                <Image
+                  src={"/img/new/education.svg"}//this should be dynamic once AWS work is done
+                  alt={category.category}
+                  fill
+                  className="object-cover rounded-t-lg"
+                />
+              </div>
+              <div className="p-4">
+                <h3 className="font-semibold text-lg ">{category.category}</h3>
+                {/* <p className="text-sm text-gray-500">{category.subCategory}</p> */}
+                <p>by TH</p>
+              </div>
             </div>
           ))}
         </div>
+
+        {/* Right Arrow */}
+        {currentPage < pageCount - 1 && (
+          <button
+            onClick={handleNext}
+            className="absolute -right-5 top-1/2 transform -translate-y-1/2 bg-gray-100 hover:bg-gray-300 px-2 py-1 rounded-full shadow-md"
+            aria-label="Next"
+          >
+            →
+          </button>
+        )}
       </div>
     </section>
   );

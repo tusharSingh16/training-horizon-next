@@ -1,3 +1,5 @@
+"use client"
+
 import React, { useEffect, useState } from "react";
 import SideLayout from "./SideLayout";
 import MainDetailPage from "./MainDetailPage";
@@ -8,6 +10,7 @@ import { RootState } from "@/lib/store/store";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { setForm } from "@/lib/store/formSlice";
+
 
 
 interface TrainerData {

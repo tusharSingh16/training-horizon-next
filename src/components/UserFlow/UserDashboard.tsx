@@ -2,9 +2,16 @@
 
 import CartIcon from "@/app/icons/CartIcon";
 import axios from "axios";
+import { ShoppingCart } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
 
 const UserDashboard = () => {
   const [userName, setUserName] = useState<string | null>(null);
@@ -13,14 +20,19 @@ const UserDashboard = () => {
   const [cartItems, setCartItems] = useState(0);
   const [isOrg, setIsOrg] = useState(false);
   const router = useRouter();
-  const userId = window.localStorage.getItem("userId");
+  const userId =
+    typeof window !== "undefined"
+      ? window.localStorage.getItem("userId")
+      : null;
 
-  // Fetch user name on component mount
+  // Fetch user role on component mount
   useEffect(() => {
+    if (typeof window === "undefined") return;
     const role = localStorage.getItem("role");
-    setIsOrg(role == "organization");
+    setIsOrg(role === "organization");
   }, []);
 
+  // Fetch user name on component mount
   useEffect(() => {
     const fetchUserName = async () => {
       try {
@@ -28,7 +40,11 @@ const UserDashboard = () => {
           `${process.env.NEXT_PUBLIC_BASE_URL}/user/username`,
           {
             headers: {
-              Authorization: "Bearer " + window.localStorage.getItem("token"),
+              Authorization:
+                "Bearer " +
+                (typeof window !== "undefined"
+                  ? window.localStorage.getItem("token")
+                  : ""),
             },
           }
         );
@@ -40,9 +56,14 @@ const UserDashboard = () => {
 
     fetchUserName();
   }, []);
-  // /organizations/:id
-  const orgId = window.localStorage.getItem("userId");
-  // for fetching username for org
+
+  // Organization ID from localStorage
+  const orgId =
+    typeof window !== "undefined"
+      ? window.localStorage.getItem("userId")
+      : null;
+
+  // Fetch organization name on component mount
   useEffect(() => {
     const fetchOrgName = async () => {
       try {
@@ -50,16 +71,17 @@ const UserDashboard = () => {
           `${process.env.NEXT_PUBLIC_BASE_URL}/organizations/${orgId}`
         );
         setUserName(response.data.orgname);
-        // console.log("Org data is " + JSON.stringify(response.data.orgname));
       } catch (error) {
         console.log("Error finding OrgId");
       }
     };
-    fetchOrgName();
-  },[orgId]);
-  
+    if (isOrg) fetchOrgName();
+  }, [isOrg, orgId]);
+
   // Update cartItems when localStorage cart is changed
   useEffect(() => {
+    if (typeof window === "undefined") return;
+
     const updateCartItems = () => {
       const cartData = JSON.parse(localStorage.getItem("cart") || "[]");
       setCartItems(cartData.length);
@@ -86,6 +108,8 @@ const UserDashboard = () => {
   };
 
   const handleSignOut = () => {
+    if (typeof window === "undefined") return;
+
     localStorage.removeItem("token");
     localStorage.removeItem("userId");
     localStorage.removeItem("cart");
@@ -96,113 +120,80 @@ const UserDashboard = () => {
   const handleDropdownToggle = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
-  
+
   return (
     <>
-      <div className="relative inline-block text-left">
-        {/* User Icon and Name */}
-        <div
-          className="flex items-center space-x-2 cursor-pointer"
-          onClick={handleDropdownToggle}
-        >
-          <div className="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center">
-            <svg
-              className="w-4 h-4 text-gray-500"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-4.4 0-8 3.6-8 8v1h16v-1c0-4.4-3.6-8-8-8z" />
-            </svg>
-          </div>
-          <span className="text-yellow-500">{userName || "Loading..."}</span>
-          <svg
-            className="w-4 h-[4 text-gray-500"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M19 9l-7 7-7-7"
-            />
-          </svg>
-        </div>
-
+      <div className="relative inline-block text-left flex flex-row  items-center space-x-4 ">
         {/* Dropdown Menu */}
-        {/* when other than org */}
-        {isDropdownOpen && !isOrg &&(
-          <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg">
-            <ul className="py-2">
-              <li
-                className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                onClick={goToFavorites}
-              >
-                Favorites
-              </li>
-              <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                Settings
-              </li>
-              <Link href={`/userflow/yourProfile`}>
-                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                  Your Profile
-                </li>
-              </Link>
-              <Link href={`/userflow/orders/${userId}`}>
-                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                  Orders
-                </li>
-              </Link>
-              <Link href="/userflow/familyMembers">
-                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                  Family Members
-                </li>
-              </Link>
-              <Link href={`/trainer/show_my_listings/${userId}`}>
-                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                  My Listings
-                </li>
-              </Link>
-              <li
-                className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                onClick={handleSignOut}
-              >
-                Sign Out
-              </li>
-            </ul>
-          </div>
-        )}
-        {/* when it is an organziation */}
-          {isDropdownOpen && isOrg &&(
-          <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg">
-            <ul className="py-2">
-              <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                Settings
-              </li>
-              <Link href={`/trainer/show_my_listings/${userId}`}>
-                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                  My Listings
-                </li>
-              </Link>
-              <Link href={""}>
-                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                  Create a Gym
-                </li>
-              </Link>
-              <li
-                className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                onClick={handleSignOut}
-              >
-                Sign Out
-              </li>
-            </ul>
-          </div>
-        )}
+        <DropdownMenu>
+          <DropdownMenuTrigger className="flex items-center space-x-2">
+            <span className="bg-gradient-to-r from-blue-600 to-purple-600 text-transparent bg-clip-text">
+              {userName || "Loading..."}
+            </span>
+            <img
+              src="https://github.com/shadcn.png"
+              alt="Profile"
+              className="h-8 w-8 rounded-full"
+            />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-52" >
+            {!isOrg ? (
+              <>
+                <DropdownMenuItem asChild className="py-3">
+                  <Link href="/userflow/yourProfile">Your Profile</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild className="py-3">
+                  <Link href={`/trainer/show_my_listings/${userId}`}>
+                    My Listings
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem className="py-3" onClick={goToFavorites}>
+                  Favorites
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild className="py-3">
+                  <Link href={`/userflow/orders/${userId}`}>Orders</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild className="py-3">
+                  <Link href="/userflow/registerMember">Register Member</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild className="py-3">
+                  <Link href="/userflow/familyMembers">Family Members</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild className="py-3">
+                  <Link href="/settings">Settings</Link>
+                </DropdownMenuItem>
+              </>
+            ) : (
+              <>
+                <DropdownMenuItem asChild>
+                  <Link href="/settings">Settings</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href={`/trainer/show_my_listings/${userId}`}>
+                    My Listings
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/create-gym">Create a Gym</Link>
+                </DropdownMenuItem>
+              </>
+            )}
+            <DropdownMenuItem onClick={handleSignOut}>
+              Sign Out
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+        {/* Cart Icon */}
+        <Link className="relative hidden sm:block" href="/userflow/cart">
+          <ShoppingCart className="h-6 w-6 text-gray-700" />
+          {cartItems > 0 && (
+            <span className="absolute -top-2 -right-4 bg-blue-400 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+              {cartItems}
+            </span>
+          )}
+        </Link>
       </div>
-      <Link href="/userflow/cart">
-        <CartIcon count={cartItems} />
-      </Link>
     </>
   );
 };

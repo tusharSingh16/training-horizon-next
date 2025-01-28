@@ -7,10 +7,10 @@ import { z } from "zod";
 import axios from "axios";
 
 import { useState, useEffect, useCallback, Suspense } from "react";
-import { useJsApiLoader, StandaloneSearchBox } from "@react-google-maps/api";
-import { Library } from "@googlemaps/js-api-loader";
+import { useJsApiLoader, StandaloneSearchBox } from "@react-google-maps/api"
+import { Library } from "@googlemaps/js-api-loader"
 import { useRef } from "react";
-import MemberEnrollmentTable from "@/components/listing-detail/MemberEnrollmentTable";
+
 import { Button } from "@/components/trainer-dashboard/ui/button";
 import {
   Form,
@@ -49,6 +49,7 @@ interface Listing {
   _id: string;
   category: string;
   subCategory: string[];
+
 }
 
 export function AddListing() {
@@ -56,7 +57,6 @@ export function AddListing() {
     category: z.string(),
     subCategory: z.string(),
     title: z.string(),
-    imageUrl:z.string(),
     priceMode: z.string(),
     price: z.string(),
     mode: z.string(),
@@ -76,9 +76,6 @@ export function AddListing() {
       message: "Enter atleast 100 characters",
     }),
   });
-
-  //use this imageUrl 
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -125,10 +122,11 @@ export function AddListing() {
 
   const inputRef = useRef<google.maps.places.SearchBox | null>(null);
   const router = useRouter();
-
+  
   const searchParams = useSearchParams();
-  const id = searchParams.get("listingId");
+      const id = searchParams.get("listingId");
 
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [categories, setCategories] = useState<Listing[]>([]);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [subCategories, setSubCategories] = useState<string[]>([]);
@@ -148,13 +146,18 @@ export function AddListing() {
     libraries: libs,
   });
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {  
     if (!id) {
       try {
+        const updatedValues = {
+          ...values,
+          imageUrl, // Overwrite or set the imageUrl field
+        };
+        console.log(updatedValues)
         const token = localStorage.getItem("token");
         const response = await axios.post(
           `${process.env.NEXT_PUBLIC_BASE_URL}/listing/add-listing`,
-          values,
+          updatedValues,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -176,11 +179,15 @@ export function AddListing() {
       }
     } else {
       try {
+        const updatedValues = {
+          ...values,
+          imageUrl, // Overwrite or set the imageUrl field
+        };
         const token = localStorage.getItem("token");
 
         const response = await axios.put(
           `${process.env.NEXT_PUBLIC_BASE_URL}/listing/add-listing/${id}`,
-          values,
+          updatedValues,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -189,7 +196,7 @@ export function AddListing() {
           }
         );
 
-        console.log(response);
+        console.log(response)
         if (response) {
           setPopUpMessage("Listing Added SuccessFully");
           setShowPopup(true);
@@ -210,11 +217,11 @@ export function AddListing() {
   const handleDateChange = useCallback(() => {
     const startDate = form.getValues("startDate");
     const endDate = form.getValues("endDate");
-
+  
     if (startDate && endDate) {
       const start = new Date(startDate);
       const end = new Date(endDate);
-
+  
       if (end < start) {
         form.setError("endDate", {
           type: "manual",
@@ -227,7 +234,7 @@ export function AddListing() {
   }, [form]);
 
   // max age is always greater than the min age
-  const handleAgeChange = useCallback(() => {
+  const handleAgeChange = useCallback ( () => {
     const minAge = form.getValues("minAge");
     const maxAge = form.getValues("maxAge");
 
@@ -260,21 +267,19 @@ export function AddListing() {
   }, [form, handleAgeChange, handleDateChange]);
 
   // Fetch categories
-  useEffect(() => {
-    axios
-      .get(`${process.env.NEXT_PUBLIC_BASE_URL}/admin/category`)
-      .then((res) => {
-        console.log(res.data);
-        setCategories(res.data);
-      });
-  }, []);
+  useEffect(()=>{
+    axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/admin/category`).then((res)=>{
+      console.log(res.data)
+      setCategories( res.data);
+    })
+},[])
 
-  // handle category change
-  const handleCategoryChange = (categoryName: string) => {
-    setSelectedCategory(categoryName);
-    const selectedCat = categories.find((cat) => cat.category === categoryName);
-    setSubCategories(selectedCat ? selectedCat.subCategory : []);
-  };
+// handle category change
+const handleCategoryChange = (categoryName: string) => {
+  setSelectedCategory(categoryName);
+  const selectedCat = categories.find(cat => cat.category === categoryName);
+  setSubCategories(selectedCat ? selectedCat.subCategory : []);
+};
 
   useEffect(() => {
     // Fetch data if listingId exists
@@ -290,9 +295,9 @@ export function AddListing() {
               },
             }
           );
-
+          
           const listingData = response.data.listing;
-          console.log(listingData);
+          console.log(listingData)
           // Pre-fill form with fetched data
           form.reset({
             category: listingData.category || "",
@@ -318,7 +323,7 @@ export function AddListing() {
           console.log("Error fetching listing data:", error);
         }
       };
-
+      
       fetchListing();
     }
   }, [id, form]);
@@ -361,7 +366,8 @@ export function AddListing() {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="w-1/2 py-4 space-y-2 border-2 border-gray-300 p-6 ">
+          className="w-1/2 py-4 space-y-2 border-2 border-gray-300 p-6 "
+        >
           {/* Category Field */}
           <div className="text-xl font-bold mb-3">Add Listing</div>
           <FormField
@@ -376,7 +382,8 @@ export function AddListing() {
                       field.onChange(value);
                       handleCategoryChange(value);
                     }}
-                    value={field.value ?? ""}>
+                    value={field.value ?? ""}
+                  >
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Select a category" />
                     </SelectTrigger>
@@ -397,38 +404,38 @@ export function AddListing() {
             )}
           />
           {/* Subcategory Selection */}
-          {
-            <FormField
-              name="subCategory"
-              control={form.control}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Subcategory</FormLabel>
-                  <FormControl>
-                    <Select
-                      onValueChange={field.onChange}
-                      value={field.value ?? ""}>
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select a sub category" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          <SelectLabel>Subcategories</SelectLabel>
-                          {subCategories.map((sub, index) => (
-                            <SelectItem key={index} value={sub}>
-                              {sub}
-                            </SelectItem>
-                          ))}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          }
-          {/* Title Field */}
+      {
+        <FormField
+          name="subCategory"
+          control={form.control}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Subcategory</FormLabel>
+              <FormControl>
+                <Select
+                  onValueChange={field.onChange}
+                  value={field.value ?? ""}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select a sub category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectLabel>Subcategories</SelectLabel>
+                      {subCategories.map((sub, index) => (
+                        <SelectItem key={index} value={sub}>
+                          {sub}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      }{/* Title Field */}
           <FormField
             name="title"
             control={form.control}
@@ -442,6 +449,8 @@ export function AddListing() {
               </FormItem>
             )}
           />
+          <UploadImage imageUrl={imageUrl} setImageUrl={setImageUrl} ></UploadImage>
+
           {/* price mode field */}
           <FormField
             name="priceMode"
@@ -455,7 +464,8 @@ export function AddListing() {
                       field.onChange(value);
                       setSelectedPriceMode(value); // Update state with selected priceMode
                     }}
-                    value={field.value ?? ""}>
+                    value={field.value ?? ""}
+                  >
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Select Price Mode" />
                     </SelectTrigger>
@@ -503,7 +513,8 @@ export function AddListing() {
                       field.onChange(value);
                       setSelectedMode(value); // Update state with selected mode
                     }}
-                    value={field.value ?? ""}>
+                    value={field.value ?? ""}
+                  >
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Select Mode" />
                     </SelectTrigger>
@@ -527,7 +538,8 @@ export function AddListing() {
           {isLoaded && selectedMode === "Offline" && (
             <StandaloneSearchBox
               onLoad={(ref) => (inputRef.current = ref)}
-              onPlacesChanged={handlePlaceSelect}>
+              onPlacesChanged={handlePlaceSelect}
+            >
               <FormField
                 name="location"
                 control={form.control}
@@ -593,7 +605,8 @@ export function AddListing() {
                       field.onChange(value);
                       setSelectedClassSize(value); // Update state with selected classSize
                     }}
-                    value={field.value ?? ""}>
+                    value={field.value ?? ""}
+                  >
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Select Mode" />
                     </SelectTrigger>
@@ -684,7 +697,8 @@ export function AddListing() {
                 <FormControl>
                   <Select
                     onValueChange={field.onChange}
-                    value={field.value ?? ""}>
+                    value={field.value ?? ""}
+                  >
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Select Gender" />
                     </SelectTrigger>
@@ -742,7 +756,8 @@ export function AddListing() {
                 <FormControl>
                   <Select
                     onValueChange={field.onChange}
-                    value={field.value ?? ""}>
+                    value={field.value ?? ""}
+                  >
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Select age group" />
                     </SelectTrigger>
@@ -771,7 +786,8 @@ export function AddListing() {
                 <FormControl>
                   <Select
                     onValueChange={field.onChange}
-                    value={field.value ?? ""}>
+                    value={field.value ?? ""}
+                  >
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Select age group" />
                     </SelectTrigger>
@@ -818,11 +834,11 @@ export function AddListing() {
               </FormItem>
             )}
           />
-          <UploadImage imageUrl={imageUrl} setImageUrl={setImageUrl} ></UploadImage>
           <div className="w-full flex justify-between">
             <Dialog
               open={isDialogOpen}
-              onOpenChange={(open) => setIsDialogOpen(open)}>
+              onOpenChange={(open) => setIsDialogOpen(open)}
+            >
               <DialogTrigger asChild>
                 <Button type="button" className="" onClick={handleReviewClick}>
                   Review
@@ -885,7 +901,7 @@ export function AddListing() {
                     <strong>Pre-Requistes:</strong> {formValues.preRequistes}
                   </div>
                   <div className="flex justify-between">
-                    <strong>Description:</strong>{" "}
+                    <strong>Description:</strong> {formValues.description}
                   </div>
                 </div>
                 <div className="flex justify-between mt-4">

@@ -8,10 +8,10 @@ const AboutUs = () => {
         <Navbar />
 
         <div className="flex-grow flex flex-col justify-center items-center">
-          <div className="max-w-4xl mx-auto p-8 bg-white rounded-lg shadow-md">
-            <h1 className="text-4xl font-bold mb-6 text-center text-gray-800">
-              About Us
-            </h1>
+          <div className="max-w-screen-lg mx-auto p-8 bg-white rounded-lg ">
+          <h2 className="text-5xl p-navbar font-bold text-center">
+                  About <span className="text-blue-500">Us</span>
+                </h2>
             <p className="text-lg leading-relaxed text-gray-700 mb-4">
               Welcome to our website! We are a team of passionate individuals
               dedicated to providing the best services and products to our

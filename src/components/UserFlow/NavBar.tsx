@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import UserDashboard from "./UserDashboard";
 import RoleBasedNav from "./RoleBasedNav";
-import { useRouter } from "next/navigation"
+import { useRouter } from "next/navigation";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -13,12 +13,15 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
+import { Button } from "../ui/button";
 
 const Navbar = () => {
   const [loggedIn, setLoggedIn] = useState(false);
   const [isTrainer, setIsTrainer] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isOrg, setIsOrg] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+
   const router = useRouter();
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -27,7 +30,16 @@ const Navbar = () => {
     setIsTrainer(role === "trainer");
     setLoggedIn(!!token);
     setLoading(false);
-    
+
+    // Scroll event listener
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 0);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
   }, []);
 
   const handleSignOut = () => {
@@ -37,160 +49,110 @@ const Navbar = () => {
     window.location.reload();
     router.push("/");
   };
-  
+
+  const handlelogin = () => {
+    router.push("/userflow/login");
+  };
 
   const navLinks = [
     { href: "/", label: "Home" },
     { href: "/all/courses", label: "Courses" },
     { href: "/about", label: "About Us" },
-    { href: "/contact", label: "Contact" },
-    { href: "/trainer", label: "Our Trainers" },
+    { href: "/trainer",label: "Our Trainers"}
   ];
 
   return (
-    <div className="flex justify-center mt-navbar">
-    <nav className="bg-opacity-50 backdrop-blur-md fixed top-3 w-full max-w-screen-xl rounded-xl z-50 shadow-md">
-
-      <div className="container mx-auto p-5">
-        {/* Desktop Navbar */}
-        <div className="hidden md:flex justify-between items-center">
-          <div className="flex space-x-4">
+    <nav className={`sticky top-0 left-0 right-0 z-50 transition-colors duration-300 ${
+      isScrolled
+        ? "bg-white backdrop-blur-sm"
+        : "bg-[url('/img/new/displayBackground.svg')] bg-cover bg-center"
+    }`}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16">
+          <div className="text-2xl px-5 font-extrabold bg-gradient-to-r from-blue-600 to-purple-600 text-transparent bg-clip-text">
+            <Link href="/">Training Horizon</Link>
+          </div>
+          {/* <div className="hidden md:flex items-center gap-6">
+  <a href="#" className="text-gray-700 hover:text-gray-900">
+    Home
+  </a>
+  <a href="#" className="text-gray-700 hover:text-gray-900">
+    Courses
+  </a>
+  <a href="#" className="text-gray-700 hover:text-gray-900">
+    About Us
+  </a>
+</div> */}
+          <div className="flex  space-x-6">
             {navLinks.map(({ href, label }) => (
               <Link
                 key={href}
                 href={href}
-                className="text-gray-700 hover:text-black px-3 py-2 rounded-sm text-sm font-medium"
+                className="hidden md:flex items-center gap-6 text-gray-700  hover:underline"
               >
                 {label}
               </Link>
             ))}
           </div>
-          <div className="flex items-center space-x-4">
-            {loggedIn ? (
-              <>
+          {loggedIn ? (
+            <>
               <div>
-
-              {isOrg ? <Link className="bg-yellow-600 p-2 rounded-sm text-white" href={""}>Create a Gym</Link> : null}
+                {isOrg ? (
+                  <Link
+                    className="bg-yellow-600 p-2 rounded-sm text-white"
+                    href={""}
+                  >
+                    Create a Gym
+                  </Link>
+                ) : null}
               </div>
-                {isTrainer && !loading && <RoleBasedNav />}
-                {!isTrainer && !isOrg && (
-                  <Link
-                    href="/dashboard/teacher/join_as_teacher"
-                    className="bg-yellow-300 text-black px-3 py-2 rounded-sm text-sm font-medium hover:bg-yellow-200"
-                  >
-                    Join as Trainer
-                  </Link>
-                )}
-                {!isTrainer && !isOrg && (
-                  <Link
-                    href="/userflow/registerMember"
-                    className="text-gray-700 hover:text-black px-3 py-2 rounded-sm text-sm font-medium"
-                  >
-                    Register Member
-                  </Link>
-                )}
-                <UserDashboard />
-              </>
-            ) : (
-              <>
-                { <Link
+              {isTrainer && !loading && <RoleBasedNav />}
+
+              {/* {!isTrainer && !isOrg && (
+    <Link
+      href="/userflow/registerMember"
+      className="hidden sm:block hover:underline"
+    >
+      Register Member
+    </Link>
+  )} */}
+              {/* <div className="max-w-screen-lg flex flex-col justify-between">
+    
+  </div> */}
+              {!isTrainer && !isOrg && (
+                <Link
                   href="/dashboard/teacher/join_as_teacher"
-                  className="bg-yellow-500 text-black px-3 py-2 rounded-sm text-sm font-medium hover:bg-yellow-200"
+                  className="hidden sm:block hover:underline"
                 >
                   Join as Trainer
-                </Link>}
-                <Link
-                  href="/userflow/login"
-                  className="text-gray-700 hover:text-black px-3 py-2 rounded-sm text-sm font-medium"
-                >
-                  Log in
                 </Link>
-                <Link
-                  href="/userflow/signup"
-                  className="bg-yellow-500 text-black px-3 py-2 rounded-sm text-sm font-medium hover:bg-yellow-600"
-                >
-                  Sign Up
-                </Link>
-              </>
-            )}
-          </div>
-        </div>
-
-        {/* Mobile Navbar */}
-        <div className="md:hidden flex justify-between items-center">
-          <DropdownMenu>
-            <DropdownMenuTrigger className="text-gray-700 hover:text-black focus:outline-none">
-              <svg
-                className="h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M4 6h16M4 12h16m-7 6h7"
-                />
-              </svg>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-48">
-              <DropdownMenuLabel>Navigation</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              {navLinks.map(({ href, label }) => (
-                <DropdownMenuItem key={href}>
-                  <Link
-                    href={href}
-                    className="block w-full text-gray-700 hover:text-black px-2 py-1 text-sm"
-                  >
-                    {label}
-                  </Link>
-                </DropdownMenuItem>
-              ))}
-              <DropdownMenuSeparator />
-              {loggedIn ? (
-                <>
-                  <DropdownMenuItem>
-                    <Link
-                      href="/userflow/registerMember"
-                      className="block w-full text-gray-700 hover:text-black px-2 py-1 text-sm"
-                    >
-                      Register Member
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <UserDashboard />
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                  <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={handleSignOut}>Sign Out</li>
-                  </DropdownMenuItem>
-                </>
-              ) : (
-                <>
-                  <DropdownMenuItem>
-                    <Link
-                      href="/userflow/login"
-                      className="block w-full text-gray-700 hover:text-black px-2 py-1 text-sm"
-                    >
-                      Log in
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Link
-                      href="/userflow/signup"
-                      className="block w-full text-gray-700 hover:text-black px-2 py-1 text-sm"
-                    >
-                      Sign Up
-                    </Link>
-                  </DropdownMenuItem>
-                </>
               )}
-            </DropdownMenuContent>
-          </DropdownMenu>
+              <div className="flex flex-row gap-4">
+                <UserDashboard />
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="flex items-center  gap-4">
+                <Link
+                  href={"/dashboard/teacher/join_as_teacher"}
+                  className="hidden sm:block hover:underline"
+                >
+                  Join As Trainer
+                </Link>
+                <Button
+                  onClick={handlelogin}
+                  variant="default"
+                  className="bg-blue-500 hover:bg-blue-600"
+                >
+                  Sign in
+                </Button>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </nav>
-    </div>
   );
 };
 

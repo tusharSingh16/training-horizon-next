@@ -7,7 +7,8 @@ import ListingCard from "./ListingCard";
 import axios from "axios";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-
+import SearchSection from "../UserFlow/SeachSection";
+import { Card, CardContent } from "../ui/card";
 
 const SubCategory: React.FC<{ categoryName: string }> = ({ categoryName }) => {
   const router = useRouter();
@@ -21,7 +22,6 @@ const SubCategory: React.FC<{ categoryName: string }> = ({ categoryName }) => {
       .get(`${process.env.NEXT_PUBLIC_BASE_URL}/admin/category/${categoryName}`)
       .then((res) => {
         setCategory(res.data);
-        
       });
   }, [categoryName]);
 
@@ -50,50 +50,110 @@ const SubCategory: React.FC<{ categoryName: string }> = ({ categoryName }) => {
   //   };
   // console.log(listings[0].trainerId);
 
+  
+
+  const handleSearch=()=>{
+
+  }
+
   return (
     <>
       <div>{/* <h1>{listings[0].trainerId}</h1> */}</div>
-      <div className="min-h-screen flex flex-col">
-        <header className="bg-white shadow">
-          <div className="container mx-auto">
-            {/* <SearchBar
-              keywords={keywords}
-              setKeywords={setKeywords}
-              // location={location}
-              // setLocation={setLocation}
-              onSearch={handleSearch}
-            /> */}
-          </div>
-        </header>
+      <div className="flex flex-col items-center min-h-screen bg-background">
+        <div className="w-full max-w-[1296px] px-4  space-y-6">
+          <SearchSection
+            keywords={keywords}
+            setKeywords={setKeywords}
+            onSearch={handleSearch}
+          />
 
-        <div className="container mx-auto flex flex-1">
-          <aside className="w-1/4">
-            {/* <FilterSidebar
-              selectedCategories={selectedCategories}
-              setSelectedCategories={setSelectedCategories}
-              // onFilter={handleFilter}
-            /> */}
-          </aside>
+          <h2 className="text-5xl font-bold text-center">
+            Sub <span className="text-blue-500">Category</span>
+          </h2>
 
-          <main className="flex-1 p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {getCategory.length>0 ? (
+          {/* Filters
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <Select>
+              <SelectTrigger className="w-full h-[32px]">
+                <div className="flex items-center gap-2">
+                  <Music className="w-4 h-4" />
+                  <SelectValue placeholder="Music" />
+                </div>
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Music</SelectItem>
+                <SelectItem value="rock">Rock</SelectItem>
+                <SelectItem value="jazz">Jazz</SelectItem>
+                <SelectItem value="classical">Classical</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select>
+              <SelectTrigger className=" w-full h-[32px]">
+                <div className="flex items-center gap-2">
+                  <MapPin className="w-4 h-4" />
+                  <SelectValue placeholder="Chicago" />
+                </div>
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="chicago">Chicago</SelectItem>
+                <SelectItem value="newyork">New York</SelectItem>
+                <SelectItem value="losangeles">Los Angeles</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select>
+              <SelectTrigger className=" w-full h-[32px]">
+                <div className="flex items-center gap-2">
+                  <Calendar className="w-4 h-4" />
+                  <SelectValue placeholder="Date" />
+                </div>
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="today">Today</SelectItem>
+                <SelectItem value="tomorrow">Tomorrow</SelectItem>
+                <SelectItem value="thisweek">This Week</SelectItem>
+                <SelectItem value="thismonth">This Month</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select>
+              <SelectTrigger className=" w-full h-[32px]">
+                <div className="flex items-center gap-2">
+                  <DollarSign className="w-4 h-4" />
+                  <SelectValue placeholder="Price" />
+                </div>
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="free">Free</SelectItem>
+                <SelectItem value="paid">Paid</SelectItem>
+                <SelectItem value="under50">Under $50</SelectItem>
+                <SelectItem value="under100">Under $100</SelectItem>
+              </SelectContent>
+            </Select>
+          </div> */}
+
+          <main className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {getCategory.length > 0 ? (
               getCategory.map((subCategory, idx) => (
-                <div
+                <Card
+                  key={idx}
+                  className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-2xl transition-transform duration-300 transform hover:scale-105 hover:-translate-y-2"
                   onClick={() => {
                     router.push(`/${categoryName}/${subCategory}`);
                   }}
-                  key={idx}
-                  className="text-center p-4 border rounded-xl shadow-lg  hover:shadow-2xl cursor-pointer hover:bg-blue-100"
                 >
-                  <Image
-                    src="/img/p1.svg"
-                    alt="?"
-                    width={28}
-                    height={36}
-                    className="w-28 h-36 mx-auto mb-4 "
+                  <img
+                    src={"/img/new/dance.svg"}
+                    alt={"abc"}
+                    className="w-full h-[300px] object-cover rounded-t-lg"
                   />
-                  <h3 className="font-medium">{subCategory}</h3>
-                </div>
+                  <CardContent className="p-6 space-y-6">
+                    <div className="space-y-3">
+                      <h3 className="text-xl font-semibold">{subCategory}</h3>
+                    </div>
+                  </CardContent>
+                </Card>
               ))
             ) : (
               <p>No listings found.</p>

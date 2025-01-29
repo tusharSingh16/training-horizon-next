@@ -1,4 +1,5 @@
-'use client'
+"use client"
+
 import SubCategory from "@/components/listing/SubCategory";
 import { useParams } from "next/navigation";
 

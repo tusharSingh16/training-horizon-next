@@ -62,7 +62,7 @@ const RoleBasedNav = () => {
     <div> <Link
         href={isApproved ? "/userflow/addListing" : "/"}
         onClick={handleClick}
-        className="bg-blue-300 text-black px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-200"
+        className="hidden sm:block bg-blue-300 text-black px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-200"
       >
         {" "}
         Add Listing

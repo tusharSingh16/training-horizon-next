@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useState } from "react";
 import Navbar from "@/components/UserFlow/NavBar";
 import { z } from "zod";
@@ -7,24 +8,22 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import Popup from "@/components/trainer-dashboard/PopUp";
 
-// Zod schema for form validation
+// Schema
 const registerMemberSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
-  age: z
-    .number()
-    .int({ message: "Age must be a valid integer" })
-    .min(0, "Age must be greater than 0"),
   dob: z.string().refine(
     (date) => {
       const dob = new Date(date);
       const today = new Date();
-      return dob <= today; // Ensure DOB is not in the future
+      return !isNaN(dob.getTime()) && dob <= today;
     },
-    {
-      message: "Invalid date ",
-    }
+    { message: "Invalid date of birth" }
   ),
-  relationship: z.enum(["brother", "child", "father", "mother"], {
+  age: z.preprocess(
+    (val) => (val ? Number(val) : undefined),
+    z.number().int().min(0, "Age must be greater than 0")
+  ),
+  relationship: z.enum(["brother", "sister", "child", "father", "mother"], {
     errorMap: () => ({ message: "Select a valid relationship" }),
   }),
   gender: z.enum(["male", "female", "other"], {
@@ -33,8 +32,8 @@ const registerMemberSchema = z.object({
   address: z.string().min(5, "Address must be at least 5 characters"),
   city: z.string().min(2, "City must be at least 2 characters"),
   postalCode: z.string().min(5, "Postal code must be at least 5 characters"),
-  agreeToTerms: z.literal(true, {
-    errorMap: () => ({ message: "You must agree to the terms and conditions" }),
+  agreeToTerms: z.boolean().refine((val) => val === true, {
+    message: "You must agree to the terms and conditions",
   }),
   doctorName: z.string().optional(),
   doctorNumber: z.string().optional(),
@@ -45,42 +44,19 @@ const RegisterMemberForm = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
     reset,
     setValue,
   } = useForm({
     resolver: zodResolver(registerMemberSchema),
   });
-  // console.log(errors)
 
   const [showPopup, setShowPopup] = useState(false);
-  const [popUpMessage, setpopUpMessage] = useState("");
+  const [popUpMessage, setPopUpMessage] = useState("");
   const [age, setAge] = useState<number | null>(null);
 
-  const onSubmit = async (data: any) => {
-    console.log("Button clicked!!");
-    try {
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/user/registerMember`,
-        data,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-
-      setpopUpMessage("Member registered successfully");
-      setShowPopup(true);
-      reset();
-    } catch (error) {
-      setpopUpMessage("Error registering member");
-      setShowPopup(true);
-      console.error("Error registering member:", error);
-    }
-  };
-
   const calculateAge = (dob: string) => {
+    if (!dob) return;
     const birthDate = new Date(dob);
     const today = new Date();
     let calculatedAge = today.getFullYear() - birthDate.getFullYear();
@@ -94,16 +70,67 @@ const RegisterMemberForm = () => {
     }
 
     setAge(calculatedAge >= 0 ? calculatedAge : null);
+    setValue("age", calculatedAge, { shouldValidate: true });
+  };
+
+  const onSubmit = async (data: any) => {
+    console.log("Form submitted! Data:", data);
+
+    const token = localStorage.getItem("token");
+    console.log("Token:", token);
+
+    if (!token) {
+      setPopUpMessage("User is not authenticated.");
+      setShowPopup(true);
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/user/registerMember`,
+        data,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      console.log("API Response:", response.data);
+      setPopUpMessage("Member registered successfully");
+      setShowPopup(true);
+      reset();
+    } catch (error: any) {
+      console.error(
+        "Error registering member:",
+        error.response ? error.response.data : error.message
+      );
+      setPopUpMessage(
+        error.response?.data?.message || "Error registering member"
+      );
+      setShowPopup(true);
+    }
   };
 
   return (
     <div>
       <Navbar />
-      <div className="max-w-2xl mx-auto p-4 mt-10 ">
-        <h2 className="text-2xl font-bold text-center mb-6 text-gray-800">
-          Register Family Member
+      <div className="max-w-2xl mx-auto p-4 ">
+        <h2 className="text-3xl p-1.5 font-bold text-center">
+          Register <span className="text-blue-500">Family Member</span>
         </h2>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <form
+          onSubmit={handleSubmit(
+            (data) => {
+              console.log("handleSubmit triggered, form data:", data);
+              onSubmit(data);
+            },
+            (errors) => {
+              console.log("Validation failed:", errors);
+            }
+          )}
+          className="space-y-6"
+        >
           {/* Name */}
           <div>
             <label className="block text-sm font-medium text-gray-700">
@@ -111,17 +138,18 @@ const RegisterMemberForm = () => {
             </label>
             <input
               {...register("name")}
-              className={`mt-1 block w-full px-4 py-2   shadow-sm border ${
+              className={`mt-1 block w-full px-4 py-2 border ${
                 errors.name ? "border-red-500" : "border-gray-300"
               }`}
               placeholder="Enter member's name"
             />
             {errors.name && (
               <p className="text-red-500 text-sm">
-                {errors.name.message as string}
+                {errors.name?.message as string}
               </p>
             )}
           </div>
+
           {/* Date of Birth */}
           <div>
             <label className="block text-sm font-medium text-gray-700">
@@ -130,23 +158,23 @@ const RegisterMemberForm = () => {
             <input
               type="date"
               {...register("dob")}
-              className={`mt-1 block w-full px-4 py-2   shadow-sm border ${
+              className={`mt-1 block w-full px-4 py-2 border ${
                 errors.dob ? "border-red-500" : "border-gray-300"
               }`}
               onChange={(e) => {
                 const dobValue = e.target.value;
-                setValue("dob", dobValue); // Ensures form state is updated
-                calculateAge(dobValue); // Also calculates age
+                setValue("dob", dobValue);
+                calculateAge(dobValue);
               }}
             />
             {errors.dob && (
               <p className="text-red-500 text-sm">
-                {errors.dob.message as string}
+                {errors.dob?.message as string}
               </p>
             )}
           </div>
 
-          {/* age */}
+          {/* Age */}
           <div>
             <label className="block text-sm font-medium text-gray-700">
               Age
@@ -154,32 +182,9 @@ const RegisterMemberForm = () => {
             <input
               type="number"
               value={age !== null ? age : ""}
-              className="mt-1 block w-full px-4 py-2 shadow-sm border border-gray-300 bg-gray-100"
+              className="mt-1 block w-full px-4 py-2 border bg-gray-100"
               readOnly
             />
-          </div>
-
-          {/* Relationship */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Relationship
-            </label>
-            <select
-              {...register("relationship")}
-              className={`mt-1 block w-full px-4 py-2   shadow-sm border ${
-                errors.relationship ? "border-red-500" : "border-gray-300"
-              }`}>
-              <option value="">Select relationship</option>
-              <option value="brother">Brother</option>
-              <option value="child">Child</option>
-              <option value="father">Father</option>
-              <option value="mother">Mother</option>
-            </select>
-            {errors.relationship && (
-              <p className="text-red-500 text-sm">
-                {errors.relationship.message as string}
-              </p>
-            )}
           </div>
 
           {/* Gender */}
@@ -189,9 +194,10 @@ const RegisterMemberForm = () => {
             </label>
             <select
               {...register("gender")}
-              className={`mt-1 block w-full px-4 py-2   shadow-sm border ${
+              className={`mt-1 block w-full px-4 py-2 border ${
                 errors.gender ? "border-red-500" : "border-gray-300"
-              }`}>
+              }`}
+            >
               <option value="">Select gender</option>
               <option value="male">Male</option>
               <option value="female">Female</option>
@@ -199,7 +205,32 @@ const RegisterMemberForm = () => {
             </select>
             {errors.gender && (
               <p className="text-red-500 text-sm">
-                {errors.gender.message as string}
+                {errors.gender?.message as string}
+              </p>
+            )}
+          </div>
+
+          {/* Relationship */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Relationship
+            </label>
+            <select
+              {...register("relationship")}
+              className={`mt-1 block w-full px-4 py-2 border ${
+                errors.relationship ? "border-red-500" : "border-gray-300"
+              }`}
+            >
+              <option value="">Select relationship</option>
+              <option value="brother">Brother</option>
+              <option value="brother">Sister</option>
+              <option value="child">Child</option>
+              <option value="father">Father</option>
+              <option value="mother">Mother</option>
+            </select>
+            {errors.relationship && (
+              <p className="text-red-500 text-sm">
+                {errors.relationship?.message as string}
               </p>
             )}
           </div>
@@ -211,14 +242,14 @@ const RegisterMemberForm = () => {
             </label>
             <input
               {...register("address")}
-              className={`mt-1 block w-full px-4 py-2   shadow-sm border ${
+              className={`mt-1 block w-full px-4 py-2 border ${
                 errors.address ? "border-red-500" : "border-gray-300"
               }`}
               placeholder="Enter address"
             />
             {errors.address && (
               <p className="text-red-500 text-sm">
-                {errors.address.message as string}
+                {errors.address?.message as string}
               </p>
             )}
           </div>
@@ -230,14 +261,14 @@ const RegisterMemberForm = () => {
             </label>
             <input
               {...register("city")}
-              className={`mt-1 block w-full px-4 py-2   shadow-sm border ${
+              className={`mt-1 block w-full px-4 py-2 border ${
                 errors.city ? "border-red-500" : "border-gray-300"
               }`}
               placeholder="Enter city"
             />
             {errors.city && (
               <p className="text-red-500 text-sm">
-                {errors.city.message as string}
+                {errors.city?.message as string}
               </p>
             )}
           </div>
@@ -249,14 +280,14 @@ const RegisterMemberForm = () => {
             </label>
             <input
               {...register("postalCode")}
-              className={`mt-1 block w-full px-4 py-2   shadow-sm border ${
+              className={`mt-1 block w-full px-4 py-2 border ${
                 errors.postalCode ? "border-red-500" : "border-gray-300"
               }`}
               placeholder="Enter postal code"
             />
             {errors.postalCode && (
               <p className="text-red-500 text-sm">
-                {errors.postalCode.message as string}
+                {errors.postalCode?.message as string}
               </p>
             )}
           </div>
@@ -285,6 +316,7 @@ const RegisterMemberForm = () => {
               placeholder="Enter doctor's number"
             />
           </div>
+
           {/* Agree to Terms */}
           <div>
             <label className="flex items-center">
@@ -297,17 +329,21 @@ const RegisterMemberForm = () => {
             </label>
             {errors.agreeToTerms && (
               <p className="text-red-500 text-sm">
-                {errors.agreeToTerms.message as string}
+                {errors.agreeToTerms?.message as string}
               </p>
             )}
           </div>
+
           <button
             type="submit"
-            className="w-full bg-blue-500 text-white py-2 px-4  hover:bg-blue-600 transition duration-150">
-            Submit
+            disabled={isSubmitting}
+            className={`w-full text-white py-2 px-4 transition duration-150 ${
+              isSubmitting ? "bg-gray-400" : "bg-blue-500 hover:bg-blue-600"
+            }`}
+          >
+            {isSubmitting ? "Submitting..." : "Submit"}
           </button>
 
-          {/* Popup for messages */}
           <Popup
             message={popUpMessage}
             isOpen={showPopup}

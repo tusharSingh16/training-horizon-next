@@ -67,14 +67,14 @@ const RentalForm = () => {
   const selectedAmenities = watch("amenities", []);
 
   // Handle checkbox selection
-  const handleAmenityChange = (amenity: string) => {
-    setValue(
-      "amenities",
-      selectedAmenities.includes(amenity)
-        ? selectedAmenities.filter((item: string) => item !== amenity)
-        : [...selectedAmenities, amenity]
-    );
-  };
+  // const handleAmenityChange = (amenity: string) => {
+  //   // setValue(
+  //   //   "amenities",
+  //     // selectedAmenities.includes(amenity)
+  //     //   ? selectedAmenities.filter((item: string) => item !== amenity)
+  //     //   : [...selectedAmenities, amenity]
+  //   );
+  // };
 
   // Form submission
   const onSubmit = async (data: any) => {
@@ -111,8 +111,8 @@ const RentalForm = () => {
           {["street", "city", "state", "zipCode", "country"].map((field) => (
             <div key={field}>
               <Label className="capitalize">{field}</Label>
-              <Input {...register(`address.${field}`)} placeholder={`Enter ${field}`} />
-              {errors.address?.[field] && <p className="text-red-500 text-sm">{errors.address[field]?.message}</p>}
+              {/* <Input {...register(`address.${field}`)} placeholder={`Enter ${field}`} />
+              {errors.address?.[field] && <p className="text-red-500 text-sm">{errors.address[field]?.message}</p>} */}
             </div>
           ))}
         </div>
@@ -123,10 +123,10 @@ const RentalForm = () => {
           <div className="grid grid-cols-2 gap-2">
             {amenitiesList.map((amenity) => (
               <label key={amenity} className="flex items-center space-x-2">
-                <Checkbox
+                {/* <Checkbox
                   checked={selectedAmenities.includes(amenity)}
                   onCheckedChange={() => handleAmenityChange(amenity)}
-                />
+                /> */}
                 <span>{amenity}</span>
               </label>
             ))}

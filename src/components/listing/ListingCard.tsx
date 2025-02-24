@@ -100,16 +100,6 @@ const ListingCard: React.FC<ListingCardProps> = ({
       const userId = window.localStorage.getItem("userId");
       if (!userId) return;
       try {
-        const response2 = await fetch(
-          `${process.env.NEXT_PUBLIC_BASE_URL}/upload?imageUrl=${imageUrl}`
-        );
-        if (!response2.ok) throw new Error("Failed to fetch signed URL");
-
-        const data = await response2.json();
-        setImageUrl(data.signedUrl);
-      } catch (error) {}
-
-      try {
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_BASE_URL}/favorites/${userId}`,
           {
@@ -132,6 +122,21 @@ const ListingCard: React.FC<ListingCardProps> = ({
       }
     };
 
+    const fetchImage = async() => {
+      try {
+        const response2 = await fetch(
+          `${process.env.NEXT_PUBLIC_BASE_URL}/upload?imageUrl=${imageUrl}`
+        );
+        if (!response2.ok) throw new Error("Failed to fetch signed URL");
+
+        const data = await response2.json();
+        setImageUrl(data.signedUrl);
+      } catch (error) {}
+
+      
+    }
+
+    fetchImage();
     fetchFavorites();
   }, [listingId, imageUrl]);
 

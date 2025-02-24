@@ -17,6 +17,7 @@ const RoleBasedNav = () => {
   };
 
   const handleClick =() => {
+    console.log(isApproved)
     setPopupMessage("Pending Approval");
     setPopupVisible(true);
   }
@@ -44,12 +45,13 @@ const RoleBasedNav = () => {
       axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/trainers/${trainerId}`)
         .then((res) => {
           setIsApproved(res.data.trainer.isApproved);
+          console.log(res.data.trainer.isApproved)
         })
         .catch((err) => {
           console.error('Error fetching trainer data:', err);
         });
     }
-  }, []); // This effect will run whenever trainerId is updated
+  }, [trainerId]); // This effect will run whenever trainerId is updated
   return (
     <div>
     {!isApproved && <Popup

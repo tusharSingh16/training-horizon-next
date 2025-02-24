@@ -123,7 +123,7 @@ const UserDashboard = () => {
 
   return (
     <>
-      <div className="relative inline-block text-left flex flex-row  items-center space-x-4 ">
+      <div className="relative text-left flex flex-row  items-center space-x-4 ">
         {/* Dropdown Menu */}
         <DropdownMenu>
           <DropdownMenuTrigger className="flex items-center space-x-2">

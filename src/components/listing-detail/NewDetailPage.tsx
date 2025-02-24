@@ -105,7 +105,7 @@ const NewDetailPage: React.FC<ListingId> = ({
     fetchFavorites();
   }, [listingData.listingId, listingData.imageUrl]);
   function formatDays(days: string[]) {
-    return days.map((day) => day.replace(/([A-Z][a-z]+)/g, " $1")).join(", ");
+    return days?.map((day) => day.replace(/([A-Z][a-z]+)/g, " $1")).join(", ");
   }
   
 

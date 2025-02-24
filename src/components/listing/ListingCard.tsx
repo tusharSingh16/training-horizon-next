@@ -1,5 +1,4 @@
-"use client"
-
+"use client";
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -93,7 +92,9 @@ const ListingCard: React.FC<ListingCardProps> = ({
       })
     );
   };
-  const [getImageUrl, setImageUrl] = useState<string>("/img/animation2.gif");
+  const [getImageUrl, setImageUrl] = useState<string>(
+    "/img/tempListingImg.jpg"
+  );
 
   useEffect(() => {
     const fetchFavorites = async () => {
@@ -195,10 +196,11 @@ const ListingCard: React.FC<ListingCardProps> = ({
                 src={getImageUrl || "/img/new/cricket.svg"}
                 alt={title}
                 className="w-full h-[250px] object-cover rounded-t-lg"
-               
               />
               <Image
-                src={`${isSelected ? "/icons/filled_fav.png" : "/icons/fav.png"}`}
+                src={`${
+                  isSelected ? "/icons/filled_fav.png" : "/icons/fav.png"
+                }`}
                 alt="fav"
                 width={25}
                 height={25}
@@ -220,12 +222,14 @@ const ListingCard: React.FC<ListingCardProps> = ({
                   </div>
                   <div className="flex items-center gap-2">
                     {/* <Sun className="w-6 h-6 opacity-30" /> */}
-                    <Users className="w-6 h-6 opacity-30" />  
+                    <Users className="w-6 h-6 opacity-30" />
                     <span className="text-sm sm:text-base">{gender}</span>
                     {/* <span className="text-sm sm:text-base">{maxAge}</span> */}
                   </div>
                 </div>
-                <h3 className="text-lg sm:text-xl font-semibold text-gray-800">{title}</h3>
+                <h3 className="text-lg sm:text-xl font-semibold text-gray-800">
+                  {title.length > 20 ? title.slice(0, 20) + "..." : title}
+                </h3>
                 <div className="flex items-center gap-2 text-sm text-gray-600">
                   <Calendar className="w-4 h-4" />
                   <span>{startTime}</span>
@@ -251,7 +255,9 @@ const ListingCard: React.FC<ListingCardProps> = ({
                   className="border-[#1D2735] text-[#1D2735] text-sm sm:text-base"
                   onClick={() => {
                     sendData();
-                    router.push(`/${categoryName}/${subCategoryName}/${listingId}`);
+                    router.push(
+                      `/${categoryName}/${subCategoryName}/${listingId}`
+                    );
                   }}
                 >
                   Enroll Now

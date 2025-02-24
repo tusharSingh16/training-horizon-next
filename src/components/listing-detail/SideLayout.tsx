@@ -155,7 +155,7 @@ function SideLayout({
 
           {/* Checkbox list for selecting registered members */}
           <div className="mb-4">
-            <label className="block text-gray-700 mb-2">Select Members:</label>
+            <label className="block text-gray-700 mb-2">Select Members: <p>(showing only eligible members)</p></label>
             {members.filter((member: any) => member.age >= minAgeLimit && member.age <= maxAgeLimit)
               .map((member: any) => (
                 <div key={member._id} className="flex items-center mb-2">

@@ -15,7 +15,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "../ui/button";
 import HomeNavbar from "./HomeNavbar"// Create a separate Navbar for Home
-import router from "next/router";
 
 const Navbar = () => {
   const [loggedIn, setLoggedIn] = useState(false);

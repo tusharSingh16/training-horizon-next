@@ -2,6 +2,7 @@ const Trainer = require("../models/Trainer");
 // const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { z } = require("zod");
+const sendEmail = require("../utils/sendEmail");
 
 const signUpSchema = z.object({
   _id: z.string(),
@@ -65,9 +66,11 @@ exports.loginTrainer = async (req, res) => {
 
     // Find trainer by email
     const trainer = await Trainer.findOne({ email: validatedData.email });
+    console.log("Trainer logged in:", trainer);
     if (!trainer) {
       return res.status(400).json({ message: "Invalid credentials" });
     }
+
 
     // Check password
     // const isMatch = await bcrypt.compare(validatedData.password, trainer.password);
@@ -81,6 +84,14 @@ exports.loginTrainer = async (req, res) => {
     });
 
     res.status(200).json({ token });
+
+    
+    await sendEmail(
+      trainer.email,
+      "Account Registration",
+      `Hello ${trainer.FirstName}, \n\nYou have successfully Logged in.`,
+      `<p>Hello ${trainer.FirstName},</p><p>You have successfully registered </p>`
+    );
   } catch (e) {
     res.status(500).json({ error: e.message });
   }

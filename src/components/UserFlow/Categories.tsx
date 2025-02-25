@@ -20,7 +20,12 @@ const Categories = () => {
     axios
       .get(`${process.env.NEXT_PUBLIC_BASE_URL}/admin/category`)
       .then((res) => {
-        setCategories(res.data);
+        const categoriesData = Array.isArray(res.data) ? res.data : [];
+        setCategories(categoriesData);
+      })
+      .catch((error) => {
+        console.error('Error fetching categories:', error);
+        setCategories([]);
       });
   }, []);
 
@@ -57,7 +62,7 @@ const Categories = () => {
           ref={scrollContainerRef}
           className="flex space-x-6 overflow-x-auto scroll-smooth no-scrollbar p-4"
         >
-          {getCategories.map((category, i) => (
+          {Array.isArray(getCategories) && getCategories.map((category, i) => (
             <div
               onClick={() => router.push(`/${category.category}`)}
               key={i}

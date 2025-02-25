@@ -92,6 +92,7 @@ export function TrainerForm() {
         password: values.password,
         role: "trainer" // Hardcoding role as 'trainer'
       };
+      
       const userResponse = await axios.post(
         `${process.env.NEXT_PUBLIC_BASE_URL}/user/signup`,
         payload,
@@ -104,7 +105,7 @@ export function TrainerForm() {
 
       const userId = userResponse.data._id;
       const trainerPayload = {
-        _id: userId, // Set _id to be the same as the user _id
+        _id: userId, 
         fname: values.fname,
         lname: values.lname,
         qualifications: values.qualifications,
@@ -114,7 +115,7 @@ export function TrainerForm() {
         phone: values.phone,
         address: values.address,
         availability: values.availability,
-        password: values.password, // Optional: If you need to store password in Trainer too
+        password: values.password, 
         about: values.about,
         workHistory: values.workHistory,
         educationDetail: values.educationDetail

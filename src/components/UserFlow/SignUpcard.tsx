@@ -43,7 +43,6 @@ function SignUpCard() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
-
   const router = useRouter();
 
   const validateInputs = () => {
@@ -68,29 +67,19 @@ function SignUpCard() {
 
   const submitForm = async () => {
     if (!validateInputs()) return;
-    await new Promise((resolve) =>  setTimeout(resolve,2000));
+    setIsLoading(true);
     try {
       const res = await axios.post(
         `${process.env.NEXT_PUBLIC_BASE_URL}/user/signup`,
-        {
-          email,
-          firstName,
-          lastName,
-          password,
-        }
-        // {
-        //   headers: {
-        //     "Content-Type": "application/json",
-        //   },
-        // }
+        { email, firstName, lastName, password }
       );
-      setIsLoading(false);
-      console.log(res.data.token);
-
       window.localStorage.setItem("token", res.data.token);
       router.push("/");
-    } catch (error) {
-      console.error(error);
+    } catch (error: any) {
+      console.error('Signup error:', error);
+      setErrors({ submit: error.response?.data?.message || 'Signup failed' });
+    } finally {
+      setIsLoading(false);
     }
   };
 

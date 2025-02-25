@@ -46,6 +46,8 @@ type CartItem = {
 const CartPage = () => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [cartCount, setCartCount] = useState<number>(0);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
   // Fetch cart from backend
   useEffect(() => {
@@ -66,6 +68,7 @@ const CartPage = () => {
         setCartCount(response.data.cart.length);
       } catch (error) {
         console.error("Error fetching cart:", error);
+        setError("Error fetching cart. Please try again later.");
       }
     };
     fetchCart();
@@ -100,6 +103,7 @@ const CartPage = () => {
       window.dispatchEvent(new Event("cart-updated"));
     } catch (error) {
       console.error("Error deleting cart item:", error);
+      setError("Error deleting cart item. Please try again later.");
     }
   };
 
@@ -137,6 +141,7 @@ const CartPage = () => {
     };
 
     try {
+      setLoading(true);
       const orderResponse = await axios.post(
         `${process.env.NEXT_PUBLIC_BASE_URL}/order/checkout`,
         orderData,
@@ -162,9 +167,31 @@ const CartPage = () => {
     } catch (error: any) {
       console.error("Error creating order:", error.response?.data || error);
       alert("Error creating order.");
+    } finally {
+      setLoading(false);
     }
     
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <p className="text-xl text-gray-600">
+          Loading...
+        </p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <p className="text-xl text-red-500">
+          {error}
+        </p>
+      </div>
+    );
+  }
 
   if (cartItems.length === 0) {
     return (

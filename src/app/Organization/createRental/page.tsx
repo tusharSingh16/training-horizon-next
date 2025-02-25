@@ -1,17 +1,7 @@
-// import React from 'react'
-
-// function page() {
-//   return (
-//     <div>page</div>
-//   )
-// }
-
-// export default page
-
 "use client";
 
 import React from "react";
-import { useForm } from "react-hook-form";
+import { useForm, UseFormSetValue } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import axios from "axios";
@@ -35,6 +25,7 @@ const amenitiesList = [
 
 const rentalSchema = z.object({
   name: z.string().min(1, "Name is required"),
+  category: z.string().min(1, "Category is required"),
   address: z.object({
     street: z.string().min(1, "Street is required"),
     city: z.string().min(1, "City is required"),
@@ -50,6 +41,24 @@ const rentalSchema = z.object({
   email: z.string().email("Enter a valid email"),
 });
 
+interface FormValues {
+  name: string;
+  category: string;
+  address: {
+    street: string;
+    city: string;
+    state: string;
+    zipCode: string;
+    country: string;
+  };
+  amenities: string[];
+  pricing: {
+    dailyRate: number;
+    hourlyRate: number;
+  };
+  email: string;
+}
+
 const RentalForm = () => {
   const {
     register,
@@ -57,10 +66,11 @@ const RentalForm = () => {
     setValue,
     watch,
     formState: { errors },
-  } = useForm({
+  } = useForm<FormValues>({
     resolver: zodResolver(rentalSchema),
     defaultValues: {
       name: "",
+      category: "",
       address: {
         street: "",
         city: "",
@@ -77,24 +87,22 @@ const RentalForm = () => {
   const selectedAmenities = watch("amenities", []);
 
   // Handle checkbox selection
-  const handleAmenityChange = (amenity: string) => {
-    setValue(
-      "amenities",
-      selectedAmenities.includes(amenity)
-        ? selectedAmenities.filter((item: string) => item !== amenity)
-        : [...selectedAmenities, amenity]
-    );
+  const handleAmenityToggle = (amenity: string, setValue: UseFormSetValue<FormValues>) => {
+    const updatedAmenities = selectedAmenities.includes(amenity)
+      ? selectedAmenities.filter((item: string) => item !== amenity)
+      : [...selectedAmenities, amenity];
+
+    setValue("amenities", updatedAmenities);
   };
 
   // Form submission
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: FormValues) => {
     try {
       await axios.post(
         `${process.env.NEXT_PUBLIC_BASE_URL}/create-rental`,
         data
       );
       console.log("rental Data: ", data);
-
       alert("Rental submitted successfully!");
     } catch (error) {
       console.error("Error submitting rental:", error);
@@ -115,30 +123,57 @@ const RentalForm = () => {
               <p className="text-red-500 text-sm">{errors.name.message}</p>
             )}
           </div>
+
+          {/* Category */}
           <div>
-            <Label>Choose Category</Label>
-            <Input {...register("name")} placeholder="Enter Category" />
-            {errors.name && (
-              <p className="text-red-500 text-sm">{errors.name.message}</p>
+            <Label>Category</Label>
+            <Input {...register("category")} placeholder="Enter category" />
+            {errors.category && (
+              <p className="text-red-500 text-sm">{errors.category.message}</p>
             )}
           </div>
 
           {/* Address Fields */}
           <div className="grid grid-cols-2 gap-4">
-            {["street", "city", "state", "zipCode", "country"].map((field) => (
-              <div key={field}>
-                <Label className="capitalize">{field}</Label>
-                <Input
-                  {...register(`address.${field}`)}
-                  placeholder={`Enter ${field}`}
-                />
-                {errors.address?.[field] && (
-                  <p className="text-red-500 text-sm">
-                    {errors.address[field]?.message}
-                  </p>
-                )}
-              </div>
-            ))}
+            <div>
+              <Label>Street</Label>
+              <Input {...register("address.street")} placeholder="Enter Street" />
+              {errors.address?.street && (
+                <p className="text-red-500 text-sm">{errors.address.street.message}</p>
+              )}
+            </div>
+
+            <div>
+              <Label>City</Label>
+              <Input {...register("address.city")} placeholder="Enter City" />
+              {errors.address?.city && (
+                <p className="text-red-500 text-sm">{errors.address.city.message}</p>
+              )}
+            </div>
+
+            <div>
+              <Label>State</Label>
+              <Input {...register("address.state")} placeholder="Enter State" />
+              {errors.address?.state && (
+                <p className="text-red-500 text-sm">{errors.address.state.message}</p>
+              )}
+            </div>
+
+            <div>
+              <Label>Zip Code</Label>
+              <Input {...register("address.zipCode")} placeholder="Enter Zip Code" />
+              {errors.address?.zipCode && (
+                <p className="text-red-500 text-sm">{errors.address.zipCode.message}</p>
+              )}
+            </div>
+
+            <div>
+              <Label>Country</Label>
+              <Input {...register("address.country")} placeholder="Enter Country" />
+              {errors.address?.country && (
+                <p className="text-red-500 text-sm">{errors.address.country.message}</p>
+              )}
+            </div>
           </div>
 
           {/* Amenities Checkboxes */}
@@ -149,7 +184,7 @@ const RentalForm = () => {
                 <label key={amenity} className="flex items-center space-x-2">
                   <Checkbox
                     checked={selectedAmenities.includes(amenity)}
-                    onCheckedChange={() => handleAmenityChange(amenity)}
+                    onCheckedChange={() => handleAmenityToggle(amenity, setValue)}
                   />
                   <span>{amenity}</span>
                 </label>
@@ -165,6 +200,9 @@ const RentalForm = () => {
                 type="number"
                 {...register("pricing.dailyRate", { valueAsNumber: true })}
               />
+              {errors.pricing?.dailyRate && (
+                <p className="text-red-500 text-sm">{errors.pricing.dailyRate.message}</p>
+              )}
             </div>
             <div>
               <Label>Hourly Rate</Label>
@@ -172,6 +210,9 @@ const RentalForm = () => {
                 type="number"
                 {...register("pricing.hourlyRate", { valueAsNumber: true })}
               />
+              {errors.pricing?.hourlyRate && (
+                <p className="text-red-500 text-sm">{errors.pricing.hourlyRate.message}</p>
+              )}
             </div>
           </div>
 
@@ -179,6 +220,9 @@ const RentalForm = () => {
           <div>
             <Label>Email</Label>
             <Input {...register("email")} placeholder="Enter email" />
+            {errors.email && (
+              <p className="text-red-500 text-sm">{errors.email.message}</p>
+            )}
           </div>
 
           {/* Submit Button */}

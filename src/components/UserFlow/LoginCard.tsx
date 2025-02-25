@@ -14,8 +14,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import GoogleAuth from "./GoogleAuth";
 import Popup from "../trainer-dashboard/PopUp";
-import Footer from "./Footer";
-import Image from "next/image"; // Import Image from next/image
+import Image from "next/image";
 
 function LoginCard() {
   const [email, setEmail] = useState("");

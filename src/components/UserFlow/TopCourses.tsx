@@ -151,7 +151,7 @@ export default function TopCourses() {
                       alt="Profile"
                       className="h-8 w-8 rounded-full object-cover"
                     />
-                    <span className="font-medium">Trainer's name</span>
+                    <span className="font-medium">{listing.trainerId}</span>
                   </div>
                 </div>
               </div>

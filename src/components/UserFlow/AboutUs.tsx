@@ -93,7 +93,7 @@ const About = () => {
             WHY <span className="text-gray-600  font-semibold">CHOOSE US</span>
           </p>
         </div>
-        <div className="flex flex-col md:flex-row mb-20">
+        <div className="flex flex-col md:flex-row mb-20 justify-center gap-5">
           <div className="border border-gray-500 px-10 md:px-16 py-8 sm:py-16 flex flex-col gap-5 text-[14px] hover:bg-blue-600 hover:text-white transition-all duration-280 text-gray-800 cursor-pointer ">
             <b>Efficiency:</b>
             <p>

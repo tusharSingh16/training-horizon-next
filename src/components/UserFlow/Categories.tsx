@@ -42,10 +42,12 @@ const Categories = () => {
 
   return (
     <section className="bg-white/30 container mx-auto py-12">
+      <div className="flex justify-center">
       <h2 className="text-5xl font-bold text-center mb-2">Browse</h2>
       <h3 className="text-4xl font-bold text-center text-blue-500 mb-12">
         Category
       </h3>
+      </div>
 
       <div className="relative max-w-6xl mx-auto ">
         {/* Left Arrow

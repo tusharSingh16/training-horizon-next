@@ -125,6 +125,8 @@ const OrderDetailPage: React.FC = () => {
       const fetchOrders = async (id: string) => {
           try {
               const response = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/order/getOrderDetailsByOrderId/` + id.toString());
+              
+              
               setOrder(response.data.order);
           } catch (err: any) {
               setError(err.response?.data?.message || 'Something went wrong');
@@ -192,7 +194,7 @@ const OrderDetailPage: React.FC = () => {
                           </tr>
                           <tr className="border-t">
                               <td className="py-2 px-4 font-bold">Total:</td>
-                              <td className="py-2 px-4 font-bold">${order?.price.totalPrice.toFixed(2)}</td>
+                              <td className="py-2 px-4 font-bold">${order?.price.totalPrice?.toFixed(2)}</td>
                           </tr>
                       </tbody>
                   </table>

@@ -8,7 +8,7 @@ const connectDB = require("./config/db");
 const app = express();
 const PORTNO = process.env.PORT || 3005;
 app.use(cors({
-  origin: "http://localhost:3000, https://makemepro.in, http://makemepro.in",
+  origin: "http://localhost:3000",
   credentials: true
 }));
 app.use(express.json());

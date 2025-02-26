@@ -96,6 +96,7 @@ const MyOrders: React.FC = () => {
         const fetchOrders = async (id: string) => {
           try {
             const response = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/order/getOrdersDetailsByUserId/` + id.toString());
+            console.log("order detail:", response.data.orders);
             const fetchedOrders = response.data.orders.map((order: any) => ({
               ...order,
               coursePrice: order.price, // Assuming `price` is returned from the API
@@ -155,7 +156,7 @@ const MyOrders: React.FC = () => {
                   {order.status}
                 </span>
               </td> */}
-              <td className="py-2 px-4">${order?.price.totalPrice.toFixed(2)}</td>
+              <td className="py-2 px-4">${order?.price.totalPrice?.toFixed(2)}</td>
               <td className="py-2 px-4">
                 <Link className='text-blue-600' href={`/userflow/orderdetails/${order._id}`}> View</Link>
               </td>

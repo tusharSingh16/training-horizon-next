@@ -182,19 +182,19 @@ const OrderDetailPage: React.FC = () => {
                       <tbody>
                           <tr>
                               <td className="py-2 px-4 font-bold">Subtotal:</td>
-                              <td className="py-2 px-4">${order?.price.subtotal}</td>
+                              <td className="py-2 px-4">${order?.price?.subtotal !== undefined ? `${order.price.subtotal.toFixed(2)}` : "N/A"}</td>
                           </tr>
                           <tr>
                               <td className="py-2 px-4 font-bold">Service Fee</td>
-                              <td className="py-2 px-4">${order?.price.shipping}</td>
+                              <td className="py-2 px-4">{order?.price?.shipping !== undefined ? `$${order.price.shipping.toFixed(2)}` : "N/A"}</td>
                           </tr>
                           <tr>
                               <td className="py-2 px-4 font-bold">Tax:</td>
-                              <td className="py-2 px-4">${order?.price.tax}</td>
+                              <td className="py-2 px-4">{order?.price?.tax !== undefined ? `$${order.price.tax.toFixed(2)}` : "N/A"}</td>
                           </tr>
                           <tr className="border-t">
                               <td className="py-2 px-4 font-bold">Total:</td>
-                              <td className="py-2 px-4 font-bold">${order?.price.totalPrice?.toFixed(2)}</td>
+                              <td className="py-2 px-4 font-bold">{order?.price?.totalPrice !== undefined ? `$${order.price.totalPrice.toFixed(2)}` : "N/A"}</td>
                           </tr>
                       </tbody>
                   </table>

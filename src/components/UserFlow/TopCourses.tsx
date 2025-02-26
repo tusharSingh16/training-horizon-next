@@ -38,15 +38,10 @@ export default function TopCourses() {
 
   return (
     <section className="bg-white/40 container mx-auto px-4 py-12">
-      <h2 className="text-4xl font-bold text-center">
+      <h2 className="text-4xl font-bold text-center mb-5">
         Top <span className="text-blue-600">Courses</span>
       </h2>
-      <p className="text-center text-gray-500 mt-2 mb-12">
-        Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere
-        cubilia <br />
-        curae Proin sodales ultrices nulla blandit volutpat.
-      </p>
-
+      
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         {getCategories?.map((eachcategory, i) => {
           return (

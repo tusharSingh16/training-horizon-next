@@ -27,16 +27,25 @@ export default function TopCourses() {
   const router = useRouter();
 
   useEffect(() => {
-    axios
-      .get(`${process.env.NEXT_PUBLIC_BASE_URL}/admin/category`)
-      .then((res) => {
-        setCategories(res.data);
+    fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/admin/category`)
+      .then((res) => res.json())
+      .then((data) => {
+        setCategories(data);
       })
       .catch((error) => {
         console.error("Error fetching categories:", error);
         setCategories([]);
-      })
+      });
   }, []);
+  //     .get(`${process.env.NEXT_PUBLIC_BASE_URL}/admin/category`)
+  //     .then((res) => {
+  //       setCategories(res.data);
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error fetching categories:", error);
+  //       setCategories([]);
+  //     })
+  // }, []);
 
   console.log("Categories are:", getCategories);
 

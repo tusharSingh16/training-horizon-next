@@ -94,16 +94,12 @@ export default function TopCourses() {
       <h2 className="text-4xl font-bold text-center mb-5">
         Top <span className="text-blue-600">Courses</span>
       </h2>
-<<<<<<< HEAD
-      
-=======
       <p className="text-center text-gray-500 mt-2 mb-12">
         Explore our top-rated courses designed to enhance your skills and
         knowledge across various domains. <br /> Learn from industry experts and
         stay ahead in your career.
       </p>
 
->>>>>>> 8226125d545be8912558d0b4b0e7591c8438c7e1
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         {sortedListings.map((listing, i) => {
           return (

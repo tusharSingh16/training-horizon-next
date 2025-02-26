@@ -42,19 +42,11 @@ const Categories = () => {
 
   return (
     <section className="bg-white/30 container mx-auto py-12">
-<<<<<<< HEAD
       {/* <div className="flex justify-center"> */}
       <h2 className="text-4xl font-bold text-center mb-5">
         Browse <span className="text-blue-600">Categories</span>
       </h2>
       {/* </div> */}
-=======
-      <div className="flex justify-center">
-      <h2 className="text-5xl font-bold p-5 text-center">
-        Browse <span className="text-blue-600">Categories</span>
-      </h2>
-      </div>
->>>>>>> 8226125d545be8912558d0b4b0e7591c8438c7e1
 
       <div className="relative max-w-6xl mx-auto ">
         {/* Left Arrow

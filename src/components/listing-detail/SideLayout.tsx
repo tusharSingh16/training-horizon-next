@@ -180,7 +180,7 @@ function SideLayout({
             </label>
           ))}
             <p className="text-sm text-gray-600 mb-2">
-  ( Note * Only eligible members within the age range of {minAgeLimit} to {maxAgeLimit} are displayed.)
+  Note: Only eligible members within the age range of {minAgeLimit} to {maxAgeLimit} can enroll in this listing
 </p>
 
       </div>

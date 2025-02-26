@@ -31,10 +31,15 @@ export default function TopCourses() {
       .get(`${process.env.NEXT_PUBLIC_BASE_URL}/admin/category`)
       .then((res) => {
         setCategories(res.data);
-      });
+      })
+      .catch((error) => {
+        console.error("Error fetching categories:", error);
+        setCategories([]);
+      })
   }, []);
 
   console.log("Categories are:", getCategories);
+
 return (
   <h1>Category</h1>
 )

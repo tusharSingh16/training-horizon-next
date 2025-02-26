@@ -42,11 +42,19 @@ const Categories = () => {
 
   return (
     <section className="bg-white/30 container mx-auto py-12">
+<<<<<<< HEAD
       {/* <div className="flex justify-center"> */}
       <h2 className="text-4xl font-bold text-center mb-5">
         Browse <span className="text-blue-600">Categories</span>
       </h2>
       {/* </div> */}
+=======
+      <div className="flex justify-center">
+      <h2 className="text-5xl font-bold p-5 text-center">
+        Browse <span className="text-blue-600">Categories</span>
+      </h2>
+      </div>
+>>>>>>> 8226125d545be8912558d0b4b0e7591c8438c7e1
 
       <div className="relative max-w-6xl mx-auto ">
         {/* Left Arrow
@@ -70,7 +78,7 @@ const Categories = () => {
               className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-2xl hover: transition-transform duration-300 transform hover:scale-105 hover:-translate-y-2 min-w-[250px] flex-grow">
               <div className="aspect-square relative">
                 <Image
-                  src={"/img/new/education.svg"} // Make dynamic when AWS work is done
+                  src={`/img/new/${category.category}.jpg`} // Make dynamic when AWS work is done
                   alt={category.category}
                   fill
                   className="object-cover rounded-t-lg"
@@ -78,7 +86,7 @@ const Categories = () => {
               </div>
               <div className="p-4">
                 <h3 className="font-semibold text-lg">{category.category}</h3>
-                <p>by TH</p>
+                <p></p>
               </div>
             </div>
           ))}

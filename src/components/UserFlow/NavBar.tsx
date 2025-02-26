@@ -62,6 +62,9 @@ const Navbar = () => {
           </div>
 
           <div className="flex space-x-6">
+          {/* <Link href="/" className="hidden md:flex text-gray-700 hover:underline">
+              Home
+            </Link> */}
             <Link href="/all/courses" className="hidden md:flex text-gray-700 hover:underline">
               Courses
             </Link>

@@ -62,7 +62,7 @@ export interface Listing {
   title: string
   imageUrl: string
   priceMode: string
-  price: string
+  price: Price
   mode: string
   location: string
   quantity: string
@@ -97,11 +97,10 @@ const MyOrders: React.FC = () => {
           try {
             const response = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/order/getOrdersDetailsByUserId/` + id.toString());
             console.log("order detail:", response.data.orders);
-            const fetchedOrders = response.data.orders.map((order: any) => ({
+            const fetchedOrders = response.data.orders.map((order: Order) => ({
               ...order,
-              coursePrice: order.price, // Assuming `price` is returned from the API
             }));
-            setOrders(fetchedOrders); // Assuming the API returns orders in `response.data.orders`
+            setOrders(fetchedOrders);
           } catch (err: any) {
             setError(err.response?.data?.message || 'Something went wrong');
           } finally {
@@ -116,21 +115,19 @@ const MyOrders: React.FC = () => {
         const date = new Date(dateString);
         return date.toISOString().split('T')[0]; // Returns YYYY-MM-DD
       };
-      const calculateTax = (price: string) => {
-        const parsedPrice = parseFloat(price) || 0;
-        return Number((0.18 * parsedPrice).toFixed(2)); // Tax is 18%
-      };
+      // const calculateTax = (price: number) => {
+      //   return Number((0.18 * price).toFixed(2)); // Tax is 18%
+      // };
     
-      const calculateTotal = (price: string) => {
-        const parsedPrice = parseFloat(price) || 0;
-        const tax = calculateTax(price);
-        const fee = calculateFee(price);
-        return (parsedPrice + tax + fee).toFixed(2); // Total = Subtotal + Tax
-      };
-      const calculateFee = (price: string) =>{
-        const parsedPrice = parseFloat(price) || 0;
-        return Number((0.10 * parsedPrice).toFixed(2)); //Service Fee is 10%
-      }
+      // const calculateTotal = (price: number) => {
+      //   const tax = calculateTax(price);
+      //   const fee = calculateFee(price);
+      //   return (price + tax + fee).toFixed(2);
+      // };
+      // const calculateFee = (price: number) => {
+      //   return Number((0.10 * price).toFixed(2)); //Service Fee is 10%
+      // }
+      
   return (
     <>
     <Navbar/>

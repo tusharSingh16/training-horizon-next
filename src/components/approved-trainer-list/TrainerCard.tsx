@@ -26,7 +26,6 @@ const TrainerCard: React.FC<TrainerProps> = ({ trainer }) => {
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_BASE_URL}/upload?imageUrl=${trainer.imageUrl}`
         );
-
         if (!response.ok) throw new Error("Failed to fetch signed URL");
 
         const data = await response.json();

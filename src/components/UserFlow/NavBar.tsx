@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "../ui/button";
 import HomeNavbar from "./HomeNavbar"// Create a separate Navbar for Home
+import Image from "next/image";
 
 const Navbar = () => {
   const [loggedIn, setLoggedIn] = useState(false);

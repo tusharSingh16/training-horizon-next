@@ -70,7 +70,7 @@ const Categories = () => {
               className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-2xl hover: transition-transform duration-300 transform hover:scale-105 hover:-translate-y-2 min-w-[250px] flex-grow">
               <div className="aspect-square relative">
                 <Image
-                  src={`/img/new/${category.category}.jpg`} // Make dynamic when AWS work is done
+                  src={`/Logo/MMP.png`} // Make dynamic when AWS work is done
                   alt={category.category}
                   fill
                   className="object-cover rounded-t-lg"

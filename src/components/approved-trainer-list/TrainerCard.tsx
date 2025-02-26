@@ -16,7 +16,7 @@ interface TrainerProps {
 }
 
 const TrainerCard: React.FC<TrainerProps> = ({ trainer }) => {
-  const [getImageUrl, setImageUrl] = useState<string>("/img/animation2.gif");
+  const [getImageUrl, setImageUrl] = useState<string>("/img/loading.gif");
 
   useEffect(() => {
     const loadImage = async () => {

@@ -166,7 +166,7 @@ export default function TopCourses() {
             router.push(`/all/courses`);
           }}
           variant="outline"
-          className="px-8 bg-blue-500 hover:bg-blue-600 text-black"
+          className="px-8 bg-blue-600 hover:bg-blue-600 text-black"
         >
           Load more listing
         </Button>

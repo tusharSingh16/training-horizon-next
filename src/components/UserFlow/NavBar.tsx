@@ -102,7 +102,7 @@ const Navbar = () => {
               <Link href="/dashboard/teacher/join_as_teacher" className="hidden sm:block hover:underline">
                 Join As Trainer
               </Link>
-              <Button onClick={() => router.push("/userflow/login")} variant="default" className="bg-blue-500 hover:bg-blue-600">
+              <Button onClick={() => router.push("/userflow/login")} variant="default" className="bg-blue-600 hover:bg-blue-600">
                 Sign in
               </Button>
             </div>

@@ -46,7 +46,7 @@ export default function TopCourses() {
       </p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        {getCategories.map((getCategories, i) => (
+        {getCategories?.map((getCategories, i) => (
           <div
             key={i}
             className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-2xl transition-transform duration-300 transform hover:scale-105 hover:-translate-y-2">

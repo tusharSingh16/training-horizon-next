@@ -6,6 +6,13 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
+
+interface Trainer {
+  _id: string;
+  fname: string;
+  lname: string;
+  imageUrl: string;
+}
 import { Spinner } from "../ui/spinner";
 
 interface Listing {
@@ -29,18 +36,18 @@ interface Listing {
   minAge: string;
   maxAge: string;
   description: string;
-  trainerId: string;
+  trainerId: Trainer;
   listingId: string;
   isFavorite: boolean;
   avgRating: number;
 }
-// const handleonClick = () => {};
 
 export default function TopCourses() {
   const [listings, setListings] = useState<Listing[]>([]);
   const [getImageUrl, setImageUrl] = useState<{ [key: string]: string }>({});
   const [isLoading, setIsLoading] = useState(true);
   const [isImageLoading, setIsImageLoading] = useState(true);
+  const [trainerImageUrls, setTrainerImageUrls] = useState<{ [key: string]: string }>({});
 
   const router = useRouter();
 
@@ -60,16 +67,16 @@ export default function TopCourses() {
     fetchCourses();
   }, []);
 
-  // console.log("Categories are:", getCategories);
-
   useEffect(() => {
     const fetchImages = async () => {
       setIsImageLoading(true);
       const newImageUrls: { [key: string]: string } = {};
+      const newTrainerImageUrls: { [key: string]: string } = {};
 
       await Promise.all(
         listings.map(async (listing) => {
           try {
+            // Fetch listing image
             const response = await fetch(
               `${process.env.NEXT_PUBLIC_BASE_URL}/upload?imageUrl=${listing.imageUrl}`
             );
@@ -80,10 +87,26 @@ export default function TopCourses() {
           } catch (error) {
             console.error("Error fetching image for:", listing._id, error);
           }
+
+          // Fetch trainer image
+          if (listing.trainerId?.imageUrl) {
+            try {
+              const response2 = await fetch(
+                `${process.env.NEXT_PUBLIC_BASE_URL}/upload?imageUrl=${listing.trainerId.imageUrl}`
+              );
+              if (!response2.ok) throw new Error("Failed to fetch signed URL");
+
+              const data2 = await response2.json();
+              newTrainerImageUrls[listing.trainerId._id] = data2.signedUrl;
+            } catch (error) {
+              console.error("Error fetching trainer image:", listing.trainerId._id, error);
+            }
+          }
         })
       );
 
       setImageUrl(newImageUrls);
+      setTrainerImageUrls(newTrainerImageUrls);
       setIsImageLoading(false);
     };
 
@@ -92,9 +115,16 @@ export default function TopCourses() {
     }
   }, [listings]);
 
-  const sortedListings = [...listings]
-    .sort((a, b) => b.avgRating - a.avgRating)
-    .slice(0, 6);
+  // const sortedListings = [...listings]
+  //   .sort((a, b) => b.avgRating - a.avgRating)
+  //   .slice(0, 6);
+
+  const getRandomListings = (listings: Listing[], count: number) => {
+    const shuffled = [...listings].sort(() => Math.random() - 0.5);
+    return shuffled.slice(0, count);
+  };
+
+  const randomListings = getRandomListings(listings, 6);
 
   return (
     <section className="bg-white/40 container mx-auto px-4 py-12">
@@ -102,9 +132,8 @@ export default function TopCourses() {
         Top <span className="text-blue-600">Courses</span>
       </h2>
       <p className="text-center text-gray-500 mt-2 mb-12">
-        Explore our top-rated courses designed to enhance your skills and
-        knowledge across various domains. <br /> Learn from industry experts and
-        stay ahead in your career.
+        Explore our top-rated courses designed to enhance your skills and knowledge across various domains. <br />
+        Learn from industry experts and stay ahead in your career.
       </p>
 
       {isLoading || isImageLoading ? (

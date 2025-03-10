@@ -6,6 +6,7 @@ import SearchSection from "../UserFlow/SearchSection";
 import TrainerCard from "./TrainerCard";
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
+import { Spinner } from "../ui/spinner";
 
 interface Trainer {
   _id: string;
@@ -21,6 +22,7 @@ const Main = () => {
   const [trainers, setTrainers] = useState<Trainer[]>([]);
   const [keywords, setKeywords] = useState<string>("");
   const [filteredTrainers, setFilteredTrainers] = useState<Trainer[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     // Fetch trainers from the API
@@ -33,6 +35,8 @@ const Main = () => {
         setTrainers(data);
       } catch (error) {
         console.error("Error fetching trainers:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -78,18 +82,24 @@ const Main = () => {
             onSearch={handleSearch}
           />
 
-          <main className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {filteredTrainers.length > 0 ? (
-              filteredTrainers.map((trainer, idx) => (
-                <TrainerCard
-                  key={idx}
-                  trainer={trainer} // Pass each trainer data as prop
-                />
-              ))
-            ) : (
-              <p>No listings found.</p>
-            )}
-          </main>
+          {isLoading ? (
+            <div className="flex justify-center items-center h-[50vh]">
+              <Spinner className="h-8 w-8" />
+            </div>
+          ) : (
+            <main className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {filteredTrainers.length > 0 ? (
+                filteredTrainers.map((trainer, idx) => (
+                  <TrainerCard
+                    key={idx}
+                    trainer={trainer} // Pass each trainer data as prop
+                  />
+                ))
+              ) : (
+                <p>No listings found.</p>
+              )}
+            </main>
+          )}
         </div>
       </div>
     </div>

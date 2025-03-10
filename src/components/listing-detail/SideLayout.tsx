@@ -159,31 +159,58 @@ function SideLayout({
       <div className="mb-4">
         <h3 className="text-lg font-semibold text-gray-700 mb-2">Select Members:</h3>
       
-        {members
-          .filter((member) => member.age >= minAgeLimit && member.age <= maxAgeLimit)
-          .map((member) => (
-            <label key={member._id} className="flex items-center space-x-3 mb-2">
-              <input
-                type="checkbox"
-                value={member._id}
-                checked={selectedMembers.includes(member._id)}
-                onChange={() =>
-                  setSelectedMembers((prev) =>
-                    prev.includes(member._id)
-                      ? prev.filter((id) => id !== member._id)
-                      : [...prev, member._id]
-                  )
-                }
-                className="rounded text-blue-500 focus:ring focus:ring-blue-300"
-              />
-              <span className="text-gray-700">{member.name}</span>
-            </label>
-          ))}
-            <p className="text-sm text-gray-600 mb-2">
-  Note: Only eligible members within the age range of {minAgeLimit} to {maxAgeLimit} can enroll in this listing
-</p>
+        {window.localStorage.getItem("token") ? (
+          <>
+            {members
+              .filter((member) => member.age >= minAgeLimit && member.age <= maxAgeLimit)
+              .map((member) => (
+                <label key={member._id} className="flex items-center space-x-3 mb-2">
+                  <input
+                    type="checkbox"
+                    value={member._id}
+                    checked={selectedMembers.includes(member._id)}
+                    onChange={() =>
+                      setSelectedMembers((prev) =>
+                        prev.includes(member._id)
+                          ? prev.filter((id) => id !== member._id)
+                          : [...prev, member._id]
+                      )
+                    }
+                    className="rounded text-blue-500 focus:ring focus:ring-blue-300"
+                  />
+                  <span className="text-gray-700">{member.name}</span>
+                </label>
+              ))}
 
+            {(!members.length || !members.filter(member => member.age >= minAgeLimit && member.age <= maxAgeLimit).length) && (
+              <div className="text-sm text-red-600 mb-2">
+                No eligible members found. Please add a member between {minAgeLimit} to {maxAgeLimit} years of age to enroll in this listing.
+                <Link href="/userflow/registerMember" className="text-blue-600 hover:underline block mt-1">
+                  Add Member
+                </Link>
+              </div>
+            )}
+
+            <p className="text-sm text-gray-600 mb-2">
+              Note: Only eligible members within the age range of {minAgeLimit} to {maxAgeLimit} can enroll in this listing
+            </p>
+          </>
+        ) : (
+          <div className="text-sm text-red-600 mb-2">
+            Please login to purchase this course!
+          </div>
+        )}
       </div>
+
+      <button
+        onClick={handleAddToCart}
+        disabled={selectedMembers.length === 0}
+        className={`w-full py-2 mb-2 flex items-center justify-center rounded-lg text-white transition ${
+          selectedMembers.length > 0 ? "bg-green-600 hover:bg-green-800" : "bg-gray-300 cursor-not-allowed"
+        }`}
+      >
+        Enroll Now
+      </button>
 
       <button
         onClick={handleAddToCart}

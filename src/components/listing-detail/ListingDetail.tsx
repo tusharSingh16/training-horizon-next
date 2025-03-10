@@ -11,6 +11,7 @@ import axios from "axios";
 import { useDispatch } from "react-redux";
 import { setForm } from "@/lib/store/formSlice";
 import NewDetailPage from "./NewDetailPage";
+import { Spinner } from "../ui/spinner";
 
 
 
@@ -105,6 +106,14 @@ const ListingDetail: React.FC<ListingDetailPageProps> = ({ id }) => {
     const match = value.match(/\d+/); // Extracts the first number found in the string
     return match ? Number(match[0]) : 0; // Defaults to 0 if no valid number found
   };
+
+  if (!data || !getListing.title) {
+    return (
+      <div className="fixed inset-0 flex justify-center items-center bg-white/80">
+        <Spinner />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8 p-4 md:p-6 lg:p-8 bg-gray-50">

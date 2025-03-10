@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
+import { Spinner } from "../ui/spinner";
 
 interface Listing {
   _id: string;
@@ -38,6 +39,8 @@ interface Listing {
 export default function TopCourses() {
   const [listings, setListings] = useState<Listing[]>([]);
   const [getImageUrl, setImageUrl] = useState<{ [key: string]: string }>({});
+  const [isLoading, setIsLoading] = useState(true);
+  const [isImageLoading, setIsImageLoading] = useState(true);
 
   const router = useRouter();
 
@@ -50,6 +53,8 @@ export default function TopCourses() {
         setListings(data);
       } catch (error) {
         console.error("Failed to fetch listings:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
     fetchCourses();
@@ -59,6 +64,7 @@ export default function TopCourses() {
 
   useEffect(() => {
     const fetchImages = async () => {
+      setIsImageLoading(true);
       const newImageUrls: { [key: string]: string } = {};
 
       await Promise.all(
@@ -78,6 +84,7 @@ export default function TopCourses() {
       );
 
       setImageUrl(newImageUrls);
+      setIsImageLoading(false);
     };
 
     if (listings.length > 0) {
@@ -100,65 +107,71 @@ export default function TopCourses() {
         stay ahead in your career.
       </p>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        {sortedListings.map((listing, i) => {
-          return (
-            <div
-              key={listing._id}
-              onClick={() => {
-                router.push(
-                  `/${listing.category}/${listing.subCategory}/${listing._id}`
-                );
-              }}
-              className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-2xl transition-transform duration-300 transform hover:scale-105 hover:-translate-y-2"
-            >
-              <div className="aspect-video relative rounded-t-xl overflow-hidden">
-                <Image
-                  src={getImageUrl[listing._id] || "/img/tempListingImg.jpg"}
-                  alt={listing.title}
-                  width={300}
-                  height={200}
-                  className="rounded-lg object-cover w-full"
-                />
-              </div>
-              <div className="p-3 sm:p-4">
-                <h3 className="font-semibold text-base sm:text-lg mb-1 sm:mb-2">
-                  {listing.title}
-                </h3>
-                <p className="text-blue-500 font-bold text-sm sm:text-base mb-2 sm:mb-3">
-                  $ {listing.price}
-                </p>
-                <div className="flex items-center gap-2 sm:gap-3 text-xs sm:text-sm text-gray-500 mb-2 sm:mb-3">
-                  <div className="flex items-center gap-1">
-                    <MapPin className="w-4 h-4" />
-                    <span>{listing.location}</span>{" "}
+      {isLoading || isImageLoading ? (
+        <div className="flex justify-center items-center min-h-[400px]">
+          <Spinner size="lg" />
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          {sortedListings.map((listing, i) => {
+            return (
+              <div
+                key={listing._id}
+                onClick={() => {
+                  router.push(
+                    `/${listing.category}/${listing.subCategory}/${listing._id}`
+                  );
+                }}
+                className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-2xl transition-transform duration-300 transform hover:scale-105 hover:-translate-y-2"
+              >
+                <div className="aspect-video relative rounded-t-xl overflow-hidden">
+                  <Image
+                    src={getImageUrl[listing._id] || "/img/tempListingImg.jpg"}
+                    alt={listing.title}
+                    width={300}
+                    height={200}
+                    className="rounded-lg object-cover w-full"
+                  />
+                </div>
+                <div className="p-3 sm:p-4">
+                  <h3 className="font-semibold text-base sm:text-lg mb-1 sm:mb-2">
+                    {listing.title}
+                  </h3>
+                  <p className="text-blue-500 font-bold text-sm sm:text-base mb-2 sm:mb-3">
+                    $ {listing.price}
+                  </p>
+                  <div className="flex items-center gap-2 sm:gap-3 text-xs sm:text-sm text-gray-500 mb-2 sm:mb-3">
+                    <div className="flex items-center gap-1">
+                      <MapPin className="w-4 h-4" />
+                      <span>{listing.location}</span>{" "}
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Clock className="w-4 h-4" />
+                      <span>
+                        {listing.startTime} {listing.endTime}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      ratings:
+                      <span>{listing.avgRating}</span>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <Clock className="w-4 h-4" />
-                    <span>
-                      {listing.startTime} {listing.endTime}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    ratings:
-                    <span>{listing.avgRating}</span>
+                  <div className="flex items-center justify-between text-xs sm:text-sm">
+                    <div className="flex items-center gap-1 sm:gap-2">
+                      <img
+                        src="/img/new/user.jpg" // this should come from s3
+                        alt="Profile"
+                        className="h-8 w-8 rounded-full object-cover"
+                      />
+                      <span className="font-medium">{listing.trainerId}</span>
+                    </div>
                   </div>
                 </div>
-                <div className="flex items-center justify-between text-xs sm:text-sm">
-                  <div className="flex items-center gap-1 sm:gap-2">
-                    <img
-                      src="/img/new/user.jpg" // this should come from s3
-                      alt="Profile"
-                      className="h-8 w-8 rounded-full object-cover"
-                    />
-                    <span className="font-medium">{listing.trainerId}</span>
-                  </div>
-                </div>
               </div>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      )}
 
       <div className="flex justify-center mt-8">
         <Button

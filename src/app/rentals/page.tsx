@@ -11,11 +11,7 @@ export default function Home() {
   
   return (
     <div>
-     
-      
        <RentalPage categoryName = {category} subCategoryName={courses}/>
-       
-    
     </div>
   );
 }

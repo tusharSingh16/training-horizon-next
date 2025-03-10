@@ -6,7 +6,7 @@ export default function Footer(){
         <div className="container mx-auto px-6 py-12 text-center md:text-left">
           <div className="justify-center items-start grid grid-cols-1 md:grid-cols-3 gap-8">
             <div>
-              <h4 className="text-xl font-bold mb-4">Make Me Pro</h4>
+              <h4 className="text-xl font-bold mb-4">MakeMePro</h4>
               <p className="text-gray-500 mb-4">
                 Join our Student Alumni or follow us on social media and stay connected with latest news.
               </p>

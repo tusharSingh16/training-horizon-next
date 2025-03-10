@@ -66,6 +66,8 @@ const ListingCard: React.FC<ListingCardProps> = ({
   const [favorites, setFavorites] = useState<string[]>([]);
   const router = useRouter();
   const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(true);
+  const [getImageUrl, setImageUrl] = useState<string>("");
 
   const sendData = () => {
     dispatch(
@@ -92,9 +94,6 @@ const ListingCard: React.FC<ListingCardProps> = ({
       })
     );
   };
-  const [getImageUrl, setImageUrl] = useState<string>(
-    "/img/loading.gif"
-  );
 
   useEffect(() => {
     const fetchFavorites = async () => {
@@ -132,9 +131,10 @@ const ListingCard: React.FC<ListingCardProps> = ({
 
         const data = await response2.json();
         setImageUrl(data.signedUrl);
-      } catch (error) {}
-
-      
+      } catch (error) {
+      } finally {
+        setIsLoading(false);
+      }
     }
 
     fetchImage();
@@ -192,12 +192,20 @@ const ListingCard: React.FC<ListingCardProps> = ({
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-6">
           <Card className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-2xl transition-transform duration-300 transform hover:scale-105 hover:-translate-y-2">
             <div className="relative">
-              <img
-                src={getImageUrl || "/img/new/cricket.svg"}
-                alt={title}
-                className="w-full h-[250px] object-cover rounded-t-lg"
-              />
-              <Image
+              {isLoading ? (
+                <div className="w-full h-[250px] bg-gray-100 flex items-center justify-center">
+                  <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#3D7A81]" />
+                </div>
+              ) : (
+                <Image
+                  src={getImageUrl || "/img/new/cricket.svg"}
+                  alt={title}
+                  width={500}
+                  height={250}
+                  className="w-full h-[250px] object-cover rounded-t-lg"
+                />
+              )}
+              <Image 
                 src={`${
                   isSelected ? "/icons/filled_fav.png" : "/icons/fav.png"
                 }`}

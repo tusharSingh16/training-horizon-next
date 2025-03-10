@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import SearchSection from "../UserFlow/SearchSection";
 import RentalCard from "./RentalCard";
+import { Spinner } from "../ui/spinner"
 
 interface Address {
   street: string;
@@ -43,6 +44,7 @@ const RentalPage: React.FC<{
   const [listings, setListings] = useState<Rentals[]>([]);
   const [keywords, setKeywords] = useState<string>("");
   const [filteredListings, setFilteredListings] = useState<Rentals[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const handleSearch = () => {
     setFilteredListings(
@@ -62,6 +64,8 @@ const RentalPage: React.FC<{
         setFilteredListings(data.rentals);
       } catch (error) {
         console.error("Failed to fetch listings:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -80,32 +84,38 @@ const RentalPage: React.FC<{
         </div>
       </header>
 
-      <div className="container mx-auto flex flex-1 px-4">
-        <main className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {filteredListings.length > 0 ? (
-            filteredListings.map((listing, idx) => (
-              <RentalCard
-                key={idx}
-                rentalId={listing._id}
-                name={listing.name}
-                email={listing.email}
-                address={`${listing.address.street}, ${listing.address.city}, ${listing.address.state}`}
-                availability={listing.availability.days.join(", ") || "Not Available"}
-                pricing={`₹${listing.pricing.dailyRate}/day, ₹${listing.pricing.hourlyRate}/hour`}
-                ratings={listing.ratings}
-                amenities={listing.amenities.join(", ")}
-                timeSlots={listing.timeSlots.join(", ")}
-                images={listing.images}
-                reviews={listing.reviews}
-                subCategoryName={subCategoryName}
-                categoryName={categoryName}
-              />
-            ))
-          ) : (
-            <p className="text-center text-gray-500">No listings found.</p>
-          )}
-        </main>
-      </div>
+      {isLoading ? (
+        <div className="fixed inset-0 flex justify-center items-center bg-white/80">
+          <Spinner />
+        </div>
+      ) : (
+        <div className="container mx-auto flex flex-1 px-4">
+          <main className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {filteredListings.length > 0 ? (
+              filteredListings.map((listing, idx) => (
+                <RentalCard
+                  key={idx}
+                  rentalId={listing._id}
+                  name={listing.name}
+                  email={listing.email}
+                  address={`${listing.address.street}, ${listing.address.city}, ${listing.address.state}`}
+                  availability={listing.availability.days.join(", ") || "Not Available"}
+                  pricing={`₹${listing.pricing.dailyRate}/day, ₹${listing.pricing.hourlyRate}/hour`}
+                  ratings={listing.ratings}
+                  amenities={listing.amenities.join(", ")}
+                  timeSlots={listing.timeSlots.join(", ")}
+                  images={listing.images}
+                  reviews={listing.reviews}
+                  subCategoryName={subCategoryName}
+                  categoryName={categoryName}
+                />
+              ))
+            ) : (
+              <p className="text-center text-gray-500">No listings found.</p>
+            )}
+          </main>
+        </div>
+      )}
     </div>
   );
 };

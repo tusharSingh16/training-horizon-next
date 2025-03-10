@@ -4,6 +4,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { Spinner } from "../ui/spinner";
 
 type ListingDetails = {
   _id: string;
@@ -15,7 +16,7 @@ type ListingDetails = {
   price: string;
   mode: string;
   location: string;
-  quantity: string;
+quantity: string;
   classSize: string;
   startDate: string;
   endDate: string;
@@ -180,8 +181,8 @@ const CartPage = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <p className="text-xl text-gray-600">Loading...</p>
+      <div className="fixed inset-0 flex justify-center items-center bg-white/80">
+        <Spinner />
       </div>
     );
   }

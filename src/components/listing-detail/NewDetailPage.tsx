@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useSelector } from "react-redux";
 import { RootState } from "@/lib/store/store";
-// import router from "next/router";
+import router from "next/router";
 import { useRouter } from "next/navigation";
 import Listing from "../show_all_listings/Listing";
 import CustomCalendar from "./Calendar";
@@ -17,6 +17,8 @@ import {
   FaMapMarkerAlt,
 } from "react-icons/fa";
 import { FaChildren, FaLocationPin } from "react-icons/fa6";
+import { Spinner } from "../ui/spinner";
+import { Button } from "../ui/button";
 
 interface Listing {
   category: string;
@@ -71,9 +73,22 @@ const NewDetailPage: React.FC<ListingId> = ({
   const [favorites, setFavorites] = useState<string[]>([]);
   const form = useSelector((state: RootState) => state.form);
   const [isSelected, setIsSelected] = useState<boolean>(form.isFavorite);
-  const [getTrainerImageUrl, setTrainerImageUrl] = useState("/img/loading.gif");
-
-  const [getImageUrl, setImageUrl] = useState<string>("/img/loading.gif");
+  const [getTrainerImageUrl, setTrainerImageUrl] = useState<string | null>(
+    null
+  );
+  const [getImageUrl, setImageUrl] = useState<string | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  
+  // to check login
+  useEffect(()=>  {
+    const token = window.localStorage.getItem("token");
+    if(token) {
+      setIsLoggedIn(true);
+    }
+    else{
+      setIsLoggedIn(false);
+    }
+  },[])
 
   useEffect(() => {
     const fetchFavorites = async () => {
@@ -115,12 +130,12 @@ const NewDetailPage: React.FC<ListingId> = ({
         const data = await response2.json();
         setImageUrl(data.signedUrl);
         console.log(getImageUrl);
-      } catch (error) { }
+      } catch (error) {}
     };
 
     const fetchTrainerImage = async () => {
       try {
-        console.log(instructorData)
+        console.log(instructorData);
         const response2 = await fetch(
           `${process.env.NEXT_PUBLIC_BASE_URL}/upload?imageUrl=${instructorData.imageUrl}`
         );
@@ -128,7 +143,7 @@ const NewDetailPage: React.FC<ListingId> = ({
 
         const data = await response2.json();
         setTrainerImageUrl(data.signedUrl);
-      } catch (error) { }
+      } catch (error) {}
     };
 
     console.log("Image url : ", getImageUrl);
@@ -136,7 +151,6 @@ const NewDetailPage: React.FC<ListingId> = ({
     fetchFavorites();
     fetchListingImage();
     fetchTrainerImage();
-
   }, [listingData.listingId, listingData.imageUrl, instructorData.imageUrl]);
   function formatDays(days: string[]) {
     return days?.map((day) => day.replace(/([A-Z][a-z]+)/g, " $1")).join(", ");
@@ -206,7 +220,18 @@ const NewDetailPage: React.FC<ListingId> = ({
       {/* Header */}
       <div className="">
         <div className="w-[800px] h-[400px] relative overflow-hidden rounded-lg">
-          <Image src={getImageUrl} alt="img" layout="fill" objectFit="cover" />
+          {getImageUrl ? (
+            <Image
+              src={getImageUrl}
+              alt="img"
+              layout="fill"
+              objectFit="cover"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center">
+              <Spinner size="lg" />
+            </div>
+          )}
         </div>
 
         <div className="md:col-span-2 space-y-4">
@@ -249,7 +274,9 @@ const NewDetailPage: React.FC<ListingId> = ({
                 <span>Mode: {listingData.mode}</span>
               </div>
               <div className="flex items-center font-bold">
-                <span>Age Group : {listingData.minAge} - {listingData.maxAge}</span>
+                <span>
+                  Age Group : {listingData.minAge} - {listingData.maxAge}
+                </span>
               </div>
               <div className="flex items-center font-bold">
                 <FaGlobe className="mr-2" />
@@ -279,39 +306,51 @@ const NewDetailPage: React.FC<ListingId> = ({
         <h2 className="mb-3 text-3xl font-bold">About Instructor</h2>
         <div className="p-4 rounded-lg flex items-center gap-10">
           <div className="">
-            <Image
-              src={getTrainerImageUrl}
-              alt="Instructor"
-              width={200}
-              height={200}
-              className="rounded-lg object-fill"
-            />
+            {getTrainerImageUrl ? (
+              <Image
+                src={getTrainerImageUrl}
+                alt="Instructor"
+                width={200}
+                height={200}
+                className="rounded-lg object-fill"
+              />
+            ) : (
+              <div className="w-[200px] h-[200px] flex items-center justify-center">
+                <Spinner size="lg" />
+              </div>
+            )}
           </div>
           <div>
-            <div>
-              <h3 className="text-lg font-semibold">
-                {instructorData.fname} {instructorData.lname}
-              </h3>
+            {!isLoggedIn ? (
               <div>
-                Rating :<i className="fas fa-book"></i>{" "}
-                {instructorData.avgRating}⭐
+                <h3>
+                  {instructorData.fname} {instructorData.lname}
+                </h3>
+                <div>Rating: {instructorData.avgRating}⭐</div>
               </div>
-            </div>
-            <p className="text-gray-500">
-              Qualifications : {instructorData.qualifications}
-            </p>
-            <p className="text-gray-500">
-              Years of Experience : {instructorData.experience}
-            </p>
-            <p className="text-gray-500">Email: {instructorData.email}</p>
-            <div className="flex items-center gap-1 text-yellow-500"></div>
+            ) : (
+              <div>
+                <h3>
+                  {instructorData.fname} {instructorData.lname}
+                </h3>
+                <div>Rating: {instructorData.avgRating}⭐</div>
+                <div>Experience: {instructorData.experience}</div>
+                <div>Qualifications: {instructorData.qualifications}</div>
+                <div>Email: {instructorData.email}</div>
+              </div>
+            )}
           </div>
-          <button
-            onClick={() => handleViewProfile(instructorData._id)}
-            className="ml-auto px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-600"
+          <Button
+            onClick={() => {
+              if (!isLoggedIn) {
+                router.push("/userflow/login"); // Navigate to the login page
+              } else {
+                handleViewProfile(instructorData._id);
+              }
+            }}
           >
-            View Profile
-          </button>
+            {!isLoggedIn ? "Login to view full profile" : "View Profile"}
+          </Button>
         </div>
       </div>
     </div>

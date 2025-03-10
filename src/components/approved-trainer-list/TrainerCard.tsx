@@ -3,6 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
+import { Spinner } from "@/components/ui/spinner";
 
 interface TrainerProps {
   trainer: {
@@ -16,7 +17,7 @@ interface TrainerProps {
 }
 
 const TrainerCard: React.FC<TrainerProps> = ({ trainer }) => {
-  const [getImageUrl, setImageUrl] = useState<string>("/img/loading.gif");
+  const [getImageUrl, setImageUrl] = useState<string | null>(null);
 
   useEffect(() => {
     const loadImage = async () => {
@@ -44,11 +45,17 @@ const TrainerCard: React.FC<TrainerProps> = ({ trainer }) => {
 
   return (
     <Card className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-2xl transition-transform duration-300 transform hover:scale-105 hover:-translate-y-2">
-      <img
-        src={getImageUrl}
-        alt={`${trainer.fname} ${trainer.lname}`}
-        className="w-full h-[300px] object-cover rounded-t-lg"
-      />
+      {getImageUrl ? (
+        <img
+          src={getImageUrl}
+          alt={`${trainer.fname} ${trainer.lname}`}
+          className="w-full h-[300px] object-cover rounded-t-lg"
+        />
+      ) : (
+        <div className="w-full h-[300px] flex items-center justify-center">
+          <Spinner />
+        </div>
+      )}
 
       <CardContent className="pt-6 space-y-2">
         <div className="flex items-center justify-center font-semibold">

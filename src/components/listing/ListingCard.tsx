@@ -8,6 +8,8 @@ import Image from "next/image";
 import { Calendar, MapPin, Sun, Users } from "lucide-react";
 import { Button } from "../ui/button";
 import { Card, CardContent } from "../ui/card";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
 interface ListingCardProps {
   category: string;
@@ -193,8 +195,8 @@ const ListingCard: React.FC<ListingCardProps> = ({
           <Card className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-2xl transition-transform duration-300 transform hover:scale-105 hover:-translate-y-2">
             <div className="relative">
               {isLoading ? (
-                <div className="w-full h-[250px] bg-gray-100 flex items-center justify-center">
-                  <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#3D7A81]" />
+                <div className="w-full h-[250px]">
+                  <Skeleton height={250} />
                 </div>
               ) : (
                 <Image
@@ -218,59 +220,70 @@ const ListingCard: React.FC<ListingCardProps> = ({
             </div>
 
             <CardContent className="p-6 space-y-6">
-              <div className="space-y-3">
-                <div className="flex flex-wrap gap-4 text-gray-500">
-                  <div className="flex items-center gap-2">
-                    <MapPin className="w-6 h-6 opacity-30" />
-                    <span className="text-sm sm:text-base">{mode}</span>
+              {isLoading ? (
+                <div className="space-y-4">
+                  <div className="flex flex-wrap gap-4">
+                    <Skeleton width={100} />
+                    <Skeleton width={80} />
                   </div>
-                  <div className="flex items-center gap-2">
-                    {/* <Users className="w-6 h-6 opacity-30" />
-                    <span className="text-sm sm:text-base">{classSize}</span> */}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    {/* <Sun className="w-6 h-6 opacity-30" /> */}
-                    <Users className="w-6 h-6 opacity-30" />
-                    <span className="text-sm sm:text-base">{gender}</span>
-                    {/* <span className="text-sm sm:text-base">{maxAge}</span> */}
+                  <Skeleton height={24} width="80%" />
+                  <Skeleton height={16} width="60%" />
+                  <div className="flex justify-between items-center">
+                    <Skeleton width={80} height={30} />
+                    <Skeleton width={100} height={40} />
                   </div>
                 </div>
-                <h3 className="text-lg sm:text-xl font-semibold text-gray-800">
-                  {title.length > 20 ? title.slice(0, 20) + "..." : title}
-                </h3>
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <Calendar className="w-4 h-4" />
-                  <span>{startTime}</span>
-                  <span>-</span>
-                  <span>{endTime}</span>
-                  <span>•</span>
-                  <span>{category}</span>
-                </div>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-lg sm:text-xl font-semibold text-[#3D7A81]">
-                  ${price}
-                  <span className="text-sm font-normal text-gray-400">
-                    {priceMode === "Per day"
-                      ? "/day"
-                      : priceMode === "Per month"
-                      ? "/month"
-                      : "/course"}
-                  </span>
-                </span>
-                <Button
-                  variant="outline"
-                  className="border-[#1D2735] text-[#1D2735] text-sm sm:text-base"
-                  onClick={() => {
-                    sendData();
-                    router.push(
-                      `/${categoryName}/${subCategoryName}/${listingId}`
-                    );
-                  }}
-                >
-                  Enroll Now
-                </Button>
-              </div>
+              ) : (
+                <>
+                  <div className="space-y-3">
+                    <div className="flex flex-wrap gap-4 text-gray-500">
+                      <div className="flex items-center gap-2">
+                        <MapPin className="w-6 h-6 opacity-30" />
+                        <span className="text-sm sm:text-base">{mode}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Users className="w-6 h-6 opacity-30" />
+                        <span className="text-sm sm:text-base">{gender}</span>
+                      </div>
+                    </div>
+                    <h3 className="text-lg sm:text-xl font-semibold text-gray-800">
+                      {title.length > 20 ? title.slice(0, 20) + "..." : title}
+                    </h3>
+                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                      <Calendar className="w-4 h-4" />
+                      <span>{startTime}</span>
+                      <span>-</span>
+                      <span>{endTime}</span>
+                      <span>•</span>
+                      <span>{category}</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-lg sm:text-xl font-semibold text-[#3D7A81]">
+                      ${price}
+                      <span className="text-sm font-normal text-gray-400">
+                        {priceMode === "Per day"
+                          ? "/day"
+                          : priceMode === "Per month"
+                          ? "/month"
+                          : "/course"}
+                      </span>
+                    </span>
+                    <Button
+                      variant="outline"
+                      className="border-[#1D2735] text-[#1D2735] text-sm sm:text-base"
+                      onClick={() => {
+                        sendData();
+                        router.push(
+                          `/${categoryName}/${subCategoryName}/${listingId}`
+                        );
+                      }}
+                    >
+                      Enroll Now
+                    </Button>
+                  </div>
+                </>
+              )}
             </CardContent>
           </Card>
         </div>

@@ -6,6 +6,7 @@ import { useSearchParams, useRouter } from "next/navigation"
 import axios from "axios"
 import SearchSection from "../UserFlow/SearchSection"
 import ListingCard from "./ListingCard"
+import { Spinner } from "../ui/spinner"
 
 interface Listing {
   _id: string
@@ -70,7 +71,7 @@ const ListingsPage: React.FC<{
     setAgeLimit([2, 90])
     setSelectedGender(null)
 
-    router.replace("/all/courses") // Replaces the current URL without adding to history
+    router.replace("/all/courses")
     router.refresh() // Refresh data in Next.js (App Router)
   }
 
@@ -149,7 +150,11 @@ const ListingsPage: React.FC<{
                 />
               ))
             ) : (
-              <p className="text-center text-gray-500">No listings found.</p>
+              // center this spinner and incease size
+              <div className="flex justify-center items-center h-screen w-screen">
+                
+                  <Spinner className="h-8 w-8"/>
+              </div>
             )}
           </main>
         </div>

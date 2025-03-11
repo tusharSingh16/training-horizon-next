@@ -99,24 +99,24 @@ function SignUpCard() {
         {/* Image Div */}
         <div className="w-1/2 hidden mr-1 lg:block">
           <Image
-            src="https://www.pushengage.com/wp-content/uploads/2022/02/Best-Website-Welcome-Message-Examples.png"
+            src="/bg/pic1.jpg"
             alt="Signup Image"
             width={600}
             height={600}
-            className="w-full h-full object-cover shadow-lg rounded-l-lg"
+            className="w-full h-full object-cover shadow-2xl rounded-l-lg"
           />
         </div>
 
         {/* Form Section */}
-        <Card className="w-full lg:w-1/2 rounded-l-none max-w-[600px] h-auto p-6 shadow-lg">
+        <Card className="w-full lg:w-1/2 rounded-l-none max-w-[600px] h-auto p-6 shadow-2xl">
           <CardHeader>
             <h2 className="text-2xl font-bold text-gray-600 text-center">
               Create your <span className="text-blue-600">account</span>
             </h2>
           </CardHeader>
           <CardContent>
-            <div className="space-y-5">
-              <div className="space-y-2">
+            <div className="space-y-2">
+              <div className="space-y-0">
                 <Label htmlFor="email" className="text-sm">
                   Email
                 </Label>

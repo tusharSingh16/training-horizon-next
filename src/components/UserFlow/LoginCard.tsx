@@ -66,22 +66,22 @@ function LoginCard() {
 
   return (
     <main className="h-screen flex items-center justify-center p-5 sm:p-10 w-full overflow-hidden">
-      <div className="flex w-full gap-6 max-w-4xl">
+      <div className="flex w-full gap-1 max-w-4xl">
         {/* Image Section */}
         <div className="w-1/3 hidden lg:block">
           <Image
-            src="/Logo/MMP.png"
+            src="/bg/pic4.jpg"
             alt="Login Image"
             width={600}
             height={600}
-            className="w-full h-full rounded-l-lg shadow-lg object-cover "
+            className="w-full h-full rounded-l-lg shadow-2xl object-cover "
           />
           {/* Welcome Back */}
         </div>
 
         {/* Form Section */}
         <div>
-          <Card className="w-full rounded-l-none sm:w-[480px] h-[600px] mx-auto pt-10 shadow-lg ">
+          <Card className="w-full rounded-l-none sm:w-[480px] h-[600px] mx-auto pt-10 shadow-2xl ">
             <CardHeader className="text-center">
               <h2 className="text-2xl text-gray-600 font-bold">Login</h2>
             </CardHeader>

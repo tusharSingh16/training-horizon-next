@@ -64,7 +64,7 @@ export default function Footer(){
             </div>
           </div>
           <div className="border-t mt-12 pt-8 flex flex-col md:flex-row justify-evenly items-center">
-            <p className="text-gray-500 text-sm">Copyright © 2023 Training Process All Rights Reserved.</p>
+            <p className="text-gray-500 text-sm">Copyright © 2023 MakeMePro. All Rights Reserved.</p>
             <div className="flex gap-4 mt-4 md:mt-0">
               <a href="#" className="text-gray-500 hover:text-gray-700 text-sm">
                 Privacy policy

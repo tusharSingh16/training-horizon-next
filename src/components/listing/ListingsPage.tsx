@@ -6,7 +6,9 @@ import { useSearchParams, useRouter } from "next/navigation"
 import axios from "axios"
 import SearchSection from "../UserFlow/SearchSection"
 import ListingCard from "./ListingCard"
-import { Spinner } from "../ui/spinner"
+import Skeleton from "react-loading-skeleton"
+import "react-loading-skeleton/dist/skeleton.css"
+import { Card, CardContent } from "../ui/card"
 
 interface Listing {
   _id: string
@@ -34,6 +36,37 @@ interface Listing {
   avgRating: number
 }
 
+// Skeleton card component to reuse
+const ListingCardSkeleton = () => (
+  <div className="flex flex-col items-center bg-background">
+    <div className="w-full h-auto px-4 py-6 space-y-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-6">
+        <Card className="bg-white rounded-lg overflow-hidden shadow-md">
+          <div className="relative">
+            <div className="w-full h-[250px]">
+              <Skeleton height={250} />
+            </div>
+          </div>
+          <CardContent className="p-6 space-y-6">
+            <div className="space-y-4">
+              <div className="flex flex-wrap gap-4">
+                <Skeleton width={100} />
+                <Skeleton width={80} />
+              </div>
+              <Skeleton height={24} width="80%" />
+              <Skeleton height={16} width="60%" />
+              <div className="flex justify-between items-center">
+                <Skeleton width={80} height={30} />
+                <Skeleton width={100} height={40} />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  </div>
+)
+
 const ListingsPage: React.FC<{
   categoryName: string
   subCategoryName: string
@@ -53,9 +86,9 @@ const ListingsPage: React.FC<{
   const [RateRange, setRateRange] = useState<[number, number]>([10, 9980])
   const [ageLimit, setAgeLimit] = useState<[number, number]>([2, 90])
   const [selectedGender, setSelectedGender] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState<boolean>(true)
 
   const handleSearch = () => {
-
     const filtered = listings.filter(
       (listing) => searchwords === "" || listing.title.toLowerCase().includes(searchwords.toLowerCase())
     );
@@ -76,6 +109,7 @@ const ListingsPage: React.FC<{
   }
 
   useEffect(() => {
+    setIsLoading(true);
     const fetchCourses = async () => {
       const query = new URLSearchParams({
         title: keywords || "",
@@ -95,6 +129,8 @@ const ListingsPage: React.FC<{
         handleSearch(); // Apply search filter immediately after fetching data
       } catch (error) {
         console.error("Failed to fetch listings:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -106,7 +142,10 @@ const ListingsPage: React.FC<{
     handleSearch();
   }, [searchwords, listings]);
 
-
+  // Generate skeleton cards array
+  const skeletonCards = Array(8).fill(0).map((_, index) => (
+    <ListingCardSkeleton key={`skeleton-${index}`} />
+  ));
 
   return (
     <>
@@ -118,8 +157,12 @@ const ListingsPage: React.FC<{
         </header>
 
         <div className="container mx-auto flex flex-1 px-4">
-          <main className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {filteredListings.length > 0 ? (
+          <main className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-full">
+            {isLoading ? (
+              // Show skeleton cards while loading
+              skeletonCards
+            ) : filteredListings.length > 0 ? (
+              // Show actual listings when data is available
               filteredListings.map((listing, idx) => (
                 <ListingCard
                   subCategoryName={subCategoryName}
@@ -150,11 +193,8 @@ const ListingsPage: React.FC<{
                 />
               ))
             ) : (
-              // center this spinner and incease size
-              <div className="flex justify-center items-center h-screen w-screen">
-                
-                  <Spinner className="h-8 w-8"/>
-              </div>
+              // Show skeleton cards when no data is available
+              skeletonCards
             )}
           </main>
         </div>
